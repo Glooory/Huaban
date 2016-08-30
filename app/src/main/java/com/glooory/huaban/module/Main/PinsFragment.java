@@ -16,6 +16,7 @@ import com.glooory.huaban.adapter.PinCardAdapter;
 import com.glooory.huaban.api.AllApi;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
+import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.util.Base64;
 import com.orhanobut.logger.Logger;
 
@@ -23,10 +24,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -73,13 +70,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         mSwipeRefreshLayout.setRefreshing(true);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(new OkHttpClient())
-                .baseUrl("http://api.huaban.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-        Subscription subscription = retrofit.create(AllApi.class)
+        Subscription subscription = RetrofitClient.createService(AllApi.class)
                 .httpAllService(Base64.CLIENTINFO, 20)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 

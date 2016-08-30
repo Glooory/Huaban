@@ -30,7 +30,7 @@ public class PinsUserBean implements Parcelable {
     private String username;
     private String urlname;
     private int created_at;
-    private String avatar;
+    private UserAvatarBean avatar;
 
     public int getUser_id() {
         return user_id;
@@ -64,13 +64,18 @@ public class PinsUserBean implements Parcelable {
         this.created_at = created_at;
     }
 
-    public String getAvatar() {
+    public UserAvatarBean getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(UserAvatarBean avatar) {
         this.avatar = avatar;
     }
+
+
+    public PinsUserBean() {
+    }
+
 
     @Override
     public int describeContents() {
@@ -83,10 +88,7 @@ public class PinsUserBean implements Parcelable {
         dest.writeString(this.username);
         dest.writeString(this.urlname);
         dest.writeInt(this.created_at);
-        dest.writeString(this.avatar);
-    }
-
-    public PinsUserBean() {
+        dest.writeParcelable(this.avatar, flags);
     }
 
     protected PinsUserBean(Parcel in) {
@@ -94,7 +96,7 @@ public class PinsUserBean implements Parcelable {
         this.username = in.readString();
         this.urlname = in.readString();
         this.created_at = in.readInt();
-        this.avatar = in.readString();
+        this.avatar = in.readParcelable(UserAvatarBean.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<PinsUserBean> CREATOR = new Parcelable.Creator<PinsUserBean>() {

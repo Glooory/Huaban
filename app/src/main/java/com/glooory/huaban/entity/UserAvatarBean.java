@@ -4,30 +4,29 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by Glooory on 2016/8/27 0027.
+ * Created by Glooory on 2016/8/29 0029.
  */
-public class PinsFileBean implements Parcelable {
+public class UserAvatarBean implements Parcelable {
 
-    // Pins 中的File
 
-    /*"file":{
-        "id":112862047,
-            "farm":"farm1",
-            "bucket":"hbimg",
-            "key":"fda7fcbb8efbc9177556f2f2989b0a2f5d6008f414951e-UT8MUO",
-            "type":"image/gif",
-            "height":"275",
-            "width":"274",
-            "frames":"52"
-    }*/
+    /**
+     * id : 107389480
+     * farm : farm1
+     * bucket : hbimg
+     * key : c903c32007d4c8e264607d99acc2195c25a430083ca2-CKTWbd
+     * type : image/jpeg
+     * height : 220
+     * width : 334
+     * frames : 1
+     */
 
     private int id;
     private String farm;
     private String bucket;
     private String key;
     private String type;
-    private int height;
-    private int width;
+    private String height;
+    private String width;
     private String frames;
 
     public int getId() {
@@ -70,19 +69,19 @@ public class PinsFileBean implements Parcelable {
         this.type = type;
     }
 
-    public int getHeight() {
+    public String getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(String height) {
         this.height = height;
     }
 
-    public int getWidth() {
+    public String getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(String width) {
         this.width = width;
     }
 
@@ -93,7 +92,6 @@ public class PinsFileBean implements Parcelable {
     public void setFrames(String frames) {
         this.frames = frames;
     }
-
 
     @Override
     public int describeContents() {
@@ -107,34 +105,34 @@ public class PinsFileBean implements Parcelable {
         dest.writeString(this.bucket);
         dest.writeString(this.key);
         dest.writeString(this.type);
-        dest.writeInt(this.height);
-        dest.writeInt(this.width);
+        dest.writeString(this.height);
+        dest.writeString(this.width);
         dest.writeString(this.frames);
     }
 
-    public PinsFileBean() {
+    public UserAvatarBean() {
     }
 
-    protected PinsFileBean(Parcel in) {
+    protected UserAvatarBean(Parcel in) {
         this.id = in.readInt();
         this.farm = in.readString();
         this.bucket = in.readString();
         this.key = in.readString();
         this.type = in.readString();
-        this.height = in.readInt();
-        this.width = in.readInt();
+        this.height = in.readString();
+        this.width = in.readString();
         this.frames = in.readString();
     }
 
-    public static final Parcelable.Creator<PinsFileBean> CREATOR = new Parcelable.Creator<PinsFileBean>() {
+    public static final Parcelable.Creator<UserAvatarBean> CREATOR = new Parcelable.Creator<UserAvatarBean>() {
         @Override
-        public PinsFileBean createFromParcel(Parcel source) {
-            return new PinsFileBean(source);
+        public UserAvatarBean createFromParcel(Parcel source) {
+            return new UserAvatarBean(source);
         }
 
         @Override
-        public PinsFileBean[] newArray(int size) {
-            return new PinsFileBean[size];
+        public UserAvatarBean[] newArray(int size) {
+            return new UserAvatarBean[size];
         }
     };
 }

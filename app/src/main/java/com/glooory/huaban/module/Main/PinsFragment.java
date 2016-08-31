@@ -10,14 +10,18 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.glooory.huaban.R;
-import com.glooory.huaban.adapter.PinCardAdapter;
+import com.glooory.huaban.adapter.PinQuickAdapter;
 import com.glooory.huaban.api.AllApi;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.util.Base64;
+import com.glooory.huaban.util.NetworkUtils;
 import com.orhanobut.logger.Logger;
 
 import java.util.List;
@@ -33,45 +37,75 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Glooory on 2016/8/28 0028.
  */
-public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+        BaseQuickAdapter.RequestLoadMoreListener{
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private PinCardAdapter mAdapter;
+    private String mAuthorization;
+    private PinQuickAdapter mAdapter;
+    private int mMaxId;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Logger.d("Fragment onCreateView() excuted");
         View view = inflater.inflate(R.layout.fragment_swiperefresh_recycler, container, false);
         ButterKnife.bind(this, view);
+        if (false) {
+            //// TODO: 2016/8/31 0031 检查是否登录
+        } else {
+            mAuthorization = Base64.CLIENTINFO;
+        }
         initViews();
-        getHttpMaxId(0);
+        getHttpFirst();
         return view;
     }
 
     private void initViews() {
-        Logger.d("Fragment initViews() excuted");
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        mAdapter = new PinCardAdapter(getContext());
+        initAdapter();
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void initAdapter() {
+
+        mAdapter = new PinQuickAdapter(getContext());
+        mAdapter.setLoadingView(null);
+        mAdapter.openLoadMore(20);
+        mAdapter.openLoadAnimation();
+        mAdapter.setOnLoadMoreListener(this);
+
+        mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
+            @Override
+            public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+                switch (view.getId()) {
+                    case R.id.item_card_pin_img_ll:
+                        Toast.makeText(getContext(), "you just clicked the img", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.item_card_via_ll:
+                        Toast.makeText(getContext(), "via info", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
     }
 
     @Override
     public void onRefresh() {
-
+        getHttpFirst();
     }
 
-    private void getHttpMaxId(int max) {
-
+    private void getHttpFirst() {
         mSwipeRefreshLayout.setRefreshing(true);
 
         Subscription subscription = RetrofitClient.createService(AllApi.class)
-                .httpAllService(Base64.CLIENTINFO, 20)
+                .httpAllService(mAuthorization, 20)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
                     @Override
@@ -95,18 +129,70 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     @Override
                     public void onError(Throwable e) {
-                        Logger.d("subscrber onError");
+                        checkException(e);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onNext(List<PinsBean> list) {
-                        Logger.d(String.valueOf(list.size()));
-                        mAdapter.setPinsList(list);
+                        setMaxId(list);
+                        mAdapter.setNewData(list);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
+        
+    }
 
+    public void getHttpMaxId(int maxId) {
 
+        Subscription subscription = RetrofitClient.createService(AllApi.class)
+                .httpAllMaxService(mAuthorization, maxId, 20)
+                .map(new Func1<PinsListBean, List<PinsBean>>() {
+
+                    @Override
+                    public List<PinsBean> call(PinsListBean pinsListBean) {
+                        return pinsListBean.getPins();
+                    }
+                })
+                .filter(new Func1<List<PinsBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<PinsBean> list) {
+                        return list.size() > 0;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<PinsBean>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        mAdapter.showLoadMoreFailedView();
+                    }
+
+                    @Override
+                    public void onNext(List<PinsBean> list) {
+                        setMaxId(list);
+                        mAdapter.addData(list);
+                    }
+                });
+
+    }
+
+    @Override
+    public void onLoadMoreRequested() {
+        getHttpMaxId(mMaxId);
+    }
+
+    private void setMaxId(List<PinsBean> list) {
+        mMaxId = list.get(list.size() - 1).getPin_id();
+    }
+
+    protected void checkException(Throwable throwable) {
+        NetworkUtils.checkHttpException(getContext(), throwable, mRecyclerView);
     }
 }

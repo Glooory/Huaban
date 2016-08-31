@@ -14,26 +14,39 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/item_card_pin_img"
+        <LinearLayout
+            android:id="@+id/item_card_pin_img_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY" />
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/item_card_pin_tvimgdes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:maxLines="4"
-            android:padding="4dp"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/card_context_size_14sp" />
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/item_card_pin_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:id="@+id/item_card_pin_tvimgdes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:maxLines="4"
+                android:padding="4dp"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/card_context_size_14sp" />
+
+        </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/item_card_via_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
             android:padding="4dp">
 
@@ -51,6 +64,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="4dp"
+                android:ellipsize="marquee"
+                android:maxLines="3"
                 android:textSize="@dimen/card_context_size_14sp" />
 
         </LinearLayout>

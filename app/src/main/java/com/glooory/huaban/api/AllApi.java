@@ -13,11 +13,11 @@ import rx.Observable;
  */
 public interface AllApi {
 
-    @GET("/all")
+    @GET("all")
     Observable<PinsListBean> httpAllService(@Header(Constant.AUTHORIZATION) String authorization,
                                             @Query("limit") int limit);
 
-    @GET("/all")
+    @GET("all")
     Observable<PinsListBean> httpAllMaxService(@Header(Constant.AUTHORIZATION) String authorization,
                                                @Query("max") int maxId,
                                                @Query("limit") int limit);

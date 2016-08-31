@@ -48,6 +48,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private String mAuthorization;
     private PinQuickAdapter mAdapter;
     private int mMaxId;
+    private final int PAGE_SIZE = 20;
 
 
     @Nullable
@@ -77,7 +78,8 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         mAdapter = new PinQuickAdapter(getContext());
         mAdapter.setLoadingView(null);
-        mAdapter.openLoadMore(20);
+        //当当前position等于PAGE_SIZE 时，就回调用onLoadMoreRequested() 自动加载下一页数据
+        mAdapter.openLoadMore(PAGE_SIZE);
         mAdapter.openLoadAnimation();
         mAdapter.setOnLoadMoreListener(this);
 
@@ -101,6 +103,9 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         getHttpFirst();
     }
 
+    /**
+     * 第一次加载数据
+     */
     private void getHttpFirst() {
         mSwipeRefreshLayout.setRefreshing(true);
 
@@ -143,6 +148,10 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         
     }
 
+    /**
+     * 后续上拉自动加载数据
+     * @param maxId
+     */
     public void getHttpMaxId(int maxId) {
 
         Subscription subscription = RetrofitClient.createService(AllApi.class)
@@ -188,6 +197,10 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         getHttpMaxId(mMaxId);
     }
 
+    /**
+     * 保存本次请求的maxId值，后续请求数据会带上
+     * @param list
+     */
     private void setMaxId(List<PinsBean> list) {
         mMaxId = list.get(list.size() - 1).getPin_id();
     }

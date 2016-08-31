@@ -55,6 +55,8 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
 
         //加载pin图片
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.item_card_pin_img), urlImg)
+                .setPlaceHolderImage(mContext.getResources().getDrawable(R.drawable.ic_account_box_white_36dp))
+                .setFailureIamge(mContext.getResources().getDrawable(R.drawable.ic_account_box_white_36dp))
                 .setProgressbarImage(mProgressImage)
                 .build();
 
@@ -64,6 +66,7 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
                 .build();
     }
 
+    //将用户名和画板名称设置成深一点的颜色，便于区分
     private SpannableString setViaDesTextStyle(PinsBean pinsBean) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("由 ")

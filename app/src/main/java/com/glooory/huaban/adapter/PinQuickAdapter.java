@@ -51,7 +51,7 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
         float ratio = Utils.getAspectRatio(pinsBean.getFile().getWidth(), pinsBean.getFile().getHeight());
         ((SimpleDraweeView) holder.getView(R.id.item_card_pin_img)).setAspectRatio(ratio);
 
-        Drawable mProgressImage = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_windmild, R.color.tint_list_pink);
+        Drawable mProgressImage = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
 
         //加载pin图片
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.item_card_pin_img), urlImg)

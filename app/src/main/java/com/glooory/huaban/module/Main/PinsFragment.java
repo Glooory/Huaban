@@ -77,7 +77,10 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private void initAdapter() {
 
         mAdapter = new PinQuickAdapter(getContext());
-        mAdapter.setLoadingView(null);
+        //设置上滑自动建在的正在加载更多的自定义View
+        View loadMoreView = LayoutInflater.from(getContext()).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);
+        mAdapter.setLoadingView(loadMoreView);
+
         //当当前position等于PAGE_SIZE 时，就回调用onLoadMoreRequested() 自动加载下一页数据
         mAdapter.openLoadMore(PAGE_SIZE);
         mAdapter.openLoadAnimation();

@@ -61,5 +61,8 @@ public class Constant {
     //删除画板的操作符
     public static final String OPERATEDELETEBOARD = "DELETE";
 
+    //是否跳过登录界面
+    public static final String ISSKIPLOGIN = "skip_login";
+
 
 }

@@ -22,7 +22,6 @@ import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.NetworkUtils;
-import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -49,6 +48,8 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private PinQuickAdapter mAdapter;
     private int mMaxId;
     private final int PAGE_SIZE = 20;
+
+    Subscription subscription;
 
 
     @Nullable
@@ -112,7 +113,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private void getHttpFirst() {
         mSwipeRefreshLayout.setRefreshing(true);
 
-        Subscription subscription = RetrofitClient.createService(AllApi.class)
+        subscription = RetrofitClient.createService(AllApi.class)
                 .httpAllService(mAuthorization, 20)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
@@ -132,7 +133,6 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 .subscribe(new Subscriber<List<PinsBean>>() {
                     @Override
                     public void onCompleted() {
-                        Logger.d("subscrber onCompleted");
                     }
 
                     @Override
@@ -157,7 +157,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      */
     public void getHttpMaxId(int maxId) {
 
-        Subscription subscription = RetrofitClient.createService(AllApi.class)
+        subscription = RetrofitClient.createService(AllApi.class)
                 .httpAllMaxService(mAuthorization, maxId, 20)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
@@ -210,5 +210,13 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     protected void checkException(Throwable throwable) {
         NetworkUtils.checkHttpException(getContext(), throwable, mRecyclerView);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
     }
 }

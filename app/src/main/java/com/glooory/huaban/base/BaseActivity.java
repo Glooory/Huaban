@@ -15,7 +15,6 @@ import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.NetworkUtils;
 import com.glooory.huaban.util.SPUtils;
-import com.orhanobut.logger.Logger;
 
 import butterknife.ButterKnife;
 import rx.Subscription;
@@ -88,9 +87,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         mContext = this;
         getNecessaryData();
         initResAndListener();
-        if (isLogin) {
-            Logger.d(TAG);
-        }
     }
 
     //由子类继承，初始化监听器和定义显示资源

@@ -13,13 +13,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".module.main.MainActivity"
+            android:name=".module.welcome.WelcomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".module.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity android:name=".module.login.LoginActivity"
             android:label="登录"
             android:theme="@style/AppTheme.NoActionBar"/>

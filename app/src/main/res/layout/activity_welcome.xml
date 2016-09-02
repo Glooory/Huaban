@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/img_welcome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/welcome_img_pink"/>
+
+        <ImageView
+            android:id="@+id/img_welcome_logo"
+            android:layout_width="96dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="48dp"
+            android:layout_marginLeft="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="true"
+            android:alpha="0"
+            android:src="@drawable/logo_huaban"/>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

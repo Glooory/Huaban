@@ -1,5 +1,7 @@
 package com.glooory.huaban.module.main;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -195,5 +197,10 @@ public class MainActivity extends BaseActivity
     public void headerClick(View view) {
         // TODO: 2016/8/31 0031 Launch UserActivity
         Toast.makeText(this, "Launch UserActivity", Toast.LENGTH_SHORT).show();
+    }
+
+    public static void launch(Activity activity) {
+        Intent intent = new Intent(activity, MainActivity.class);
+        activity.startActivity(intent);
     }
 }

@@ -5,7 +5,7 @@ package com.glooory.huaban.util;
  */
 public class Base64 {
 
-    private static final String mBasic = "Basic";
+    private static final String mBasic = "Basic ";
 
     private static final String mClientInfo = "MWQ5MTJjYWU0NzE0NGZhMDlkODg6Zjk0ZmNjMDliNTliNDM0OWExNDhhMjAzYWIyZjIwYzc=";
 

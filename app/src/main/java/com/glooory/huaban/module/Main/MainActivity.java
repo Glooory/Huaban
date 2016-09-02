@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.Main;
+package com.glooory.huaban.module.main;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.base.BaseActivity;
+import com.glooory.huaban.module.login.LoginActivity;
 import com.glooory.huaban.util.Constant;
 import com.jakewharton.rxbinding.view.RxView;
 
@@ -174,7 +175,7 @@ public class MainActivity extends BaseActivity
         switch (view.getId()) {
             case R.id.drawer_avatar_ll:
                 // TODO: 2016/8/31 0031 lanuch UserActivity
-                Toast.makeText(this, "Launch Activity", Toast.LENGTH_SHORT).show();
+                LoginActivity.launch(this);
                 break;
             case R.id.drawer_collecion:
                 // TODO: 2016/8/31 0031 Launch UserActvity

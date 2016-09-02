@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.Main;
+package com.glooory.huaban.module.main;
 
 import android.graphics.Color;
 import android.os.Bundle;

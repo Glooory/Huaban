@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:paddingBottom="8dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    tools:context=".module.Main.MainActivity">
+    tools:context=".module.main.MainActivity">
 
     <LinearLayout
         android:id="@+id/drawer_avatar_ll"

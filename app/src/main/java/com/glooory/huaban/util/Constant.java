@@ -19,7 +19,7 @@ public class Constant {
 
     //user information
     public static final String ISLOGIN = "isLogin";
-    public static final String logintime = "loginTime";
+    public static final String LOGINTIME = "loginTime";
     public static final String USERACCOUNT = "userAccount";
     public static final String USERPASSWORD = "userPassword";
 

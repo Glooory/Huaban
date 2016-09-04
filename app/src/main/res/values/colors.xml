@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#C2185B</color>
     <color name="colorPrimaryLight">#F8BBD0</color>
     <color name="colorAccent">#E91E63</color>
+    <color name="accent">#E91E63</color>
     <color name="colorAccent_purple">#E040FB</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>

@@ -130,4 +130,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void checkException(Throwable e, View rootView) {
         NetworkUtils.checkHttpException(mContext, e, rootView);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isLogin = (boolean) SPUtils.get(getApplicationContext(), Constant.ISLOGIN, Boolean.FALSE);
+    }
 }

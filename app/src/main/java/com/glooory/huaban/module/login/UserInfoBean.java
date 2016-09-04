@@ -1,6 +1,6 @@
 package com.glooory.huaban.module.login;
 
-import com.glooory.huaban.entity.UserAvatarBean;
+import com.glooory.huaban.entity.AvatarBean;
 
 /**
  * Created by Glooory on 2016/9/1 0001.
@@ -29,7 +29,7 @@ public class UserInfoBean {
     private int user_id;
     private String username;
     private String urlname;
-    private UserAvatarBean avatar;
+    private AvatarBean avatar;
     private String email;
     private int created_at;
     private int like_count;
@@ -79,11 +79,11 @@ public class UserInfoBean {
         this.urlname = urlname;
     }
 
-    public UserAvatarBean getAvatar() {
+    public AvatarBean getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(UserAvatarBean avatar) {
+    public void setAvatar(AvatarBean avatar) {
         this.avatar = avatar;
     }
 

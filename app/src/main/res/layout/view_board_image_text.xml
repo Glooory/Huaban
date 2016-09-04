@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/framelayout_image"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="@drawable/drawable_default_selector"
+    android:transitionName="card_image">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/img_card_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="2000dp"
+        android:maxWidth="2000dp"
+        fresco:progressBarAutoRotateInterval="1000"
+        tools:layout_height="100dp" />
+
+    <RelativeLayout
+        android:id="@+id/relation_board_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:background="@drawable/bg_gradient_board"
+        android:paddingBottom="@dimen/text_padding_default"
+        android:paddingLeft="@dimen/text_margin"
+        android:paddingRight="@dimen/text_margin"
+        android:paddingTop="@dimen/text_spacing_default">
+
+        <TextView
+            android:id="@+id/tv_board_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="@dimen/text_spacing_default"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="title"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_16" />
+
+        <TextView
+            android:id="@+id/tv_board_gather"
+            style="@style/text_secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/tv_board_title"
+            android:textColor="@color/white"
+            tools:text="采集数量" />
+
+        <TextView
+            android:id="@+id/tv_board_attention"
+            style="@style/text_secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_board_gather"
+            android:textColor="@color/white"
+            tools:text="关注数量" />
+
+    </RelativeLayout>
+
+</FrameLayout>

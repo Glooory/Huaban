@@ -24,6 +24,7 @@ import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.entity.BoardItemInfoBean;
 import com.glooory.huaban.entity.BoardListInfoBean;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.main.MainActivity;
 import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.IntentUtils;
@@ -73,6 +74,8 @@ public class LoginActivity extends BaseActivity {
     LinearLayout mLinearLogin;
     @BindView(R.id.scroll_login_form)
     ScrollView mScrollLoginForm;
+    @BindView(R.id.btn_login_skip)
+    Button mLoginSkipBtn;
 
     private TokenBean mTokenBean;
     private UserInfoBean mUserBean;
@@ -156,6 +159,19 @@ public class LoginActivity extends BaseActivity {
                         startNetRegister();
                     }
                 });
+
+        RxView.clicks(mLoginSkipBtn)
+                .throttleFirst(500, TimeUnit.MILLISECONDS)
+                .subscribe(new Action1<Void>() {
+                    @Override
+                    public void call(Void aVoid) {
+                        new SPBuild(getApplicationContext())
+                                .addData(Constant.ISSKIPLOGIN, Boolean.TRUE)
+                                .build();
+                        MainActivity.launch(LoginActivity.this);
+                        finish();
+                    }
+                });
     }
 
     private void startNetRegister() {
@@ -224,9 +240,9 @@ public class LoginActivity extends BaseActivity {
                 .httpsTokenRx(mAuthorization, PASSWORD, username, password)
                 //得到token成功， 用内部字段保存， 在最后得到用户信息是一起保存
                 //得到Observable<> 将它转换为另一个Observable<>
-                .flatMap(new Func1<TokenBean, rx.Observable<UserInfoBean>>() {
+                .flatMap(new Func1<TokenBean, Observable<UserInfoBean>>() {
                     @Override
-                    public rx.Observable<UserInfoBean> call(TokenBean tokenBean) {
+                    public Observable<UserInfoBean> call(TokenBean tokenBean) {
                         Logger.d("获取token成功    " + tokenBean.toString());
                         mTokenBean = tokenBean;
                         mAuthorization = tokenBean.getToken_type() + " " + tokenBean.getAccess_token();
@@ -318,7 +334,7 @@ public class LoginActivity extends BaseActivity {
                 .addData(Constant.TOKENEXPIRESIN, tokenBean.getExpires_in())
                 .addData(Constant.USERNAME, result.getUsername())
                 .addData(Constant.USERID, String.valueOf(result.getUser_id()))
-                .addData(Constant.USERHEADKEY, result.getAvatar())
+                .addData(Constant.USERHEADKEY, result.getAvatar().getKey())
                 .addData(Constant.USEREMAIL, result.getEmail())
                 .addData(Constant.BOARDTITLEARRAY, boardTitle.toString())
                 .addData(Constant.BOARDIDARRAY, boardId.toString())

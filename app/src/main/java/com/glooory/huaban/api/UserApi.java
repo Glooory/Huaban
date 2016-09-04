@@ -1,7 +1,8 @@
 package com.glooory.huaban.api;
 
 import com.glooory.huaban.entity.BoardListInfoBean;
-import com.glooory.huaban.module.login.UserInfoBean;
+import com.glooory.huaban.module.user.UserBean;
+import com.glooory.huaban.module.user.UserBoardListBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.GET;
@@ -18,15 +19,30 @@ public interface UserApi {
     //https://api.huaban.com/users/15246080
     //获取个人信息
     @GET("users/{userId}")
-    Observable<UserInfoBean> httpsUserInfoRx(@Header(Constant.AUTHORIZATION) String authorization,
-                                             @Path("userId") String userId);
+    Observable<UserBean> httpsUserInfoRx(@Header(Constant.AUTHORIZATION) String authorization,
+                                         @Path("userId") String userId);
 
 
     //获取我的画板集合信息
-    // https://api.huaban,com/last_board/?extra=recommend_tags
+    // https://api.huaban.com/last_board/?extra=recommend_tags
     @GET("last_boards/")
     Observable<BoardListInfoBean> httpsBoardListInfo(@Header(Constant.AUTHORIZATION) String authorization,
-                                                   @Query("extra") String extra);
+                                                     @Query("extra") String extra);
 
+
+    // 用户的画板信息
+    // https://api.huaban.com/users/12345678/boards?limit=20
+    @GET("users/{userId}/boards")
+    Observable<UserBoardListBean> httpUserBoardService(@Header(Constant.AUTHORIZATION) String mAuthorization,
+                                                       @Path("userId") String userId,
+                                                       @Query("limit") int limit);
+
+    //https://api.huaban.com/users/12345678/boards?max=1123644&limit=20
+    @GET("users/{userId}/boards")
+    Observable<UserBoardListBean> httpUserBoardMaxService(@Header(Constant.AUTHORIZATION) String mAuthorization,
+                                                          @Path("userId") String userId,
+                                                          @Query("max") int max,
+                                                          @Query("limit") int limit);
 
 }
+

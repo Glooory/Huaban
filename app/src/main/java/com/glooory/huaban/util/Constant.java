@@ -64,5 +64,7 @@ public class Constant {
     //是否跳过登录界面
     public static final String ISSKIPLOGIN = "skip_login";
 
+    public static final String ISME = "is_me";
+
 
 }

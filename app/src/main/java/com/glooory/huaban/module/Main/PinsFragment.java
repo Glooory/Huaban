@@ -20,8 +20,10 @@ import com.glooory.huaban.api.AllApi;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.NetworkUtils;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -57,8 +59,12 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_swiperefresh_recycler, container, false);
         ButterKnife.bind(this, view);
-        if (false) {
-            //// TODO: 2016/8/31 0031 检查是否登录
+        boolean isLogin = ((MainActivity) getActivity()).isLogin;
+        Logger.d("Fragment onCreate" + "///////////" +isLogin);
+
+        if (isLogin) {
+            mAuthorization = ((MainActivity) getActivity()).mAuthorization;
+            Logger.d("logged in -----" + mAuthorization);
         } else {
             mAuthorization = Base64.CLIENTINFO;
         }
@@ -79,7 +85,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         mAdapter = new PinQuickAdapter(getContext());
         //设置上滑自动建在的正在加载更多的自定义View
-        View loadMoreView = LayoutInflater.from(getContext()).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);
+        View loadMoreView = LayoutInflater.from(getContext()).inflate(R.layout.custom_loadmore_view, mSwipeRefreshLayout, false);
         mAdapter.setLoadingView(loadMoreView);
 
         //当当前position等于PAGE_SIZE 时，就回调用onLoadMoreRequested() 自动加载下一页数据
@@ -92,9 +98,11 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.item_card_pin_img_ll:
+                        // TODO: 2016/9/4 0004 launch ImageDetailActivity
                         Toast.makeText(getContext(), "you just clicked the img", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.item_card_via_ll:
+                        UserActivity.launch(getActivity(), String.valueOf(mAdapter.getItem(i).getUser_id()));
                         Toast.makeText(getContext(), "via info", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -143,6 +151,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     @Override
                     public void onNext(List<PinsBean> list) {
+                        Logger.d("getHttpFirst() executed ----" + list.size());
                         setMaxId(list);
                         mAdapter.setNewData(list);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -177,11 +186,11 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 .subscribe(new Subscriber<List<PinsBean>>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        Logger.d("getHttpMaxId()  onError()  call----" + e.getMessage());
                         Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         mAdapter.showLoadMoreFailedView();
                     }

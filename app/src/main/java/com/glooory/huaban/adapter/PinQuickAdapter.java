@@ -69,17 +69,16 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
     //将用户名和画板名称设置成深一点的颜色，便于区分
     private SpannableString setViaDesTextStyle(PinsBean pinsBean) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("由 ")
-                .append(pinsBean.getUser().getUsername())
+        stringBuilder.append(pinsBean.getUser().getUsername())
                 .append(" 采集到 ")
                 .append(pinsBean.getBoard().getTitle());
         int useNameLength = pinsBean.getUser().getUsername().length();
         int boardTitleLength = pinsBean.getBoard().getTitle().length();
         SpannableString ss = new SpannableString(stringBuilder.toString());
         ss.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.primary_text)),
-                2, useNameLength + 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                0, useNameLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.primary_text)),
-                useNameLength + 7, useNameLength + 7 + boardTitleLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                useNameLength + 5, useNameLength + 5 + boardTitleLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return ss;
     }
 }

@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by Glooory on 2016/8/29 0029.
  */
-public class UserAvatarBean implements Parcelable {
+public class AvatarBean implements Parcelable {
 
 
     /**
@@ -110,10 +110,10 @@ public class UserAvatarBean implements Parcelable {
         dest.writeString(this.frames);
     }
 
-    public UserAvatarBean() {
+    public AvatarBean() {
     }
 
-    protected UserAvatarBean(Parcel in) {
+    protected AvatarBean(Parcel in) {
         this.id = in.readInt();
         this.farm = in.readString();
         this.bucket = in.readString();
@@ -124,15 +124,15 @@ public class UserAvatarBean implements Parcelable {
         this.frames = in.readString();
     }
 
-    public static final Parcelable.Creator<UserAvatarBean> CREATOR = new Parcelable.Creator<UserAvatarBean>() {
+    public static final Parcelable.Creator<AvatarBean> CREATOR = new Parcelable.Creator<AvatarBean>() {
         @Override
-        public UserAvatarBean createFromParcel(Parcel source) {
-            return new UserAvatarBean(source);
+        public AvatarBean createFromParcel(Parcel source) {
+            return new AvatarBean(source);
         }
 
         @Override
-        public UserAvatarBean[] newArray(int size) {
-            return new UserAvatarBean[size];
+        public AvatarBean[] newArray(int size) {
+            return new AvatarBean[size];
         }
     };
 }

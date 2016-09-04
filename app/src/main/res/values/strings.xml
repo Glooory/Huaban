@@ -72,14 +72,14 @@
 
 
     <!-- Strings related to login -->
-    <string name="prompt_username">Username</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign In</string>
-    <string name="action_register">Register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_username">This Username is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="prompt_username">用户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_register">注册</string>
+    <string name="action_sign_in_short">登录</string>
+    <string name="error_invalid_username">非法的用户名</string>
+    <string name="error_invalid_password">密码至少6位</string>
+    <string name="error_incorrect_password">密码错误</string>
     <string name="error_field_required">This field is required</string>
 
 
@@ -196,6 +196,10 @@
     <string name="nav_about">关于</string>
     <string name="nav_exit">退出</string>
     <string name="menu_action_search">搜索</string>
+
+    <string name="login_skip">随便看看</string>
+
+    <string name="empty_data">这里什么都没有</string>
 
 
 </resources>

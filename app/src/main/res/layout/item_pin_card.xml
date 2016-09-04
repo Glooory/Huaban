@@ -34,10 +34,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
-                android:maxLines="4"
+                android:maxLines="3"
                 android:padding="4dp"
                 android:textColor="@color/primary_text"
-                android:textSize="@dimen/card_context_size_14sp" />
+                android:textSize="@dimen/card_context_size_12sp" />
 
         </LinearLayout>
 

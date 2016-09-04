@@ -10,6 +10,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,15 +20,25 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
+import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseActivity;
+import com.glooory.huaban.httputils.FrescoLoader;
+import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.login.LoginActivity;
+import com.glooory.huaban.module.user.UserActivity;
+import com.glooory.huaban.module.user.UserBean;
 import com.glooory.huaban.util.Constant;
+import com.glooory.huaban.util.SPUtils;
 import com.jakewharton.rxbinding.view.RxView;
+import com.orhanobut.logger.Logger;
 
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -46,6 +57,7 @@ public class MainActivity extends BaseActivity
     private LinearLayout mDrawerCollection;
     private LinearLayout mDrawerBoard;
     private LinearLayout mDrawerFans;
+    private long exitTime;
     //侧滑菜单头像
     private SimpleDraweeView mAvatarImg;
     //侧滑菜单用户名
@@ -77,7 +89,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void initResAndListener() {
         setSupportActionBar(mToolbar);
-        mToolbar.setTitle("首页");
+        mToolbar.setTitle(mNavView.getMenu().getItem(0).getTitle());
         RxView.clicks(mFab)
                 .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)  //防抖动处理
                 .subscribe(new Action1<Void>() {
@@ -120,6 +132,55 @@ public class MainActivity extends BaseActivity
     private void initDrawerMenu() {
         Menu memu = mNavView.getMenu();
         memu.getItem(0).setChecked(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isLogin) {
+            setNavUserInfo();
+            final String userId = (String) SPUtils.get(getApplication(), Constant.USERID, "");
+            Logger.d(userId);
+            RetrofitClient.createService(UserApi.class)
+                    .httpsUserInfoRx(mAuthorization, userId)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<UserBean>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                        }
+
+                        @Override
+                        public void onNext(UserBean userBean) {
+                            mCollectionTv.setText(String.valueOf(userBean.getPin_count()));
+                            mBoardCountTv.setText(String.valueOf(userBean.getBoard_count()));
+                            mFansCountTv.setText(String.valueOf(userBean.getFollower_count()));
+                        }
+                    });
+
+        }
+    }
+
+    private void setNavUserInfo() {
+        String userName = (String) SPUtils.get(getApplicationContext(), Constant.USERNAME, "");
+        String userAvatarKey = (String) SPUtils.get(getApplicationContext(), Constant.USERHEADKEY, "");
+
+        if (!TextUtils.isEmpty(userAvatarKey)) {
+            String userAvatarUrl = getString(R.string.urlImageRoot) + userAvatarKey;
+            new FrescoLoader.Builder(this, mAvatarImg, userAvatarUrl)
+                    .setIsCircle(false)
+                    .build();
+        } else {
+            Logger.d("user avatar key is empty");
+        }
+
+        if (!TextUtils.isEmpty(userName)) {
+            mUserNameTv.setText(userName);
+        }
     }
 
     @Override
@@ -177,7 +238,12 @@ public class MainActivity extends BaseActivity
         switch (view.getId()) {
             case R.id.drawer_avatar_ll:
                 // TODO: 2016/8/31 0031 lanuch UserActivity
-                LoginActivity.launch(this);
+                if (isLogin) {
+                    UserActivity.launch(MainActivity.this,
+                            (String) SPUtils.get(getApplicationContext(), Constant.USERID, ""));
+                } else {
+                    LoginActivity.launch(this);
+                }
                 break;
             case R.id.drawer_collecion:
                 // TODO: 2016/8/31 0031 Launch UserActvity
@@ -203,4 +269,6 @@ public class MainActivity extends BaseActivity
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
     }
+
+
 }

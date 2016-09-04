@@ -11,6 +11,9 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
@@ -49,7 +52,8 @@ import rx.schedulers.Schedulers;
  */
 public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
     public boolean isMe;
-    private String mUserId;
+    public String mUserId;
+    private String[] titles;
 
     @BindView(R.id.img_image_user)
     SimpleDraweeView mImgImageUser;
@@ -135,6 +139,15 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         String userIdTemp = getIntent().getExtras().getString(Constant.USERID);
         String myId = (String) SPUtils.get(getApplicationContext(), Constant.USERID, "");
         isMe = myId.equals(userIdTemp);
+        titles = getResources().getStringArray(R.array.user_appbar_title_array);
+
+        SectionsPagerAdapter mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mViewpager.setAdapter(mPagerAdapter);
+
+
+        mTablayout.setupWithViewPager(mViewpager);
+        mTablayout.setSelectedTabIndicatorColor(mColorTabIndicator);
+
     }
 
     private void httpForUserInfo() {
@@ -252,5 +265,27 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Override
     public void onRefresh() {
 
+    }
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return UserBoardFragment.newInstance(mUserId);
+        }
+
+        @Override
+        public int getCount() {
+            return 1;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[0];
+        }
     }
 }

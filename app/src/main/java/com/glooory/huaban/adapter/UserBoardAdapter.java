@@ -12,6 +12,7 @@ import com.glooory.huaban.R;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.module.user.UserBoardItemBean;
 import com.glooory.huaban.util.CompatUtils;
+import com.orhanobut.logger.Logger;
 
 /**
  * Created by Glooory on 2016/9/3 0003 19:15.
@@ -85,18 +86,18 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         }
 
         holder.setText(R.id.tv_board_operate, text);
-        holder.getView(R.id.linearlayout_group).setTag(isOpreat);
+        holder.getView(R.id.tv_board_operate).setTag(isOpreat);
 
         ((TextView) holder.getView(R.id.tv_board_operate)).setCompoundDrawablesWithIntrinsicBounds(
                 drawable, null, null, null
         );
 
-        holder.setTag(R.id.tv_board_title, bean.getTitle());
+        holder.setText(R.id.tv_board_title, bean.getTitle());
         holder.setText(R.id.tv_board_gather, String.format(mGatherFormat, bean.getPin_count()));
         holder.setText(R.id.tv_board_attention, String.format(mAttentionFormat, bean.getFollow_count()));
 
-        holder.addOnClickListener(R.id.framelayout_image)
-                .addOnClickListener(R.id.linearlayout_group);
+        holder.addOnClickListener(R.id.linearlayout_image)
+                .addOnClickListener(R.id.tv_board_operate);
 
         String url_img = img_root_url + getFirstPinsFileKey(bean);
 
@@ -110,40 +111,41 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
                 .setProgressbarImage(dProgressImg)
                 .build();
 
-        int boardPinsConut = bean.getPins().size();
+        int boardPinsCount = bean.getPins().size();
+        Logger.d(boardPinsCount);
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)).setAspectRatio(1.0f);
-        if (bean.getPins().size() > 2) {
+        if (bean.getPins().size() > 1) {
             String firstImgUrl = img_root_url + bean.getPins().get(1).getFile().getKey() + img_suffix_small;
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)), firstImgUrl)
-                    .setIsRadius(true, 4)
+                    .setIsRadius(true, 8)
                     .build();
         }
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_second)).setAspectRatio(1.0f);
-        if (bean.getPins().size() > 3) {
+        if (bean.getPins().size() > 2) {
             String firstImgUrl = img_root_url + bean.getPins().get(2).getFile().getKey() + img_suffix_small;
 
-            new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)), firstImgUrl)
-                    .setIsRadius(true, 4)
+            new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_second)), firstImgUrl)
+                    .setIsRadius(true, 8)
                     .build();
         }
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_third)).setAspectRatio(1.0f);
-        if (bean.getPins().size() > 4) {
+        if (bean.getPins().size() > 3) {
             String firstImgUrl = img_root_url + bean.getPins().get(3).getFile().getKey() + img_suffix_small;
 
-            new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)), firstImgUrl)
-                    .setIsRadius(true, 4)
+            new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_third)), firstImgUrl)
+                    .setIsRadius(true, 8)
                     .build();
         }
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_fourth)).setAspectRatio(1.0f);
-        if (bean.getPins().size() > 5) {
+        if (bean.getPins().size() > 4) {
             String firstImgUrl = img_root_url + bean.getPins().get(4).getFile().getKey() + img_suffix_small;
 
-            new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)), firstImgUrl)
-                    .setIsRadius(true, 4)
+            new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_fourth)), firstImgUrl)
+                    .setIsRadius(true, 8)
                     .build();
         }
     }

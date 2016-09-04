@@ -22,6 +22,7 @@ import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.util.Base64;
+import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.NetworkUtils;
 import com.orhanobut.logger.Logger;
 
@@ -30,7 +31,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -39,7 +39,7 @@ import rx.schedulers.Schedulers;
  * Created by Glooory on 2016/8/28 0028.
  */
 public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
-        BaseQuickAdapter.RequestLoadMoreListener{
+        BaseQuickAdapter.RequestLoadMoreListener {
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -51,8 +51,6 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private int mMaxId;
     private final int PAGE_SIZE = 20;
 
-    Subscription subscription;
-
 
     @Nullable
     @Override
@@ -60,7 +58,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         View view = inflater.inflate(R.layout.fragment_swiperefresh_recycler, container, false);
         ButterKnife.bind(this, view);
         boolean isLogin = ((MainActivity) getActivity()).isLogin;
-        Logger.d("Fragment onCreate" + "///////////" +isLogin);
+        Logger.d("Fragment onCreate" + "///////////" + isLogin);
 
         if (isLogin) {
             mAuthorization = ((MainActivity) getActivity()).mAuthorization;
@@ -103,7 +101,6 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         break;
                     case R.id.item_card_via_ll:
                         UserActivity.launch(getActivity(), String.valueOf(mAdapter.getItem(i).getUser_id()));
-                        Toast.makeText(getContext(), "via info", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -121,7 +118,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private void getHttpFirst() {
         mSwipeRefreshLayout.setRefreshing(true);
 
-        subscription = RetrofitClient.createService(AllApi.class)
+        RetrofitClient.createService(AllApi.class)
                 .httpAllService(mAuthorization, 20)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
@@ -157,28 +154,23 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
-        
+
     }
 
     /**
      * 后续上拉自动加载数据
+     *
      * @param maxId
      */
     public void getHttpMaxId(int maxId) {
 
-        subscription = RetrofitClient.createService(AllApi.class)
-                .httpAllMaxService(mAuthorization, maxId, 20)
+        RetrofitClient.createService(AllApi.class)
+                .httpAllMaxService(mAuthorization, maxId, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
                     @Override
                     public List<PinsBean> call(PinsListBean pinsListBean) {
                         return pinsListBean.getPins();
-                    }
-                })
-                .filter(new Func1<List<PinsBean>, Boolean>() {
-                    @Override
-                    public Boolean call(List<PinsBean> list) {
-                        return list.size() > 0;
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -197,6 +189,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     @Override
                     public void onNext(List<PinsBean> list) {
+                        Logger.d(list.size());
                         setMaxId(list);
                         mAdapter.addData(list);
                     }
@@ -211,6 +204,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     /**
      * 保存本次请求的maxId值，后续请求数据会带上
+     *
      * @param list
      */
     private void setMaxId(List<PinsBean> list) {
@@ -221,11 +215,4 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         NetworkUtils.checkHttpException(getContext(), throwable, mRecyclerView);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (subscription != null) {
-            subscription.unsubscribe();
-        }
-    }
 }

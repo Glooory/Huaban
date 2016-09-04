@@ -73,11 +73,11 @@ public class UserBoardFragment extends BaseUserFragment{
             @Override
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
-                    case R.id.framelayout_image:
+                    case R.id.linearlayout_image:
                         // TODO: 2016/9/4 0004 launch ImageDetailActivity
                         Toast.makeText(getContext(), "launch ImageDetailActivity", Toast.LENGTH_SHORT).show();
                         break;
-                    case R.id.linearlayout_group:
+                    case R.id.tv_board_operate:
                         //// TODO: 2016/9/4 0004 board edit action
                         Toast.makeText(getContext(), "edit action", Toast.LENGTH_SHORT).show();
                         break;

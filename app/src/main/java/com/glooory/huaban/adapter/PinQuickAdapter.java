@@ -25,7 +25,7 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
     private final String urlRoot;
 
     public PinQuickAdapter(Context context) {
-        super(R.layout.item_pin_card, null);
+        super(R.layout.card_item_pin, null);
         this.mContext = context;
         urlRoot = mContext.getResources().getString(R.string.urlImageRoot);
     }

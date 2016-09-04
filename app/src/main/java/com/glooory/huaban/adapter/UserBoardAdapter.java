@@ -12,7 +12,6 @@ import com.glooory.huaban.R;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.module.user.UserBoardItemBean;
 import com.glooory.huaban.util.CompatUtils;
-import com.orhanobut.logger.Logger;
 
 /**
  * Created by Glooory on 2016/9/3 0003 19:15.
@@ -112,7 +111,6 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
                 .build();
 
         int boardPinsCount = bean.getPins().size();
-        Logger.d(boardPinsCount);
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)).setAspectRatio(1.0f);
         if (bean.getPins().size() > 1) {

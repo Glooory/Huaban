@@ -54,6 +54,10 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     public boolean isMe;
     public String mUserId;
     private String[] titles;
+    public int mBoardCount;
+    public int mCollectionCount;
+    public int mLikeCount;
+    private SectionsPagerAdapter mPagerAdapter;
 
     @BindView(R.id.img_image_user)
     SimpleDraweeView mImgImageUser;
@@ -132,6 +136,9 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 null
         );
 
+        mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
     }
 
     private void initRes() {
@@ -141,9 +148,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         isMe = myId.equals(userIdTemp);
         titles = getResources().getStringArray(R.array.user_appbar_title_array);
 
-        SectionsPagerAdapter mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mViewpager.setAdapter(mPagerAdapter);
-
+        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mTablayout.setupWithViewPager(mViewpager);
         mTablayout.setSelectedTabIndicatorColor(mColorTabIndicator);
@@ -151,6 +156,8 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void httpForUserInfo() {
+
+        mSwipeRefreshLayout.setRefreshing(true);
 
         if (!TextUtils.isEmpty(mUserId)) {
             Subscription subscription = new RetrofitClient().createService(UserApi.class)
@@ -161,20 +168,32 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         @Override
                         public void onCompleted() {
                             Logger.d("onCompleted()");
+                            mViewpager.setAdapter(mPagerAdapter);
+
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             Logger.d(e.getMessage());
+                            mViewpager.setAdapter(mPagerAdapter);
                         }
 
                         @Override
                         public void onNext(UserBean userBean) {
+                            saveItemsCount(userBean);
                             setUserTextInfo(userBean);
                             setUserImgInfo(userBean);
                         }
                     });
         }
+
+    }
+
+    private void saveItemsCount(UserBean bean) {
+        mBoardCount = bean.getBoard_count();
+        mCollectionCount = bean.getPin_count();
+        mLikeCount = bean.getLike_count();
+        Logger.d(mBoardCount);
 
     }
 
@@ -210,7 +229,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 .append(bean.getFollower_count())
                 .append(" 粉丝");
         mTvUserFriend.setText(stringBuilder.toString());
-        Logger.d("setUserTextInfo() executed");
+
     }
 
     /**
@@ -223,26 +242,21 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         if (!TextUtils.isEmpty(avatarKey)) {
             String avatarUrl = mHttpRoot + avatarKey;
 
-            Logger.d(avatarUrl);
-
             new FrescoLoader.Builder(getApplicationContext(), mImgImageUser, avatarUrl)
                     .setPlaceHolderImage(CompatUtils.getTintDrawable(mContext, R.drawable.ic_avatar_def, Color.WHITE))
                     .setIsCircle(true, true)
                     .setBitmapDataSubscriber(new BaseBitmapDataSubscriber() {
                         @Override
                         protected void onNewResultImpl(Bitmap bitmap) {
-                            Logger.d("get bitmap");
                             if (bitmap != null) {
                                 final Drawable blurDrawable = new BitmapDrawable(getResources(), FastBlurUtil.doBlur(bitmap, 20, false));
                                 if (Utils.checkUIThreadBoolean()) {
                                     mAppBar.setBackground(blurDrawable);
-                                    Logger.d("setinUI");
                                 } else {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             mAppBar.setBackground(blurDrawable);
-                                            Logger.d("setNotinUI");
                                         }
                                     });
                                 }
@@ -257,14 +271,11 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     .build();
         }
 
-        Logger.d("setUserImgInfo() finished");
-
     }
 
 
     @Override
     public void onRefresh() {
-
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

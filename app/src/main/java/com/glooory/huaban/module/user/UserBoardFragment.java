@@ -1,5 +1,6 @@
 package com.glooory.huaban.module.user;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +8,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -23,7 +23,6 @@ import com.orhanobut.logger.Logger;
 import java.util.List;
 
 import rx.Subscriber;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -33,12 +32,25 @@ import rx.schedulers.Schedulers;
  */
 public class UserBoardFragment extends BaseUserFragment{
     private UserBoardAdapter mAdapter;
+    private int mBoardCount;
+    private int mCurrentCount;
+    private View mFooterView;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof UserActivity) {
+            ((UserActivity) mContext).mSwipeRefreshLayout.setRefreshing(true);
+            mBoardCount = ((UserActivity) mContext).mBoardCount;
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_user_recyclerview, container, false);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mFooterView = inflater.inflate(R.layout.view_no_more_data_footer, mRecyclerView, false);
 
         initAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -61,10 +73,6 @@ public class UserBoardFragment extends BaseUserFragment{
 
         //当当前position等于PAGE_SIZE 时，就回调用onLoadMoreRequested() 自动加载下一页数据
         mAdapter.openLoadMore(PAGESIZE);
-        // 设置空数据时的View
-        TextView emptyTv = new TextView(mContext);
-        emptyTv.setText(getString(R.string.empty_data));
-        mAdapter.setEmptyView(emptyTv);
 
         mAdapter.openLoadAnimation();
         mAdapter.setOnLoadMoreListener(this);
@@ -88,7 +96,7 @@ public class UserBoardFragment extends BaseUserFragment{
 
     private void firstHttpRequest() {
 
-        Subscription subscription = RetrofitClient.createService(UserApi.class)
+        RetrofitClient.createService(UserApi.class)
                 .httpUserBoardService(mAuthorization, userId, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
@@ -119,6 +127,8 @@ public class UserBoardFragment extends BaseUserFragment{
                     public void onNext(List<UserBoardItemBean> userBoardItemBeen) {
                         setMaxId(userBoardItemBeen);
                         mAdapter.setNewData(userBoardItemBeen);
+                        mCurrentCount = mAdapter.getData().size();
+                        checkIfAddFooter();
                         if (mContext instanceof UserActivity) {
                             ((UserActivity) mContext).mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -128,7 +138,7 @@ public class UserBoardFragment extends BaseUserFragment{
 
     private void moreHttpRequest(int max) {
 
-        Subscription subscription = new RetrofitClient().createService(UserApi.class)
+         new RetrofitClient().createService(UserApi.class)
                 .httpUserBoardMaxService(mAuthorization, userId, max, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
@@ -159,6 +169,7 @@ public class UserBoardFragment extends BaseUserFragment{
                     public void onNext(List<UserBoardItemBean> userBoardItemBeen) {
                         setMaxId(userBoardItemBeen);
                         mAdapter.addData(userBoardItemBeen);
+                        mCurrentCount = mAdapter.getData().size();
                     }
                 });
     }
@@ -167,8 +178,30 @@ public class UserBoardFragment extends BaseUserFragment{
         mMaxId = beans.get(beans.size() - 1).getBoard_id();
     }
 
+    private void checkIfAddFooter() {
+        if (mBoardCount < PAGESIZE) {
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.loadComplete();
+                    mAdapter.addFooterView(mFooterView);
+                }
+            });
+        }
+    }
+
     @Override
     public void onLoadMoreRequested() {
-        moreHttpRequest(mMaxId);
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mCurrentCount >= mBoardCount) {
+                    mAdapter.loadComplete();
+                    mAdapter.addFooterView(mFooterView);
+                } else {
+                    moreHttpRequest(mMaxId);
+                }
+            }
+        });
     }
 }

@@ -200,6 +200,7 @@
     <string name="login_skip">随便看看</string>
 
     <string name="empty_data">这里什么都没有</string>
+    <string name="no_more_data">没有更多内容了</string>
 
     <string-array name="user_appbar_title_array">
         <item>画板</item>

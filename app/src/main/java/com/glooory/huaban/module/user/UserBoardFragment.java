@@ -1,10 +1,6 @@
 package com.glooory.huaban.module.user;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +30,6 @@ public class UserBoardFragment extends BaseUserFragment{
     private UserBoardAdapter mAdapter;
     private int mBoardCount;
     private int mCurrentCount;
-    private View mFooterView;
 
     @Override
     public void onAttach(Context context) {
@@ -47,16 +42,10 @@ public class UserBoardFragment extends BaseUserFragment{
         }
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_user_recyclerview, container, false);
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        mFooterView = inflater.inflate(R.layout.view_no_more_data_footer, null, false);
-
+    public BaseQuickAdapter getMAdapter() {
         initAdapter();
-        mRecyclerView.setAdapter(mAdapter);
-        return mRecyclerView;
+        return mAdapter;
     }
 
     @Override
@@ -180,16 +169,20 @@ public class UserBoardFragment extends BaseUserFragment{
         mMaxId = beans.get(beans.size() - 1).getBoard_id();
     }
 
-    private void checkIfAddFooter() {
+    public void checkIfAddFooter() {
         if (mBoardCount < PAGESIZE) {
+            Logger.d("checkIfAddFooter() executed");
             if (mFooterView.getParent() != null) {
                 ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
+                Logger.d("remove footerview");
             }
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
                     mAdapter.loadComplete();
                     mAdapter.addFooterView(mFooterView);
+                    Logger.d(getMAdapter() instanceof UserBoardAdapter);
+                    Logger.d("post run");
                 }
             });
         }

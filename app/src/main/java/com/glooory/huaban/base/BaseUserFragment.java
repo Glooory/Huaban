@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
     protected RecyclerView mRecyclerView;
     protected Context mContext;
     protected int mMaxId;
+    protected View mFooterView;
 
     @Override
     public void onAttach(Context context) {
@@ -52,5 +54,17 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
         super.onCreate(savedInstanceState);
         userId = getArguments().getString(Constant.USERID);
     }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_user_recyclerview, container, false);
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mRecyclerView.setAdapter(getMAdapter());
+        mFooterView = inflater.inflate(R.layout.view_no_more_data_footer, container, false);
+        return mRecyclerView;
+    }
+
+    public abstract BaseQuickAdapter getMAdapter();
 
 }

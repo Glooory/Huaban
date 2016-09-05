@@ -40,7 +40,9 @@ public class UserBoardFragment extends BaseUserFragment{
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof UserActivity) {
-            ((UserActivity) mContext).mSwipeRefreshLayout.setRefreshing(true);
+            if (((UserActivity) mContext).mSwipeRefreshLayout != null) {
+                ((UserActivity) mContext).mSwipeRefreshLayout.setRefreshing(true);
+            }
             mBoardCount = ((UserActivity) mContext).mBoardCount;
         }
     }
@@ -50,7 +52,7 @@ public class UserBoardFragment extends BaseUserFragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_user_recyclerview, container, false);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        mFooterView = inflater.inflate(R.layout.view_no_more_data_footer, mRecyclerView, false);
+        mFooterView = inflater.inflate(R.layout.view_no_more_data_footer, null, false);
 
         initAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -180,6 +182,9 @@ public class UserBoardFragment extends BaseUserFragment{
 
     private void checkIfAddFooter() {
         if (mBoardCount < PAGESIZE) {
+            if (mFooterView.getParent() != null) {
+                ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
+            }
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {

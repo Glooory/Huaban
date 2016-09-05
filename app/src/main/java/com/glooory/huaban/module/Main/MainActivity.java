@@ -25,8 +25,8 @@ import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.login.LoginActivity;
+import com.glooory.huaban.module.login.UserInfoBean;
 import com.glooory.huaban.module.user.UserActivity;
-import com.glooory.huaban.module.user.UserBean;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.SPUtils;
 import com.jakewharton.rxbinding.view.RxView;
@@ -145,7 +145,7 @@ public class MainActivity extends BaseActivity
                     .httpsUserInfoRx(mAuthorization, userId)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<UserBean>() {
+                    .subscribe(new Subscriber<UserInfoBean>() {
                         @Override
                         public void onCompleted() {
                         }
@@ -155,7 +155,7 @@ public class MainActivity extends BaseActivity
                         }
 
                         @Override
-                        public void onNext(UserBean userBean) {
+                        public void onNext(UserInfoBean userBean) {
                             mCollectionTv.setText(String.valueOf(userBean.getPin_count()));
                             mBoardCountTv.setText(String.valueOf(userBean.getBoard_count()));
                             mFansCountTv.setText(String.valueOf(userBean.getFollower_count()));

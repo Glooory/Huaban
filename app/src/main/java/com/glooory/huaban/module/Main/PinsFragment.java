@@ -119,7 +119,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mSwipeRefreshLayout.setRefreshing(true);
 
         RetrofitClient.createService(AllApi.class)
-                .httpAllService(mAuthorization, 20)
+                .httpAllService(mAuthorization, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
                     @Override
@@ -160,12 +160,16 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     /**
      * 后续上拉自动加载数据
      *
-     * @param maxId
+     * @param max
      */
-    public void getHttpMaxId(int maxId) {
+    public void getHttpMaxId(int max) {
+
+        Logger.d(mMaxId);
+
+        Logger.d(max);
 
         RetrofitClient.createService(AllApi.class)
-                .httpAllMaxService(mAuthorization, maxId, Constant.LIMIT)
+                .httpAllMaxService(mAuthorization, Constant.LIMIT, max)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
                     @Override
@@ -183,6 +187,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     @Override
                     public void onError(Throwable e) {
                         Logger.d("getHttpMaxId()  onError()  call----" + e.getMessage());
+                        e.printStackTrace();
                         Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         mAdapter.showLoadMoreFailedView();
                     }
@@ -208,7 +213,11 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @param list
      */
     private void setMaxId(List<PinsBean> list) {
-        mMaxId = list.get(list.size() - 1).getPin_id();
+        if (list != null) {
+            if (list.size() > 0) {
+                mMaxId = list.get(list.size() - 1).getPin_id();
+            }
+        }
     }
 
     protected void checkException(Throwable throwable) {

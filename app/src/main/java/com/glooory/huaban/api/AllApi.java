@@ -19,7 +19,8 @@ public interface AllApi {
 
     @GET("all")
     Observable<PinsListBean> httpAllMaxService(@Header(Constant.AUTHORIZATION) String authorization,
-                                               @Query("max") int maxId,
-                                               @Query("limit") int limit);
+                                               @Query("limit") int limit,
+                                               @Query("max") int max
+                                               );
 
 }

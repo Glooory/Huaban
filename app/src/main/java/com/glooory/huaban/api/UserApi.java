@@ -1,7 +1,7 @@
 package com.glooory.huaban.api;
 
 import com.glooory.huaban.entity.BoardListInfoBean;
-import com.glooory.huaban.module.user.UserBean;
+import com.glooory.huaban.module.login.UserInfoBean;
 import com.glooory.huaban.module.user.UserBoardListBean;
 import com.glooory.huaban.util.Constant;
 
@@ -19,8 +19,8 @@ public interface UserApi {
     //https://api.huaban.com/users/15246080
     //获取个人信息
     @GET("users/{userId}")
-    Observable<UserBean> httpsUserInfoRx(@Header(Constant.AUTHORIZATION) String authorization,
-                                         @Path("userId") String userId);
+    Observable<UserInfoBean> httpsUserInfoRx(@Header(Constant.AUTHORIZATION) String authorization,
+                                             @Path("userId") String userId);
 
 
     //获取我的画板集合信息

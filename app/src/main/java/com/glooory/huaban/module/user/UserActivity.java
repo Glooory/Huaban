@@ -9,7 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +19,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,12 +35,17 @@ import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.login.LoginActivity;
+import com.glooory.huaban.module.login.UserInfoBean;
 import com.glooory.huaban.util.CompatUtils;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.FastBlurUtil;
 import com.glooory.huaban.util.SPUtils;
 import com.glooory.huaban.util.Utils;
+import com.jakewharton.rxbinding.view.RxView;
 import com.orhanobut.logger.Logger;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindColor;
 import butterknife.BindString;
@@ -45,6 +54,7 @@ import butterknife.ButterKnife;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -53,11 +63,16 @@ import rx.schedulers.Schedulers;
 public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
     public boolean isMe;
     public String mUserId;
+    @BindView(R.id.btn_follow_operation)
+    Button mBtnFollowOperation;
+    @BindView(R.id.coordinator_user)
+    CoordinatorLayout mCoordinator;
     private String[] titles;
     public int mBoardCount;
     public int mCollectionCount;
     public int mLikeCount;
     private SectionsPagerAdapter mPagerAdapter;
+    private boolean isFollowing;
 
     @BindView(R.id.img_image_user)
     SimpleDraweeView mImgImageUser;
@@ -81,8 +96,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     ViewPager mViewpager;
     @BindView(R.id.swipe_refresh_widget)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.fab_opreate)
-    FloatingActionButton mFabOpreate;
 
     @BindColor(R.color.white)
     int mColorTabIndicator;
@@ -128,7 +141,9 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private void initView() {
 
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mCollapsingtoolbar.setExpandedTitleColor(Color.TRANSPARENT);//展开时文字为透明的
+        mBtnFollowOperation.setVisibility(View.GONE);//最初先隐藏，后面再根据情况显示
         mTvUserFriend.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
@@ -136,9 +151,27 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 null
         );
 
+        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                float off = -verticalOffset;
+                float alpha = 1.0f - off / (appBarLayout.getTotalScrollRange() / 2.0f);
+                mLinearlayoutUserInfo.setAlpha(alpha);
+            }
+        });
+
+        mTablayout.setSelectedTabIndicatorColor(mColorTabIndicator);
+
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
+        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+    }
+
+    private void updateViewAfterHttp() {
+        mViewpager.setAdapter(mPagerAdapter);
+        mTablayout.setupWithViewPager(mViewpager);
     }
 
     private void initRes() {
@@ -147,12 +180,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         String myId = (String) SPUtils.get(getApplicationContext(), Constant.USERID, "");
         isMe = myId.equals(userIdTemp);
         titles = getResources().getStringArray(R.array.user_appbar_title_array);
-
-        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        mTablayout.setupWithViewPager(mViewpager);
-        mTablayout.setSelectedTabIndicatorColor(mColorTabIndicator);
-
     }
 
     private void httpForUserInfo() {
@@ -164,32 +191,33 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     .httpsUserInfoRx(mAuthorization, mUserId)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<UserBean>() {
+                    .subscribe(new Subscriber<UserInfoBean>() {
                         @Override
                         public void onCompleted() {
                             Logger.d("onCompleted()");
-                            mViewpager.setAdapter(mPagerAdapter);
+                            updateViewAfterHttp();
 
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             Logger.d(e.getMessage());
-                            mViewpager.setAdapter(mPagerAdapter);
+                            updateViewAfterHttp();
                         }
 
                         @Override
-                        public void onNext(UserBean userBean) {
+                        public void onNext(UserInfoBean userBean) {
                             saveItemsCount(userBean);
                             setUserTextInfo(userBean);
                             setUserImgInfo(userBean);
+                            setUserIsFollowing(userBean);
                         }
                     });
         }
 
     }
 
-    private void saveItemsCount(UserBean bean) {
+    private void saveItemsCount(UserInfoBean bean) {
         mBoardCount = bean.getBoard_count();
         mCollectionCount = bean.getPin_count();
         mLikeCount = bean.getLike_count();
@@ -197,11 +225,13 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     }
 
-    private void setUserTextInfo(UserBean bean) {
+    private void setUserTextInfo(UserInfoBean bean) {
 
         //设置用户名
         if (!TextUtils.isEmpty(bean.getUsername())) {
             mTvUserName.setText(bean.getUsername());
+            mCollapsingtoolbar.setTitle(bean.getUsername());
+
         } else {
             mTvUserName.setText(Constant.EMPTY_STRING);
         }
@@ -213,9 +243,10 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 sb.append(bean.getProfile().getLocation())
                         .append("  ");
             }
-
-            if (!TextUtils.isEmpty(bean.getProfile().getLocation())) {
-                sb.append(bean.getProfile().getJob());
+            if (bean.getProfile().getJob() != null) {
+                if (!TextUtils.isEmpty(bean.getProfile().getLocation())) {
+                    sb.append(bean.getProfile().getJob());
+                }
             }
 
             mTvUserProfile.setText(sb.toString());
@@ -234,11 +265,12 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     /**
      * 设置模糊背景和头像
+     *
      * @param bean
      */
-    private void setUserImgInfo(UserBean bean) {
+    private void setUserImgInfo(UserInfoBean bean) {
 
-        String avatarKey = bean.getAvatarBean().getKey();
+        String avatarKey = bean.getAvatar().getKey();
         if (!TextUtils.isEmpty(avatarKey)) {
             String avatarUrl = mHttpRoot + avatarKey;
 
@@ -249,7 +281,8 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         @Override
                         protected void onNewResultImpl(Bitmap bitmap) {
                             if (bitmap != null) {
-                                final Drawable blurDrawable = new BitmapDrawable(getResources(), FastBlurUtil.doBlur(bitmap, 20, false));
+                                Bitmap low = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
+                                final Drawable blurDrawable = new BitmapDrawable(getResources(), FastBlurUtil.doBlur(low, 10, false));
                                 if (Utils.checkUIThreadBoolean()) {
                                     mAppBar.setBackground(blurDrawable);
                                 } else {
@@ -273,6 +306,17 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     }
 
+    private void setUserIsFollowing(UserInfoBean bean) {
+
+        isFollowing = bean.getFollowing() == 1;
+        setUpToolBtn();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
 
     @Override
     public void onRefresh() {
@@ -298,5 +342,68 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         public CharSequence getPageTitle(int position) {
             return titles[0];
         }
+    }
+
+    //根据登录状态和是否是自己的用户信息来决定toolbar 上面的button的点击事件和文字
+    private void setUpToolBtn() {
+
+        if (isLogin) {
+            if (isMe) {
+                mBtnFollowOperation.setText(R.string.create_new_board);
+                RxView.clicks(mBtnFollowOperation)
+                        .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
+                        .subscribe(new Action1<Void>() {
+                            @Override
+                            public void call(Void aVoid) {
+                                // TODO: 2016/9/5 0005 create a new board
+                            }
+                        });
+            } else {
+                if (isFollowing) {
+                    mBtnFollowOperation.setText(R.string.follow_action_unfollow);
+                    RxView.clicks(mBtnFollowOperation)
+                            .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
+                            .subscribe(new Action1<Void>() {
+                                @Override
+                                public void call(Void aVoid) {
+                                    // TODO: 2016/9/5 0005 unfollow operation
+                                }
+                            });
+                } else {
+                    mBtnFollowOperation.setText(R.string.follow_action_follow);
+                    RxView.clicks(mBtnFollowOperation)
+                            .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
+                            .subscribe(new Action1<Void>() {
+                                @Override
+                                public void call(Void aVoid) {
+                                    // TODO: 2016/9/5 0005 follow operation
+                                }
+                            });
+                }
+            }
+        } else {
+            RxView.clicks(mBtnFollowOperation)
+                    .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
+                    .subscribe(new Action1<Void>() {
+                        @Override
+                        public void call(Void aVoid) {
+                            //判断是否登录
+                            if (isLogin) {
+                                // TODO: 2016/9/5 0005 follow or unfollow operation
+                            } else {
+                                Snackbar snackbar = Snackbar.make(mCoordinator, R.string.need_login, Snackbar.LENGTH_LONG);
+                                snackbar.setAction(R.string.go_to_login, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        LoginActivity.launch(UserActivity.this);
+                                    }
+                                }).show();
+                            }
+                        }
+                    });
+        }
+
+        mBtnFollowOperation.setVisibility(View.VISIBLE);
+
     }
 }

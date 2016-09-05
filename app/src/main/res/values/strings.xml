@@ -62,11 +62,6 @@
     <string name="text_search_history">History</string>
     <string name="text_reference">reference</string>
 
-    <string name="card_title">测试Card的title应该是很长的文本</string>
-    <string name="card_username">用户名14sp</string>
-    <string name="card_gather">采集到图库14sp</string>
-
-
     <string name="net_error">net error</string>
     <string name="net_error_data">net error on data</string>
 
@@ -200,7 +195,13 @@
     <string name="login_skip">随便看看</string>
 
     <string name="empty_data">这里什么都没有</string>
-    <string name="no_more_data">没有更多内容了</string>
+    <string name="no_more_data">没有更多了</string>
+    <string name="need_login">请先登录</string>
+    <string name="go_to_login">去登录</string>
+    <string name="create_new_board">创建画板</string>
+    <string name="add_new_collection">添加采集</string>
+    <string name="follow_action_follow">关注</string>
+    <string name="follow_action_unfollow">取消关注</string>
 
     <string-array name="user_appbar_title_array">
         <item>画板</item>

@@ -9,12 +9,13 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.glooory.huaban.R;
-import com.glooory.huaban.adapter.UserBoardAdapter;
+import com.glooory.huaban.adapter.PinQuickAdapter;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseUserFragment;
+import com.glooory.huaban.entity.PinsBean;
+import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.util.Constant;
-import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -24,38 +25,38 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Glooory on 2016/9/3 0003 18:18.
+ * Created by Glooory on 2016/9/6 0006 21:03.
  */
-public class UserBoardFragment extends BaseUserFragment{
-    private UserBoardAdapter mAdapter;
+public class UserLikeFragment extends BaseUserFragment {
+    private PinQuickAdapter mAdapter;
     private int mCurrentCount;
 
-    public static UserBoardFragment newInstance(String userId, int boardCount) {
+
+
+    public static UserLikeFragment newInstance(String userId, int dataCount) {
         Bundle args = new Bundle();
         args.putString(Constant.USERID, userId);
-        args.putInt(Constant.DATA_ITEM_COUNT, boardCount);
-        UserBoardFragment fragment = new UserBoardFragment();
+        args.putInt(Constant.DATA_ITEM_COUNT, dataCount);
+        UserLikeFragment fragment = new UserLikeFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public UserBoardAdapter getMAdapter() {
+    public PinQuickAdapter getMAdapter() {
         initAdapter();
         return mAdapter;
     }
 
     private void initAdapter() {
-        mAdapter = new UserBoardAdapter(mContext, isMe);
-
+        mAdapter = new PinQuickAdapter(mContext);
 
         //设置上滑自动建在的正在加载更多的自定义View
-        View loadMoreView = LayoutInflater.from(mContext).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);
+        View loadMoreView = LayoutInflater.from(getContext()).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);
         mAdapter.setLoadingView(loadMoreView);
 
         //当当前position等于PAGE_SIZE 时，就回调用onLoadMoreRequested() 自动加载下一页数据
         mAdapter.openLoadMore(PAGESIZE);
-
         mAdapter.openLoadAnimation();
         mAdapter.setOnLoadMoreListener(this);
 
@@ -63,13 +64,12 @@ public class UserBoardFragment extends BaseUserFragment{
             @Override
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
-                    case R.id.linearlayout_image:
+                    case R.id.item_card_pin_img_ll:
                         // TODO: 2016/9/4 0004 launch ImageDetailActivity
-                        Toast.makeText(getContext(), "launch ImageDetailActivity", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "you just clicked the img", Toast.LENGTH_SHORT).show();
                         break;
-                    case R.id.relativelayout_board_operate:
-                        //// TODO: 2016/9/4 0004 board edit action
-                        Toast.makeText(getContext(), "edit action", Toast.LENGTH_SHORT).show();
+                    case R.id.item_card_via_ll:
+                        UserActivity.launch(getActivity(), String.valueOf(mAdapter.getItem(i).getUser_id()));
                         break;
                 }
             }
@@ -79,90 +79,87 @@ public class UserBoardFragment extends BaseUserFragment{
     @Override
     public void httpForFirstTime() {
 
-        RetrofitClient.createService(UserApi.class)
-                .httpUserBoardService(mAuthorization, mUserId, Constant.LIMIT)
-                .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
+        new RetrofitClient().createService(UserApi.class)
+                .httpUserLikesService(mAuthorization, mUserId, Constant.LIMIT)
+                .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
-                    public List<UserBoardItemBean> call(UserBoardListBean userBoardListBean) {
-                        return userBoardListBean.getBoards();
-                    }
-                })
-                .filter(new Func1<List<UserBoardItemBean>, Boolean>() {
-                    @Override
-                    public Boolean call(List<UserBoardItemBean> userBoardItemBeen) {
-                        return userBoardItemBeen.size() > 0;
+                    public List<PinsBean> call(PinsListBean pinsListBean) {
+                        return pinsListBean.getPins();
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<UserBoardItemBean>>() {
+                .subscribe(new Subscriber<List<PinsBean>>() {
                     @Override
                     public void onCompleted() {
-                        if (mRefreshListener != null) {
-                            mRefreshListener.requestRefreshDone();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Logger.d(e.getMessage());
-                        Logger.d(mRefreshListener != null);
-                        if (mRefreshListener != null) {
-                            mRefreshListener.requestRefreshDone();
-                        }
-                    }
-
-                    @Override
-                    public void onNext(List<UserBoardItemBean> userBoardItemBeen) {
-                        setMaxId(userBoardItemBeen);
-                        mAdapter.setNewData(userBoardItemBeen);
-                        mCurrentCount = mAdapter.getData().size();
                         checkIfAddFooter();
-                    }
-                });
-
-    }
-
-    private void moreHttpRequest(int max) {
-
-         new RetrofitClient().createService(UserApi.class)
-                .httpUserBoardMaxService(mAuthorization, mUserId, max, Constant.LIMIT)
-                .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
-                    @Override
-                    public List<UserBoardItemBean> call(UserBoardListBean userBoardListBean) {
-                        return userBoardListBean.getBoards();
-                    }
-                })
-                .filter(new Func1<List<UserBoardItemBean>, Boolean>() {
-                    @Override
-                    public Boolean call(List<UserBoardItemBean> userBoardItemBeen) {
-                        return userBoardItemBeen.size() > 0;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<UserBoardItemBean>>() {
-                    @Override
-                    public void onCompleted() {
-                        Logger.d("LoadMore onCompeted()");
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Logger.d(e.getMessage());
+                        checkIfAddFooter();
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
                     }
 
                     @Override
-                    public void onNext(List<UserBoardItemBean> userBoardItemBeen) {
-                        setMaxId(userBoardItemBeen);
-                        mAdapter.addData(userBoardItemBeen);
+                    public void onNext(List<PinsBean> list) {
+                        saveMaxId(list);
+                        mAdapter.setNewData(list);
                         mCurrentCount = mAdapter.getData().size();
                     }
                 });
+
+
     }
 
-    private void setMaxId(List<UserBoardItemBean> beans) {
-        mMaxId = beans.get(beans.size() - 1).getBoard_id();
+    private void httpForMore() {
+
+        new RetrofitClient().createService(UserApi.class)
+                .httpUserLikesMaxService(mAuthorization, mUserId, mMaxId, Constant.LIMIT)
+                .map(new Func1<PinsListBean, List<PinsBean>>() {
+                    @Override
+                    public List<PinsBean> call(PinsListBean pinsListBean) {
+                        return pinsListBean.getPins();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<PinsBean>>() {
+                    @Override
+                    public void onCompleted() {
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
+                    }
+
+                    @Override
+                    public void onNext(List<PinsBean> list) {
+                        saveMaxId(list);
+                        mAdapter.addData(list);
+                        mCurrentCount = mAdapter.getData().size();
+                    }
+                });
+
+    }
+
+    private void saveMaxId(List<PinsBean> list) {
+        if (list != null) {
+            if (list.size() > 0) {
+                mMaxId = list.get(list.size() - 1).getPin_id();
+            }
+        }
     }
 
     public void checkIfAddFooter() {
@@ -181,7 +178,13 @@ public class UserBoardFragment extends BaseUserFragment{
     }
 
     @Override
+    public void refreshData() {
+        httpForFirstTime();
+    }
+
+    @Override
     public void onLoadMoreRequested() {
+
         mRecyclerView.post(new Runnable() {
             @Override
             public void run() {
@@ -189,15 +192,10 @@ public class UserBoardFragment extends BaseUserFragment{
                     mAdapter.loadComplete();
                     mAdapter.addFooterView(mFooterView);
                 } else {
-                    moreHttpRequest(mMaxId);
+                    httpForMore();
                 }
             }
         });
-    }
 
-    @Override
-    public void refreshData() {
-        httpForFirstTime();
     }
-
 }

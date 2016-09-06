@@ -14,6 +14,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.glooory.huaban.R;
 import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.util.Constant;
+import com.orhanobut.logger.Logger;
 
 /**
  * Created by Glooory on 2016/9/4 0004 11:23.
@@ -32,6 +33,7 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
 
     @Override
     public void onAttach(Context context) {
+        Logger.d("Base onAttach");
         super.onAttach(context);
         mContext = context;
         if (context instanceof UserActivity) {
@@ -43,6 +45,7 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Logger.d("Base onCreat()");
         if (mRefreshListener != null) {
             mRefreshListener.requestRefresh();
         }
@@ -54,14 +57,18 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Logger.d("Base onCreatView()");
         mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_user_recyclerview, container, false);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(getMAdapter());
         mFooterView = inflater.inflate(R.layout.view_no_more_data_footer, container, false);
+        httpForFirstTime();
         return mRecyclerView;
     }
 
     public abstract <T extends BaseQuickAdapter> T getMAdapter();
+
+    public abstract void httpForFirstTime();
 
     public abstract void refreshData();
 
@@ -73,5 +80,9 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
 
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        Logger.d("Base onResume()");
+    }
 }

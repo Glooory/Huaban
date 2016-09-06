@@ -18,8 +18,6 @@ import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.util.CompatUtils;
 import com.glooory.huaban.util.Utils;
 
-import java.util.List;
-
 /**
  * Created by Glooory on 2016/8/31 0031.
  */
@@ -32,13 +30,7 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
         this.mContext = context;
         urlRoot = mContext.getResources().getString(R.string.urlImageRoot);
     }
-
-    public PinQuickAdapter(Context context, int layoutResId, List<PinsBean> data) {
-        super(layoutResId, data);
-        this.mContext = context;
-        urlRoot = mContext.getResources().getString(R.string.urlImageRoot);
-    }
-
+    
     @Override
     protected void convert(BaseViewHolder holder, PinsBean pinsBean) {
         //图片地址

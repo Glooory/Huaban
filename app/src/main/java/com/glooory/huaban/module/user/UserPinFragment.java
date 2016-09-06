@@ -42,12 +42,6 @@ public class UserPinFragment extends BaseUserFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        httpForFirst();
-    }
-
-    @Override
     public UserPinAdapter getMAdapter() {
         initAdapter();
         return mAdapter;
@@ -79,23 +73,8 @@ public class UserPinFragment extends BaseUserFragment {
         });
     }
 
-    public void checkIfAddFooter() {
-        if (mDateItemCount < PAGESIZE) {
-            if (mFooterView.getParent() != null) {
-                ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
-            }
-            mRecyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.loadComplete();
-                    mAdapter.addFooterView(mFooterView);
-                }
-            });
-        }
-    }
-
-    private void httpForFirst() {
-        Logger.d(mUserId);
+    @Override
+    public void httpForFirstTime() {
 
         new RetrofitClient().createService(UserApi.class)
                 .httpUserPinsService(mAuthorization, mUserId, Constant.LIMIT)
@@ -110,6 +89,7 @@ public class UserPinFragment extends BaseUserFragment {
                 .subscribe(new Subscriber<List<PinsBean>>() {
                     @Override
                     public void onCompleted() {
+                        Logger.d(mRefreshListener == null);
                         if (mRefreshListener != null) {
                             mRefreshListener.requestRefreshDone();
                         }
@@ -117,6 +97,7 @@ public class UserPinFragment extends BaseUserFragment {
 
                     @Override
                     public void onError(Throwable e) {
+                        Logger.d(mRefreshListener == null);
                         if (mRefreshListener != null) {
                             mRefreshListener.requestRefreshDone();
                         }
@@ -130,6 +111,22 @@ public class UserPinFragment extends BaseUserFragment {
                         checkIfAddFooter();
                     }
                 });
+
+    }
+
+    public void checkIfAddFooter() {
+        if (mDateItemCount < PAGESIZE) {
+            if (mFooterView.getParent() != null) {
+                ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
+            }
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.loadComplete();
+                    mAdapter.addFooterView(mFooterView);
+                }
+            });
+        }
     }
 
     private void httpForMorePins() {
@@ -192,7 +189,6 @@ public class UserPinFragment extends BaseUserFragment {
 
     @Override
     public void refreshData() {
-        Logger.d("PinFragment refresh");
-        httpForFirst();
+        httpForFirstTime();
     }
 }

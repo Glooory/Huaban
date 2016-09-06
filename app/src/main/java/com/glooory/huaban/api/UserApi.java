@@ -59,5 +59,21 @@ public interface UserApi {
                                                     @Path("userId") String userId,
                                                     @Query("max") int max,
                                                     @Query("limit") int limit);
+
+    //用户所喜欢的采集
+    //https://api.huaban.com/users/12345678/likes?limit=20
+    @GET("users/{userId}/likes")
+    Observable<PinsListBean> httpUserLikesService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                  @Path("userId") String userId,
+                                                  @Query("limit") int limit);
+
+    //https://api.huaban.com/users/12345678/likes?max=1234567&limit=20
+    @GET("users/{userId}/likes")
+    Observable<PinsListBean> httpUserLikesMaxService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                     @Path("userId") String userId,
+                                                     @Query("max") int max,
+                                                     @Query("limit") int limit);
+
 }
+
 

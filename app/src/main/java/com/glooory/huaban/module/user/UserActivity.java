@@ -73,6 +73,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private int mCurrentPosition = 0;
     private UserBoardFragment boardFragment;
     private UserPinFragment pinFragment;
+    private UserLikeFragment likeFragment;
 
     @BindView(R.id.img_image_user)
     SimpleDraweeView mImgImageUser;
@@ -190,6 +191,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         mViewpager.setAdapter(mPagerAdapter);
         mTablayout.setupWithViewPager(mViewpager);
+        mViewpager.setOffscreenPageLimit(3);
         mViewpager.setCurrentItem(mCurrentPosition, true);
 
 
@@ -219,7 +221,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     .subscribe(new Subscriber<UserInfoBean>() {
                         @Override
                         public void onCompleted() {
-                            Logger.d("onCompleted()");
                         }
 
                         @Override
@@ -422,10 +423,19 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         int currentIndex = mViewpager.getCurrentItem();
         switch (currentIndex) {
             case 0:
-                boardFragment.refreshData();
+                if (boardFragment != null) {
+                    boardFragment.refreshData();
+                }
                 break;
             case 1:
-                pinFragment.refreshData();
+                if (pinFragment != null) {
+                    pinFragment.refreshData();
+                }
+                break;
+            case 2:
+                if (likeFragment != null) {
+                    likeFragment.refreshData();
+                }
                 break;
         }
 
@@ -454,6 +464,8 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     return UserBoardFragment.newInstance(mUserId, mBoardCount);
                 case 1:
                     return UserPinFragment.newInstance(mUserId, mCollectionCount);
+                case 2:
+                    return UserLikeFragment.newInstance(mUserId, mLikeCount);
                 default:
                     return null;
             }
@@ -469,13 +481,15 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 case 1:
                     pinFragment = (UserPinFragment) createdFragment;
                     break;
+                case 2:
+                    likeFragment = (UserLikeFragment) createdFragment;
             }
             return createdFragment;
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override

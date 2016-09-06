@@ -24,17 +24,23 @@
             android:layout_height="1dp"
             android:background="@color/grey_a700" />
 
-        <TextView
-            android:id="@+id/tv_board_operate"
-            style="@style/text_secondary"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/relativelayout_board_operate"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:foreground="?selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:gravity="center|center_horizontal"
-            android:padding="@dimen/text_padding_default"
-            tools:drawableLeft="@drawable/ic_mode_edit_black_18dp"
-            tools:text="相关操作" />
+            android:clickable="true">
+
+            <TextView
+                android:id="@+id/tv_board_operate"
+                style="@style/text_secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                tools:drawableLeft="@drawable/ic_mode_edit_black_18dp" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 

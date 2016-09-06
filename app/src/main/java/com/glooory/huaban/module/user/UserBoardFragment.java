@@ -1,6 +1,6 @@
 package com.glooory.huaban.module.user;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,22 +28,19 @@ import rx.schedulers.Schedulers;
  */
 public class UserBoardFragment extends BaseUserFragment{
     private UserBoardAdapter mAdapter;
-    private int mBoardCount;
     private int mCurrentCount;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof UserActivity) {
-            if (((UserActivity) mContext).mSwipeRefreshLayout != null) {
-                ((UserActivity) mContext).mSwipeRefreshLayout.setRefreshing(true);
-            }
-            mBoardCount = ((UserActivity) mContext).mBoardCount;
-        }
+    public static UserBoardFragment newInstance(String userId, int boardCount) {
+        Bundle args = new Bundle();
+        args.putString(Constant.USERID, userId);
+        args.putInt(Constant.DATA_ITEM_COUNT, boardCount);
+        UserBoardFragment fragment = new UserBoardFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
-    public BaseQuickAdapter getMAdapter() {
+    public UserBoardAdapter getMAdapter() {
         initAdapter();
         return mAdapter;
     }
@@ -76,7 +73,7 @@ public class UserBoardFragment extends BaseUserFragment{
                         // TODO: 2016/9/4 0004 launch ImageDetailActivity
                         Toast.makeText(getContext(), "launch ImageDetailActivity", Toast.LENGTH_SHORT).show();
                         break;
-                    case R.id.tv_board_operate:
+                    case R.id.relativelayout_board_operate:
                         //// TODO: 2016/9/4 0004 board edit action
                         Toast.makeText(getContext(), "edit action", Toast.LENGTH_SHORT).show();
                         break;
@@ -88,7 +85,7 @@ public class UserBoardFragment extends BaseUserFragment{
     private void firstHttpRequest() {
 
         RetrofitClient.createService(UserApi.class)
-                .httpUserBoardService(mAuthorization, userId, Constant.LIMIT)
+                .httpUserBoardService(mAuthorization, mUserId, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
                     public List<UserBoardItemBean> call(UserBoardListBean userBoardListBean) {
@@ -107,11 +104,17 @@ public class UserBoardFragment extends BaseUserFragment{
                     @Override
                     public void onCompleted() {
                         Logger.d("onCompleted()");
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Logger.d(e.getMessage());
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
                     }
 
                     @Override
@@ -120,9 +123,6 @@ public class UserBoardFragment extends BaseUserFragment{
                         mAdapter.setNewData(userBoardItemBeen);
                         mCurrentCount = mAdapter.getData().size();
                         checkIfAddFooter();
-                        if (mContext instanceof UserActivity) {
-                            ((UserActivity) mContext).mSwipeRefreshLayout.setRefreshing(false);
-                        }
                     }
                 });
     }
@@ -130,7 +130,7 @@ public class UserBoardFragment extends BaseUserFragment{
     private void moreHttpRequest(int max) {
 
          new RetrofitClient().createService(UserApi.class)
-                .httpUserBoardMaxService(mAuthorization, userId, max, Constant.LIMIT)
+                .httpUserBoardMaxService(mAuthorization, mUserId, max, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
                     public List<UserBoardItemBean> call(UserBoardListBean userBoardListBean) {
@@ -170,19 +170,15 @@ public class UserBoardFragment extends BaseUserFragment{
     }
 
     public void checkIfAddFooter() {
-        if (mBoardCount < PAGESIZE) {
-            Logger.d("checkIfAddFooter() executed");
+        if (mDateItemCount < PAGESIZE) {
             if (mFooterView.getParent() != null) {
                 ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
-                Logger.d("remove footerview");
             }
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
                     mAdapter.loadComplete();
                     mAdapter.addFooterView(mFooterView);
-                    Logger.d(getMAdapter() instanceof UserBoardAdapter);
-                    Logger.d("post run");
                 }
             });
         }
@@ -193,7 +189,7 @@ public class UserBoardFragment extends BaseUserFragment{
         mRecyclerView.post(new Runnable() {
             @Override
             public void run() {
-                if (mCurrentCount >= mBoardCount) {
+                if (mCurrentCount >= mDateItemCount) {
                     mAdapter.loadComplete();
                     mAdapter.addFooterView(mFooterView);
                 } else {

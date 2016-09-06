@@ -96,7 +96,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         holder.setText(R.id.tv_board_attention, String.format(mAttentionFormat, bean.getFollow_count()));
 
         holder.addOnClickListener(R.id.linearlayout_image)
-                .addOnClickListener(R.id.tv_board_operate);
+                .addOnClickListener(R.id.relativelayout_board_operate);
 
         String url_img = img_root_url + getFirstPinsFileKey(bean);
 

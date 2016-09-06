@@ -4,7 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.view.View;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -43,7 +46,23 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
         //头像地址
         String urlAvatar = urlRoot + pinsBean.getUser().getAvatar().getKey();
 
-        holder.setText(R.id.item_card_pin_tvimgdes, pinsBean.getRaw_text())
+        //图片描述为空则不显示textview
+        if (pinsBean.getRaw_text() == null || TextUtils.isEmpty(pinsBean.getRaw_text())) {
+            holder.getView(R.id.item_card_pin_tvimgdes).setVisibility(View.GONE);
+        } else {
+            holder.setText(R.id.item_card_pin_tvimgdes, pinsBean.getRaw_text());
+        }
+
+        //采集和喜欢的图片
+        Drawable pinDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_pin_12dp, R.color.grey_500);
+        Drawable likeDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_favourite_12dp, R.color.grey_500);
+        ((TextView) holder.getView(R.id.tv_item_card_pin_collection))
+                .setCompoundDrawablesWithIntrinsicBounds(pinDrawable, null, null, null);
+        ((TextView) holder.getView(R.id.tv_item_card_pin_like))
+                .setCompoundDrawablesWithIntrinsicBounds(likeDrawable, null, null, null);
+
+        holder.setText(R.id.tv_item_card_pin_collection, Utils.checkIfNeedConvert(pinsBean.getRepin_count()))
+                .setText(R.id.tv_item_card_pin_like, Utils.checkIfNeedConvert(pinsBean.getLike_count()))
                 .setText(R.id.item_card_pin_viadestv, setViaDesTextStyle(pinsBean))
                 .addOnClickListener(R.id.item_card_pin_img_ll)
                 .addOnClickListener(R.id.item_card_via_ll);

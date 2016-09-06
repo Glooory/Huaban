@@ -1,6 +1,7 @@
 package com.glooory.huaban.api;
 
 import com.glooory.huaban.entity.BoardListInfoBean;
+import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.module.login.UserInfoBean;
 import com.glooory.huaban.module.user.UserBoardListBean;
 import com.glooory.huaban.util.Constant;
@@ -44,5 +45,19 @@ public interface UserApi {
                                                           @Query("max") int max,
                                                           @Query("limit") int limit);
 
+
+    //用户的所有采集信息
+    //https:api.huaban.com/users/12345678/pins?limit=20
+    @GET("users/{userId}/pins")
+    Observable<PinsListBean> httpUserPinsService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                 @Path("userId") String userId,
+                                                 @Query("limit") int limit);
+
+    //https:api.huaban.com/users/12345678/pins?max=1234567&limit=20
+    @GET("users/{userId}/pins")
+    Observable<PinsListBean> httpUserPinsMaxService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                    @Path("userId") String userId,
+                                                    @Query("max") int max,
+                                                    @Query("limit") int limit);
 }
 

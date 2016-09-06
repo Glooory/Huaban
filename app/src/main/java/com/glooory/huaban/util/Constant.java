@@ -66,5 +66,8 @@ public class Constant {
 
     public static final String ISME = "is_me";
 
+    public static final String DATA_ITEM_COUNT = "data_item_count";
+
+
 
 }

@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.glooory.huaban.R;
 import com.glooory.huaban.module.user.UserActivity;
-import com.glooory.huaban.module.user.UserBoardFragment;
 import com.glooory.huaban.util.Constant;
 
 /**
@@ -22,13 +21,14 @@ import com.glooory.huaban.util.Constant;
 public abstract class BaseUserFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
     protected boolean isMe;
     protected String mAuthorization;
-    protected int userItemCount; // 当前用户的画板获取采集总数，用来判断显示已经没有更多内容的footer view
     protected final int PAGESIZE = 20;
-    protected String userId;
+    protected String mUserId;
     protected RecyclerView mRecyclerView;
     protected Context mContext;
     protected int mMaxId;
     protected View mFooterView;
+    protected int mDateItemCount;
+    protected FragmentRefreshListener mRefreshListener;
 
     @Override
     public void onAttach(Context context) {
@@ -37,22 +37,18 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
         if (context instanceof UserActivity) {
             mAuthorization = ((UserActivity) context).mAuthorization;
             isMe = ((UserActivity) context).isMe;
+            mRefreshListener = ((UserActivity) context);
         }
-    }
-
-    public static UserBoardFragment newInstance(String userId) {
-
-        Bundle args = new Bundle();
-        args.putString(Constant.USERID, userId);
-        UserBoardFragment fragment = new UserBoardFragment();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (mRefreshListener != null) {
+            mRefreshListener.requestRefresh();
+        }
         super.onCreate(savedInstanceState);
-        userId = getArguments().getString(Constant.USERID);
+        mUserId = getArguments().getString(Constant.USERID);
+        mDateItemCount = getArguments().getInt(Constant.DATA_ITEM_COUNT);
     }
 
     @Nullable
@@ -65,6 +61,15 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
         return mRecyclerView;
     }
 
-    public abstract BaseQuickAdapter getMAdapter();
+    public abstract <T extends BaseQuickAdapter> T getMAdapter();
+
+    public interface FragmentRefreshListener {
+
+        void requestRefresh();
+
+        void requestRefreshDone();
+
+    }
+
 
 }

@@ -19,7 +19,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -33,6 +32,7 @@ import com.facebook.imagepipeline.image.CloseableImage;
 import com.glooory.huaban.R;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseActivity;
+import com.glooory.huaban.base.BaseUserFragment;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.login.LoginActivity;
@@ -42,27 +42,23 @@ import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.FastBlurUtil;
 import com.glooory.huaban.util.SPUtils;
 import com.glooory.huaban.util.Utils;
-import com.jakewharton.rxbinding.view.RxView;
 import com.orhanobut.logger.Logger;
-
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindColor;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by Glooory on 2016/9/3 0003 17:46.
  */
-public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener,
+        BaseUserFragment.FragmentRefreshListener{
     public boolean isMe;
-    public String mUserId;
+    private String mUserId;
     @BindView(R.id.btn_follow_operation)
     Button mBtnFollowOperation;
     @BindView(R.id.coordinator_user)
@@ -97,7 +93,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @BindView(R.id.swipe_refresh_widget)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
-    @BindColor(R.color.white)
+    @BindColor(R.color.colorPrimary)
     int mColorTabIndicator;
 
     @BindString(R.string.url_image_small)
@@ -142,8 +138,12 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mCollapsingtoolbar.setExpandedTitleColor(Color.TRANSPARENT);//展开时文字为透明的
+
         mBtnFollowOperation.setVisibility(View.GONE);//最初先隐藏，后面再根据情况显示
+        setUpToolBtn();
+        topActionBtnSetOnListener();
+
+        mCollapsingtoolbar.setExpandedTitleColor(Color.TRANSPARENT);//展开时文字为透明的
         mTvUserFriend.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
@@ -161,6 +161,22 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         });
 
         mTablayout.setSelectedTabIndicatorColor(mColorTabIndicator);
+        mTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                setUpToolBtn();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN);
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -187,7 +203,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setRefreshing(true);
 
         if (!TextUtils.isEmpty(mUserId)) {
-            Subscription subscription = new RetrofitClient().createService(UserApi.class)
+            new RetrofitClient().createService(UserApi.class)
                     .httpsUserInfoRx(mAuthorization, mUserId)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -314,12 +330,95 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
+    public void onRefresh() {
+
+        httpForUserInfo();
+
+
+    }
+
+    //根据登录状态和是否是自己的用户信息来决定toolbar 上面的button的文字
+    private void setUpToolBtn() {
+
+        if (isMe) {
+            switch (mTablayout.getSelectedTabPosition()) {
+                case 0:
+                    mBtnFollowOperation.setText(R.string.create_new_board);
+                    mBtnFollowOperation.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    mBtnFollowOperation.setText(R.string.add_new_collection);
+                    mBtnFollowOperation.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    mBtnFollowOperation.setText("");
+                    mBtnFollowOperation.setVisibility(View.GONE);
+                    break;
+            }
+        } else {
+            if (isLogin) {
+                if (isFollowing) {
+                    mBtnFollowOperation.setText(R.string.follow_action_unfollow);
+                    mBtnFollowOperation.setVisibility(View.VISIBLE);
+                } else {
+                    mBtnFollowOperation.setText(R.string.follow_action_follow);
+                    mBtnFollowOperation.setVisibility(View.VISIBLE);
+                }
+            } else {
+                mBtnFollowOperation.setText(R.string.follow_action_follow);
+                mBtnFollowOperation.setVisibility(View.VISIBLE);
+            }
+        }
+
+    }
+
+    /**
+     * toolbar 右上角的Button 的点击事件
+     */
+    private void topActionBtnSetOnListener() {
+
+        mBtnFollowOperation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isMe) {
+                    switch (mTablayout.getSelectedTabPosition()) {
+                        case 0:
+                            // TODO: 2016/9/6 0006 create new board operate
+                            break;
+                        case 1:
+                            // TODO: 2016/9/6 0006 add a new pin operate
+                            break;
+                    }
+                } else {
+                    if (isLogin) {
+                        if (isFollowing) {
+                            // TODO: 2016/9/6 0006 unfollow operate
+                        } else {
+                            // TODO: 2016/9/6 0006 follow operate
+                        }
+                    } else {
+                        Snackbar snackbar = Snackbar.make(mCoordinator, R.string.need_login, Snackbar.LENGTH_LONG);
+                        snackbar.setAction(R.string.go_to_login, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                LoginActivity.launch(UserActivity.this);
+                            }
+                        }).show();
+                    }
+                }
+            }
+        });
+
     }
 
     @Override
-    public void onRefresh() {
+    public void requestRefresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void requestRefreshDone() {
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -330,80 +429,25 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         @Override
         public Fragment getItem(int position) {
-            return UserBoardFragment.newInstance(mUserId);
+            Logger.d(position);
+            switch (position) {
+                case 0:
+                    return UserBoardFragment.newInstance(mUserId, mBoardCount);
+                case 1:
+                    return UserPinFragment.newInstance(mUserId, mCollectionCount);
+                default:
+                    return null;
+            }
         }
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return titles[0];
+            return titles[position];
         }
-    }
-
-    //根据登录状态和是否是自己的用户信息来决定toolbar 上面的button的点击事件和文字
-    private void setUpToolBtn() {
-
-        if (isLogin) {
-            if (isMe) {
-                mBtnFollowOperation.setText(R.string.create_new_board);
-                RxView.clicks(mBtnFollowOperation)
-                        .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
-                        .subscribe(new Action1<Void>() {
-                            @Override
-                            public void call(Void aVoid) {
-                                // TODO: 2016/9/5 0005 create a new board
-                            }
-                        });
-            } else {
-                if (isFollowing) {
-                    mBtnFollowOperation.setText(R.string.follow_action_unfollow);
-                    RxView.clicks(mBtnFollowOperation)
-                            .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
-                            .subscribe(new Action1<Void>() {
-                                @Override
-                                public void call(Void aVoid) {
-                                    // TODO: 2016/9/5 0005 unfollow operation
-                                }
-                            });
-                } else {
-                    mBtnFollowOperation.setText(R.string.follow_action_follow);
-                    RxView.clicks(mBtnFollowOperation)
-                            .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
-                            .subscribe(new Action1<Void>() {
-                                @Override
-                                public void call(Void aVoid) {
-                                    // TODO: 2016/9/5 0005 follow operation
-                                }
-                            });
-                }
-            }
-        } else {
-            RxView.clicks(mBtnFollowOperation)
-                    .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
-                    .subscribe(new Action1<Void>() {
-                        @Override
-                        public void call(Void aVoid) {
-                            //判断是否登录
-                            if (isLogin) {
-                                // TODO: 2016/9/5 0005 follow or unfollow operation
-                            } else {
-                                Snackbar snackbar = Snackbar.make(mCoordinator, R.string.need_login, Snackbar.LENGTH_LONG);
-                                snackbar.setAction(R.string.go_to_login, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        LoginActivity.launch(UserActivity.this);
-                                    }
-                                }).show();
-                            }
-                        }
-                    });
-        }
-
-        mBtnFollowOperation.setVisibility(View.VISIBLE);
-
     }
 }

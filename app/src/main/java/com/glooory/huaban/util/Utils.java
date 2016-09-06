@@ -1,6 +1,7 @@
 package com.glooory.huaban.util;
 
 import android.os.Looper;
+import android.text.TextUtils;
 
 /**
  * Created by Glooory on 2016/8/29 0029.
@@ -44,6 +45,35 @@ public final class Utils {
     public static void checkUITheadError() {
         if (!checkUIThreadBoolean()) {
             throw new IllegalStateException("must be called in UI Thread");
+        }
+    }
+
+    /**
+     * 检查图片是否为Gif图片
+     * @param type
+     * @return
+     */
+    public static boolean checkIsGif(String type) {
+        if (type == null || TextUtils.isEmpty(type)) {
+            return false;
+        }
+        if (type.contains("gif") || type.contains("GIF") || type.contains("Gif")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 转换为k表示
+     * @param count
+     * @return
+     */
+    public static String checkIfNeedConvert(int count) {
+        if (count > 9999) {
+            float c = (float) ((count % 100) / 10.0);
+            return String.valueOf(c) + "K";
+        } else {
+            return String.valueOf(count);
         }
     }
 

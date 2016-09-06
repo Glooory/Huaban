@@ -89,7 +89,6 @@ public class UserPinFragment extends BaseUserFragment {
                 .subscribe(new Subscriber<List<PinsBean>>() {
                     @Override
                     public void onCompleted() {
-                        Logger.d(mRefreshListener == null);
                         if (mRefreshListener != null) {
                             mRefreshListener.requestRefreshDone();
                         }

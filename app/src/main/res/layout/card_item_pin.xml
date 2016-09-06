@@ -22,12 +22,26 @@
             android:foreground="?attr/selectableItemBackground"
             android:orientation="vertical">
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/item_card_pin_img"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY" />
+                android:layout_height="wrap_content">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/item_card_pin_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY" />
+
+                <ImageButton
+                    android:id="@+id/imgbtn_gif"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
+                    android:background="@color/grey_a700"
+                    app:srcCompat="@drawable/ic_gif_white_36dp" />
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/item_card_pin_tvimgdes"
@@ -39,28 +53,29 @@
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/card_context_size_12sp" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="4dp">
+                android:gravity="center_vertical" >
 
                 <TextView
                     android:id="@+id/tv_item_card_pin_collection"
                     style="@style/card_likecount_text_style"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:layout_weight="1" />
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center_vertical" />
 
                 <TextView
                     android:id="@+id/tv_item_card_pin_like"
                     style="@style/card_likecount_text_style"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:layout_weight="1" />
+                    android:layout_marginLeft="16dp"
+                    android:layout_toRightOf="@id/tv_item_card_pin_collection"
+                    android:gravity="center_vertical" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
 

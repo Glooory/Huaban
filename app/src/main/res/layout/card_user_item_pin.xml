@@ -62,28 +62,29 @@
         </LinearLayout>
 
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="4dp">
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tv_user_item_collection"
                 style="@style/card_likecount_text_style"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="24dp"
-                android:layout_weight="1" />
+                android:layout_alignParentLeft="true"
+                android:gravity="center_vertical" />
 
             <TextView
                 android:id="@+id/tv_user_item_like"
                 style="@style/card_likecount_text_style"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="24dp"
-                android:layout_weight="1" />
+                android:layout_marginLeft="16dp"
+                android:layout_toRightOf="@id/tv_user_item_collection"
+                android:gravity="center_vertical" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

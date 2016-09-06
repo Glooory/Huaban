@@ -38,6 +38,13 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
         //头像地址
         String urlAvatar = urlRoot + pinsBean.getUser().getAvatar().getKey();
 
+        //是否需要显示GIFImageButton
+        if (Utils.checkIsGif(pinsBean.getFile().getType())) {
+            holder.getView(R.id.imgbtn_gif).setVisibility(View.VISIBLE);
+        } else {
+            holder.getView(R.id.imgbtn_gif).setVisibility(View.INVISIBLE);
+        }
+
         //图片描述为空则不显示textview
         if (pinsBean.getRaw_text() == null || TextUtils.isEmpty(pinsBean.getRaw_text())) {
             holder.getView(R.id.item_card_pin_tvimgdes).setVisibility(View.GONE);

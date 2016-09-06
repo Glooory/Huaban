@@ -82,7 +82,7 @@ public class UserBoardFragment extends BaseUserFragment{
         });
     }
 
-    private void firstHttpRequest() {
+    public void firstHttpRequest() {
 
         RetrofitClient.createService(UserApi.class)
                 .httpUserBoardService(mAuthorization, mUserId, Constant.LIMIT)
@@ -112,6 +112,7 @@ public class UserBoardFragment extends BaseUserFragment{
                     @Override
                     public void onError(Throwable e) {
                         Logger.d(e.getMessage());
+                        Logger.d(mRefreshListener != null);
                         if (mRefreshListener != null) {
                             mRefreshListener.requestRefreshDone();
                         }
@@ -197,5 +198,11 @@ public class UserBoardFragment extends BaseUserFragment{
                 }
             }
         });
+    }
+
+    @Override
+    public void refreshData() {
+        Logger.d("BoardFragment refresh");
+        firstHttpRequest();
     }
 }

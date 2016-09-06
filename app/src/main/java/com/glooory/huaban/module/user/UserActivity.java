@@ -20,6 +20,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -69,6 +70,9 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     public int mLikeCount;
     private SectionsPagerAdapter mPagerAdapter;
     private boolean isFollowing;
+    private int mCurrentPosition = 0;
+    private UserBoardFragment boardFragment;
+    private UserPinFragment pinFragment;
 
     @BindView(R.id.img_image_user)
     SimpleDraweeView mImgImageUser;
@@ -165,6 +169,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 setUpToolBtn();
+                mViewpager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -183,11 +188,15 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
+        mViewpager.setAdapter(mPagerAdapter);
+        mTablayout.setupWithViewPager(mViewpager);
+        mViewpager.setCurrentItem(mCurrentPosition, true);
+
+
     }
 
     private void updateViewAfterHttp() {
-        mViewpager.setAdapter(mPagerAdapter);
-        mTablayout.setupWithViewPager(mViewpager);
+
     }
 
     private void initRes() {
@@ -211,8 +220,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         @Override
                         public void onCompleted() {
                             Logger.d("onCompleted()");
-                            updateViewAfterHttp();
-
                         }
 
                         @Override
@@ -237,7 +244,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mBoardCount = bean.getBoard_count();
         mCollectionCount = bean.getPin_count();
         mLikeCount = bean.getLike_count();
-        Logger.d(mBoardCount);
 
     }
 
@@ -334,7 +340,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         httpForUserInfo();
 
-
+        requestFragmentRefresh();
     }
 
     //根据登录状态和是否是自己的用户信息来决定toolbar 上面的button的文字
@@ -411,6 +417,20 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     }
 
+    private void requestFragmentRefresh() {
+
+        int currentIndex = mViewpager.getCurrentItem();
+        switch (currentIndex) {
+            case 0:
+                boardFragment.refreshData();
+                break;
+            case 1:
+                pinFragment.refreshData();
+                break;
+        }
+
+    }
+
     @Override
     public void requestRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
@@ -429,7 +449,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         @Override
         public Fragment getItem(int position) {
-            Logger.d(position);
             switch (position) {
                 case 0:
                     return UserBoardFragment.newInstance(mUserId, mBoardCount);
@@ -438,6 +457,20 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 default:
                     return null;
             }
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
+            switch (position) {
+                case 0:
+                    boardFragment = (UserBoardFragment) createdFragment;
+                    break;
+                case 1:
+                    pinFragment = (UserPinFragment) createdFragment;
+                    break;
+            }
+            return createdFragment;
         }
 
         @Override

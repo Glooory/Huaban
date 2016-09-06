@@ -16,6 +16,7 @@ import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.util.Constant;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -94,6 +95,7 @@ public class UserPinFragment extends BaseUserFragment {
     }
 
     private void httpForFirst() {
+        Logger.d(mUserId);
 
         new RetrofitClient().createService(UserApi.class)
                 .httpUserPinsService(mAuthorization, mUserId, Constant.LIMIT)
@@ -186,5 +188,11 @@ public class UserPinFragment extends BaseUserFragment {
             }
         });
 
+    }
+
+    @Override
+    public void refreshData() {
+        Logger.d("PinFragment refresh");
+        httpForFirst();
     }
 }

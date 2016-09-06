@@ -15,7 +15,6 @@ import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.util.CompatUtils;
 import com.glooory.huaban.util.Utils;
-import com.orhanobut.logger.Logger;
 
 /**
  * Created by Glooory on 2016/9/5 0005 23:06.
@@ -28,7 +27,6 @@ public class UserPinAdapter extends BaseQuickAdapter<PinsBean>{
         super(R.layout.card_user_item_pin, null);
         this.mContext = context;
         imgUrlRoot = context.getString(R.string.urlImageRoot);
-        Logger.d("adapter construtor");
     }
 
     @Override

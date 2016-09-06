@@ -63,6 +63,8 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
 
     public abstract <T extends BaseQuickAdapter> T getMAdapter();
 
+    public abstract void refreshData();
+
     public interface FragmentRefreshListener {
 
         void requestRefresh();

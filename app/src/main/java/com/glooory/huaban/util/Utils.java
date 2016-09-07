@@ -70,8 +70,9 @@ public final class Utils {
      */
     public static String checkIfNeedConvert(int count) {
         if (count > 9999) {
-            float c = (float) ((count % 100) / 10.0);
-            return String.valueOf(c) + "K";
+            int i = count / 1000;
+            int f = count % 100;
+            return String.valueOf(i) + "." + String.valueOf(f)  + "K";
         } else {
             return String.valueOf(count);
         }

@@ -1,5 +1,6 @@
 package com.glooory.huaban.api;
 
+import com.glooory.huaban.entity.FollowerBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.module.board.SimpleBoardInfoBean;
 import com.glooory.huaban.util.Constant;
@@ -35,4 +36,18 @@ public interface BoardApi {
                                                         @Path("boardId") int boardId,
                                                         @Query("max") int max,
                                                         @Query("limit") int limit);
+
+    //获取某个画板的关注者
+    // https://api.huaban.com/boards/1346566/followers?limit=20
+    @GET("boards/{boardId}/followers")
+    Observable<FollowerBean> httpForBoardFollowerService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                         @Path("boardId") int boardId,
+                                                         @Query("limit") int limit);
+
+    // https://api.huaban.com/boards/1346566/followers?limit=20
+    @GET("boards/{boardId}/followers")
+    Observable<FollowerBean> httpForBoardFollowerMaxService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                            @Path("boardId") int boardId,
+                                                            @Query("max") int seq,
+                                                            @Query("limit") int limit);
 }

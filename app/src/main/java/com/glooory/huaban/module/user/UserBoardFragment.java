@@ -74,8 +74,6 @@ public class UserBoardFragment extends BaseUserFragment{
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.linearlayout_image:
-                        // TODO: 2016/9/4 0004 launch ImageDetailActivity
-                        Logger.d(mUserName);
                         BoardActivity.launch(getActivity(), mAdapter.getData().get(i), mUserName);
                         break;
                     case R.id.relativelayout_board_operate:

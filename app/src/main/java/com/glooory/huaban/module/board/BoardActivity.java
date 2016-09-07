@@ -245,17 +245,34 @@ public class BoardActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return BoardPinsFragment.newInstance(mAuthorization, mBoardBean.getBoard_id(), mBoardBean.getPin_count());
+
+            switch (position) {
+                case 0:
+                    return BoardPinsFragment.newInstance(mAuthorization,
+                            mBoardBean.getBoard_id(),
+                            mBoardBean.getPin_count());
+                case 1:
+                    return BoardFollowerFragment.newInstance(mAuthorization,
+                            mBoardBean.getBoard_id(),
+                            mBoardBean.getFollow_count());
+            }
+            return null;
         }
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "52 采集";
+            switch (position) {
+                case 0:
+                    return String.valueOf(mBoardBean.getPin_count()) + " 采集";
+                case 1:
+                    return "被 " + mBoardBean.getFollow_count() + " 人关注";
+            }
+            return "";
         }
 
     }

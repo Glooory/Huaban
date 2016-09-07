@@ -1,6 +1,11 @@
-package com.glooory.huaban.module.user;
+package com.glooory.huaban.module.board;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +14,8 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.glooory.huaban.R;
-import com.glooory.huaban.adapter.PinQuickAdapter;
-import com.glooory.huaban.api.UserApi;
-import com.glooory.huaban.base.BaseUserFragment;
+import com.glooory.huaban.adapter.UserPinAdapter;
+import com.glooory.huaban.api.BoardApi;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
@@ -25,38 +29,71 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Glooory on 2016/9/6 0006 21:03.
+ * Created by Glooory on 2016/9/7 0007 17:24.
  */
-public class UserLikeFragment extends BaseUserFragment {
-    private PinQuickAdapter mAdapter;
+public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
+    //触发自动加载的基数
+    private int PAGE_SIZE = 20;
+    //当前已经加载的数据的数量
     private int mCurrentCount;
+    //当前画板的总采集数量
+    private int mPinsTotal;
+    private RecyclerView mRecyclerView;
+    private UserPinAdapter mAdapter;
+    //没有更多内容的view
+    private View mFooterView;
+    //后续自动加载数据需要的PinId
+    private int mMaxId;
+    private Context mContext;
+    private int mBoardId;
+    private String mAuthorization;
 
-
-
-    public static UserLikeFragment newInstance(String userId, int dataCount) {
+    public static BoardPinsFragment newInstance(String authorization, int boardId, int pinCount) {
         Bundle args = new Bundle();
-        args.putString(Constant.USERID, userId);
-        args.putInt(Constant.DATA_ITEM_COUNT, dataCount);
-        UserLikeFragment fragment = new UserLikeFragment();
+        args.putInt(Constant.BOARD_ID, boardId);
+        args.putInt(Constant.PIN_COUNT, pinCount);
+        args.putString(Constant.AUTHORIZATION, authorization);
+        BoardPinsFragment fragment = new BoardPinsFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public PinQuickAdapter getMAdapter() {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.mContext = context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mBoardId = (int) getArguments().get(Constant.BOARD_ID);
+        mPinsTotal = (int) getArguments().get(Constant.PIN_COUNT);
+        mAuthorization = (String) getArguments().get(Constant.AUTHORIZATION);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_user_recyclerview, container, false);
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mFooterView = inflater.inflate(R.layout.view_no_more_data_footer, container, false);
         initAdapter();
-        return mAdapter;
+        mRecyclerView.setAdapter(mAdapter);
+        httpForFirst();
+        return mRecyclerView;
     }
 
     private void initAdapter() {
-        mAdapter = new PinQuickAdapter(mContext);
+        mAdapter = new UserPinAdapter(mContext);
 
         //设置上滑自动建在的正在加载更多的自定义View
-        View loadMoreView = LayoutInflater.from(getContext()).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);
+        View loadMoreView = LayoutInflater.from(mContext).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);
         mAdapter.setLoadingView(loadMoreView);
 
         //当当前position等于PAGE_SIZE 时，就回调用onLoadMoreRequested() 自动加载下一页数据
-        mAdapter.openLoadMore(PAGESIZE);
+        mAdapter.openLoadMore(PAGE_SIZE);
+
         mAdapter.openLoadAnimation();
         mAdapter.setOnLoadMoreListener(this);
 
@@ -64,25 +101,19 @@ public class UserLikeFragment extends BaseUserFragment {
             @Override
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
-                    case R.id.item_card_pin_img_ll:
+                    case R.id.linearlayout_user_pin:
                         // TODO: 2016/9/4 0004 launch ImageDetailActivity
-                        Toast.makeText(getContext(), "you just clicked the img", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.item_card_via_ll:
-                        UserActivity.launch(getActivity(),
-                                String.valueOf(mAdapter.getItem(i).getUser_id()),
-                                mAdapter.getItem(i).getUser().getUsername());
+                        Toast.makeText(mContext, "launch ImageDetailActivity", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
         });
     }
 
-    @Override
-    public void httpForFirstTime() {
+    private void httpForFirst() {
 
-        new RetrofitClient().createService(UserApi.class)
-                .httpUserLikesService(mAuthorization, mUserId, Constant.LIMIT)
+        new RetrofitClient().createService(BoardApi.class)
+                .httpForBoardPinService(mAuthorization, mBoardId, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
                     public List<PinsBean> call(PinsListBean pinsListBean) {
@@ -94,18 +125,12 @@ public class UserLikeFragment extends BaseUserFragment {
                 .subscribe(new Subscriber<List<PinsBean>>() {
                     @Override
                     public void onCompleted() {
-                        checkIfAddFooter();
-                        if (mRefreshListener != null) {
-                            mRefreshListener.requestRefreshDone();
-                        }
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        checkIfAddFooter();
-                        if (mRefreshListener != null) {
-                            mRefreshListener.requestRefreshDone();
-                        }
+
                     }
 
                     @Override
@@ -113,16 +138,16 @@ public class UserLikeFragment extends BaseUserFragment {
                         saveMaxId(list);
                         mAdapter.setNewData(list);
                         mCurrentCount = mAdapter.getData().size();
+                        checkIfAddFooter();
                     }
                 });
-
 
     }
 
     private void httpForMore() {
 
-        new RetrofitClient().createService(UserApi.class)
-                .httpUserLikesMaxService(mAuthorization, mUserId, mMaxId, Constant.LIMIT)
+        new RetrofitClient().createService(BoardApi.class)
+                .httpForBoardPinsMaxService(mAuthorization, mBoardId, mMaxId, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
                     public List<PinsBean> call(PinsListBean pinsListBean) {
@@ -134,16 +159,12 @@ public class UserLikeFragment extends BaseUserFragment {
                 .subscribe(new Subscriber<List<PinsBean>>() {
                     @Override
                     public void onCompleted() {
-                        if (mRefreshListener != null) {
-                            mRefreshListener.requestRefreshDone();
-                        }
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        if (mRefreshListener != null) {
-                            mRefreshListener.requestRefreshDone();
-                        }
+
                     }
 
                     @Override
@@ -157,15 +178,17 @@ public class UserLikeFragment extends BaseUserFragment {
     }
 
     private void saveMaxId(List<PinsBean> list) {
+
         if (list != null) {
             if (list.size() > 0) {
                 mMaxId = list.get(list.size() - 1).getPin_id();
             }
         }
+
     }
 
     public void checkIfAddFooter() {
-        if (mDateItemCount < PAGESIZE) {
+        if (mPinsTotal < PAGE_SIZE) {
             if (mFooterView.getParent() != null) {
                 ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
             }
@@ -180,17 +203,12 @@ public class UserLikeFragment extends BaseUserFragment {
     }
 
     @Override
-    public void refreshData() {
-        httpForFirstTime();
-    }
-
-    @Override
     public void onLoadMoreRequested() {
 
         mRecyclerView.post(new Runnable() {
             @Override
             public void run() {
-                if (mCurrentCount >= mDateItemCount) {
+                if (mCurrentCount >= mPinsTotal) {
                     mAdapter.loadComplete();
                     mAdapter.addFooterView(mFooterView);
                 } else {

@@ -240,7 +240,8 @@ public class MainActivity extends BaseActivity
                 // TODO: 2016/8/31 0031 lanuch UserActivity
                 if (isLogin) {
                     UserActivity.launch(MainActivity.this,
-                            (String) SPUtils.get(getApplicationContext(), Constant.USERID, ""));
+                            (String) SPUtils.get(getApplicationContext(), Constant.USERID, ""),
+                            (String) SPUtils.get(getApplicationContext(), Constant.USERNAME, ""));
                 } else {
                     LoginActivity.launch(this);
                 }

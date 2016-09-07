@@ -110,8 +110,6 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
                 .setProgressbarImage(dProgressImg)
                 .build();
 
-        int boardPinsCount = bean.getPins().size();
-
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)).setAspectRatio(1.0f);
         if (bean.getPins().size() > 1) {
             String firstImgUrl = img_root_url + bean.getPins().get(1).getFile().getKey() + img_suffix_small;

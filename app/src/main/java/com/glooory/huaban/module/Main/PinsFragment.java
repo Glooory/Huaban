@@ -100,7 +100,8 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         Toast.makeText(getContext(), "you just clicked the img", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.item_card_via_ll:
-                        UserActivity.launch(getActivity(), String.valueOf(mAdapter.getItem(i).getUser_id()));
+                        UserActivity.launch(getActivity(), String.valueOf(mAdapter.getItem(i).getUser_id()),
+                                mAdapter.getItem(i).getUser().getUsername());
                         break;
                 }
             }

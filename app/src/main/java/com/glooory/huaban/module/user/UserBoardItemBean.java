@@ -1,13 +1,17 @@
 package com.glooory.huaban.module.user;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.glooory.huaban.entity.PinsSimpleBean;
+import com.google.gson.Gson;
 
 import java.util.List;
 
 /**
  * Created by Glooory on 2016/9/1 0001.
  */
-public class UserBoardItemBean {
+public class UserBoardItemBean implements Parcelable {
 
     /**
      * board_id : 17793839
@@ -23,6 +27,7 @@ public class UserBoardItemBean {
      * updated_at : 1411778585
      * deleting : 0
      * is_private : 2
+     * extra : {"cover":{"pin_id":"834279334"},"is_creation":true}
      * following : false
      */
 
@@ -37,11 +42,12 @@ public class UserBoardItemBean {
     private int like_count;
     private int created_at;
     private int updated_at;
-    private int deleting=1;
+    private int deleting = 1;
     private int is_private;
     private boolean following;
 
     private List<PinsSimpleBean> pins;
+    private ExtraBean extra;
 
     public void setPins(List<PinsSimpleBean> pins) {
         this.pins = pins;
@@ -163,4 +169,177 @@ public class UserBoardItemBean {
         this.following = following;
     }
 
+    public ExtraBean getExtra() {
+        return extra;
+    }
+
+    public void setExtra(ExtraBean extra) {
+        this.extra = extra;
+    }
+
+    public static class ExtraBean implements Parcelable {
+        /**
+         * pin_id : 834279334
+         */
+
+        private CoverBean cover;
+        private boolean is_creation;
+
+        public static ExtraBean objectFromData(String str) {
+
+            return new Gson().fromJson(str, ExtraBean.class);
+        }
+
+        public CoverBean getCover() {
+            return cover;
+        }
+
+        public void setCover(CoverBean cover) {
+            this.cover = cover;
+        }
+
+        public boolean isIs_creation() {
+            return is_creation;
+        }
+
+        public void setIs_creation(boolean is_creation) {
+            this.is_creation = is_creation;
+        }
+
+        public static class CoverBean implements Parcelable {
+            private String pin_id;
+
+            public static CoverBean objectFromData(String str) {
+
+                return new Gson().fromJson(str, CoverBean.class);
+            }
+
+            public String getPin_id() {
+                return pin_id;
+            }
+
+            public void setPin_id(String pin_id) {
+                this.pin_id = pin_id;
+            }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.pin_id);
+            }
+
+            public CoverBean() {
+            }
+
+            protected CoverBean(Parcel in) {
+                this.pin_id = in.readString();
+            }
+
+            public static final Parcelable.Creator<CoverBean> CREATOR = new Parcelable.Creator<CoverBean>() {
+                @Override
+                public CoverBean createFromParcel(Parcel source) {
+                    return new CoverBean(source);
+                }
+
+                @Override
+                public CoverBean[] newArray(int size) {
+                    return new CoverBean[size];
+                }
+            };
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeParcelable(this.cover, flags);
+            dest.writeByte(this.is_creation ? (byte) 1 : (byte) 0);
+        }
+
+        public ExtraBean() {
+        }
+
+        protected ExtraBean(Parcel in) {
+            this.cover = in.readParcelable(CoverBean.class.getClassLoader());
+            this.is_creation = in.readByte() != 0;
+        }
+
+        public static final Parcelable.Creator<ExtraBean> CREATOR = new Parcelable.Creator<ExtraBean>() {
+            @Override
+            public ExtraBean createFromParcel(Parcel source) {
+                return new ExtraBean(source);
+            }
+
+            @Override
+            public ExtraBean[] newArray(int size) {
+                return new ExtraBean[size];
+            }
+        };
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.board_id);
+        dest.writeInt(this.user_id);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeString(this.category_id);
+        dest.writeInt(this.seq);
+        dest.writeInt(this.pin_count);
+        dest.writeInt(this.follow_count);
+        dest.writeInt(this.like_count);
+        dest.writeInt(this.created_at);
+        dest.writeInt(this.updated_at);
+        dest.writeInt(this.deleting);
+        dest.writeInt(this.is_private);
+        dest.writeByte(this.following ? (byte) 1 : (byte) 0);
+        dest.writeTypedList(this.pins);
+        dest.writeParcelable(this.extra, flags);
+    }
+
+    public UserBoardItemBean() {
+    }
+
+    protected UserBoardItemBean(Parcel in) {
+        this.board_id = in.readInt();
+        this.user_id = in.readInt();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.category_id = in.readString();
+        this.seq = in.readInt();
+        this.pin_count = in.readInt();
+        this.follow_count = in.readInt();
+        this.like_count = in.readInt();
+        this.created_at = in.readInt();
+        this.updated_at = in.readInt();
+        this.deleting = in.readInt();
+        this.is_private = in.readInt();
+        this.following = in.readByte() != 0;
+        this.pins = in.createTypedArrayList(PinsSimpleBean.CREATOR);
+        this.extra = in.readParcelable(ExtraBean.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<UserBoardItemBean> CREATOR = new Parcelable.Creator<UserBoardItemBean>() {
+        @Override
+        public UserBoardItemBean createFromParcel(Parcel source) {
+            return new UserBoardItemBean(source);
+        }
+
+        @Override
+        public UserBoardItemBean[] newArray(int size) {
+            return new UserBoardItemBean[size];
+        }
+    };
 }

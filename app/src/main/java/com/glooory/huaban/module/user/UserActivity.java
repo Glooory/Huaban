@@ -74,6 +74,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private UserBoardFragment boardFragment;
     private UserPinFragment pinFragment;
     private UserLikeFragment likeFragment;
+    private String mUserName;
 
     @BindView(R.id.img_image_user)
     SimpleDraweeView mImgImageUser;
@@ -118,9 +119,10 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         return "UserActivity";
     }
 
-    public static void launch(Activity activity, String userId) {
+    public static void launch(Activity activity, String userId, String userName) {
         Intent intent = new Intent(activity, UserActivity.class);
         intent.putExtra(Constant.USERID, userId);
+        intent.putExtra(Constant.USERNAME, userName);
         activity.startActivity(intent);
     }
 
@@ -197,13 +199,10 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     }
 
-    private void updateViewAfterHttp() {
-
-    }
-
     private void initRes() {
         //判断是否是自己
         String userIdTemp = getIntent().getExtras().getString(Constant.USERID);
+        mUserName = getIntent().getExtras().getString(Constant.USERNAME);
         String myId = (String) SPUtils.get(getApplicationContext(), Constant.USERID, "");
         isMe = myId.equals(userIdTemp);
         titles = getResources().getStringArray(R.array.user_appbar_title_array);
@@ -226,7 +225,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         @Override
                         public void onError(Throwable e) {
                             Logger.d(e.getMessage());
-                            updateViewAfterHttp();
                         }
 
                         @Override
@@ -245,7 +243,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mBoardCount = bean.getBoard_count();
         mCollectionCount = bean.getPin_count();
         mLikeCount = bean.getLike_count();
-
     }
 
     private void setUserTextInfo(UserInfoBean bean) {
@@ -461,7 +458,8 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return UserBoardFragment.newInstance(mUserId, mBoardCount);
+                    Logger.d(mUserName);
+                    return UserBoardFragment.newInstance(mUserId, mBoardCount, mUserName);
                 case 1:
                     return UserPinFragment.newInstance(mUserId, mCollectionCount);
                 case 2:

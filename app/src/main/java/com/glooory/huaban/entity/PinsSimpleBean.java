@@ -1,9 +1,12 @@
 package com.glooory.huaban.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Glooory on 2016/9/1 0001.
  */
-public class PinsSimpleBean {
+public class PinsSimpleBean implements Parcelable {
 
     /**
      * pin_id : 670997406
@@ -200,7 +203,7 @@ public class PinsSimpleBean {
         this.orig_source = orig_source;
     }
 
-    public static class FileBean {
+    public static class FileBean implements Parcelable {
         private String farm;
         private String bucket;
         private String key;
@@ -264,6 +267,109 @@ public class PinsSimpleBean {
         public void setWidth(String width) {
             this.width = width;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.farm);
+            dest.writeString(this.bucket);
+            dest.writeString(this.key);
+            dest.writeString(this.type);
+            dest.writeString(this.height);
+            dest.writeString(this.frames);
+            dest.writeString(this.width);
+        }
+
+        public FileBean() {
+        }
+
+        protected FileBean(Parcel in) {
+            this.farm = in.readString();
+            this.bucket = in.readString();
+            this.key = in.readString();
+            this.type = in.readString();
+            this.height = in.readString();
+            this.frames = in.readString();
+            this.width = in.readString();
+        }
+
+        public static final Creator<FileBean> CREATOR = new Creator<FileBean>() {
+            @Override
+            public FileBean createFromParcel(Parcel source) {
+                return new FileBean(source);
+            }
+
+            @Override
+            public FileBean[] newArray(int size) {
+                return new FileBean[size];
+            }
+        };
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.pin_id);
+        dest.writeInt(this.user_id);
+        dest.writeInt(this.board_id);
+        dest.writeInt(this.file_id);
+        dest.writeParcelable(this.file, flags);
+        dest.writeInt(this.media_type);
+        dest.writeString(this.source);
+        dest.writeString(this.link);
+        dest.writeString(this.raw_text);
+        dest.writeInt(this.via);
+        dest.writeInt(this.via_user_id);
+        dest.writeInt(this.original);
+        dest.writeInt(this.created_at);
+        dest.writeInt(this.like_count);
+        dest.writeInt(this.comment_count);
+        dest.writeInt(this.repin_count);
+        dest.writeInt(this.is_private);
+        dest.writeString(this.orig_source);
+    }
+
+    public PinsSimpleBean() {
+    }
+
+    protected PinsSimpleBean(Parcel in) {
+        this.pin_id = in.readInt();
+        this.user_id = in.readInt();
+        this.board_id = in.readInt();
+        this.file_id = in.readInt();
+        this.file = in.readParcelable(FileBean.class.getClassLoader());
+        this.media_type = in.readInt();
+        this.source = in.readString();
+        this.link = in.readString();
+        this.raw_text = in.readString();
+        this.via = in.readInt();
+        this.via_user_id = in.readInt();
+        this.original = in.readInt();
+        this.created_at = in.readInt();
+        this.like_count = in.readInt();
+        this.comment_count = in.readInt();
+        this.repin_count = in.readInt();
+        this.is_private = in.readInt();
+        this.orig_source = in.readString();
+    }
+
+    public static final Parcelable.Creator<PinsSimpleBean> CREATOR = new Parcelable.Creator<PinsSimpleBean>() {
+        @Override
+        public PinsSimpleBean createFromParcel(Parcel source) {
+            return new PinsSimpleBean(source);
+        }
+
+        @Override
+        public PinsSimpleBean[] newArray(int size) {
+            return new PinsSimpleBean[size];
+        }
+    };
 }

@@ -68,6 +68,11 @@ public class Constant {
 
     public static final String DATA_ITEM_COUNT = "data_item_count";
 
+    public static final String BOARD_ITEM_BEAN = "board_item_bean";
+
+    public static final String BOARD_ID = "board_id";
+    public static final String PIN_COUNT = "pin_count";
+
 
 
 }

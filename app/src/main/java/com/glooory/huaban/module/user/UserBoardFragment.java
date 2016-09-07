@@ -1,6 +1,7 @@
 package com.glooory.huaban.module.user;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.glooory.huaban.adapter.UserBoardAdapter;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseUserFragment;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.board.BoardActivity;
 import com.glooory.huaban.util.Constant;
 import com.orhanobut.logger.Logger;
 
@@ -29,14 +31,22 @@ import rx.schedulers.Schedulers;
 public class UserBoardFragment extends BaseUserFragment{
     private UserBoardAdapter mAdapter;
     private int mCurrentCount;
+    private String mUserName;
 
-    public static UserBoardFragment newInstance(String userId, int boardCount) {
+    public static UserBoardFragment newInstance(String userId, int boardCount, String userName) {
         Bundle args = new Bundle();
         args.putString(Constant.USERID, userId);
         args.putInt(Constant.DATA_ITEM_COUNT, boardCount);
+        args.putString(Constant.USERNAME, userName);
         UserBoardFragment fragment = new UserBoardFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mUserName = getArguments().getString(Constant.USERNAME);
     }
 
     @Override
@@ -65,7 +75,8 @@ public class UserBoardFragment extends BaseUserFragment{
                 switch (view.getId()) {
                     case R.id.linearlayout_image:
                         // TODO: 2016/9/4 0004 launch ImageDetailActivity
-                        Toast.makeText(getContext(), "launch ImageDetailActivity", Toast.LENGTH_SHORT).show();
+                        Logger.d(mUserName);
+                        BoardActivity.launch(getActivity(), mAdapter.getData().get(i), mUserName);
                         break;
                     case R.id.relativelayout_board_operate:
                         //// TODO: 2016/9/4 0004 board edit action

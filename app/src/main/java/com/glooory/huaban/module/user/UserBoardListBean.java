@@ -1,6 +1,6 @@
 package com.glooory.huaban.module.user;
 
-import java.util.List;
+        import java.util.List;
 
 /**
  * Created by Glooory on 2016/9/1 0001.

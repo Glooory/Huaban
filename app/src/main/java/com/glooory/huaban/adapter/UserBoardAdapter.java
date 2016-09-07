@@ -136,14 +136,6 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
                     .build();
         }
 
-        ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_fourth)).setAspectRatio(1.0f);
-        if (bean.getPins().size() > 4) {
-            String firstImgUrl = img_root_url + bean.getPins().get(4).getFile().getKey() + img_suffix_small;
-
-            new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_fourth)), firstImgUrl)
-                    .setIsRadius(true, 8)
-                    .build();
-        }
     }
 
     private String getFirstPinsFileKey(UserBoardItemBean bean) {

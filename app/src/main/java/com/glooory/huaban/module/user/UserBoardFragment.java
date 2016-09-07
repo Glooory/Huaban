@@ -134,10 +134,10 @@ public class UserBoardFragment extends BaseUserFragment{
 
     }
 
-    private void moreHttpRequest(int max) {
+    private void moreHttpRequest() {
 
          new RetrofitClient().createService(UserApi.class)
-                .httpUserBoardMaxService(mAuthorization, mUserId, max, Constant.LIMIT)
+                .httpUserBoardMaxService(mAuthorization, mUserId, mMaxId, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
                     public List<UserBoardItemBean> call(UserBoardListBean userBoardListBean) {
@@ -181,6 +181,7 @@ public class UserBoardFragment extends BaseUserFragment{
             if (mFooterView.getParent() != null) {
                 ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
             }
+
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
@@ -200,7 +201,7 @@ public class UserBoardFragment extends BaseUserFragment{
                     mAdapter.loadComplete();
                     mAdapter.addFooterView(mFooterView);
                 } else {
-                    moreHttpRequest(mMaxId);
+                    moreHttpRequest();
                 }
             }
         });

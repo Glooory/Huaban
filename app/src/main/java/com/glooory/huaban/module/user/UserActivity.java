@@ -189,13 +189,9 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        mViewpager.setAdapter(mPagerAdapter);
         mTablayout.setupWithViewPager(mViewpager);
         mViewpager.setOffscreenPageLimit(3);
         mViewpager.setCurrentItem(mCurrentPosition, true);
-
 
     }
 
@@ -243,6 +239,13 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mBoardCount = bean.getBoard_count();
         mCollectionCount = bean.getPin_count();
         mLikeCount = bean.getLike_count();
+        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mViewpager.setAdapter(mPagerAdapter);
+        String title1 = String.valueOf(bean.getBoard_count()) + " 画板";
+        String title2 = String.valueOf(bean.getPin_count()) + " 采集";
+        String title3 = String.valueOf(bean.getLike_count()) + " 关注";
+        titles = new String[]{title1, title2, title3};
+        mViewpager.getAdapter().notifyDataSetChanged();
     }
 
     private void setUserTextInfo(UserInfoBean bean) {
@@ -458,7 +461,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    Logger.d(mUserName);
                     return UserBoardFragment.newInstance(mUserId, mBoardCount, mUserName);
                 case 1:
                     return UserPinFragment.newInstance(mUserId, mCollectionCount);

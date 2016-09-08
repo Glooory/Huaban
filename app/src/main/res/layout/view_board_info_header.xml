@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_board_board_info"
     android:layout_width="match_parent"
-    android:layout_height="192dp"
+    android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
 
@@ -14,7 +14,6 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:src="@drawable/ic_avatar_def" />
 

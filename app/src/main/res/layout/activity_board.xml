@@ -17,14 +17,18 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingtoolbar_board"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="192dp"
             android:fitsSystemWindows="true"
+            app:titleEnabled="false"
             app:contentScrim="@color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:statusBarScrim="@color/transparent"
-            app:expandedTitleTextAppearance="@style/TextCollapsedAppBar">
+            app:statusBarScrim="@color/transparent">
 
-            <include layout="@layout/view_board_info_header" />
+            <include layout="@layout/view_board_info_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|bottom"
+                android:layout_marginBottom="16dp"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_board"

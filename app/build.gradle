@@ -63,4 +63,6 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
 
     compile 'com.orhanobut:logger:1.15'
+
+    compile 'com.sackcentury:shinebutton:0.1.6'
 }

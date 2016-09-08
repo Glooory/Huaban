@@ -16,7 +16,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -92,7 +96,6 @@ public class BoardActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
 
         mBoardBean = getIntent().getParcelableExtra(Constant.BOARD_ITEM_BEAN);
@@ -155,10 +158,11 @@ public class BoardActivity extends BaseActivity {
         }
 
         mCollapsingtoolbar.setExpandedTitleColor(Color.WHITE);
-        mCollapsingtoolbar.setTitle(mBoardBean.getTitle());
+        getSupportActionBar().setTitle(mBoardBean.getTitle());
+
 
         Logger.d(mUserName == null);
-        mTvBoardUserName.setText(mUserName);
+        mTvBoardUserName.setText(setUpUserSpan(mUserName));
 
         if (!TextUtils.isEmpty(mBoardBean.getDescription()) && mBoardBean.getDescription() != null
                 && !mBoardBean.getDescription().equals(" ")) {
@@ -167,36 +171,6 @@ public class BoardActivity extends BaseActivity {
             mTvBoardDes.setVisibility(View.INVISIBLE);
         }
 
-//        new RetrofitClient().createService(BoardApi.class)
-//                .httpForBoardInfoService(mAuthorization, mBoardBean.getBoard_id())
-//                .map(new Func1<SimpleBoardInfoBean, SimpleBoardInfoBean.BoardBean>() {
-//                    @Override
-//                    public SimpleBoardInfoBean.BoardBean call(SimpleBoardInfoBean simpleBoardInfoBean) {
-//                        return simpleBoardInfoBean.getBoard();
-//                    }
-//                })
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Subscriber<SimpleBoardInfoBean.BoardBean>() {
-//                    @Override
-//                    public void onCompleted() {
-//                        mTvBoardUserName.setVisibility(View.INVISIBLE);
-//                        Logger.d("onCompleted");
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        Logger.d(e.getMessage());
-//                        mTvBoardUserName.setVisibility(View.INVISIBLE);
-//                    }
-//
-//                    @Override
-//                    public void onNext(SimpleBoardInfoBean.BoardBean boardBean) {
-//                        Logger.d(boardBean.getUser().getUsername());
-//                        mTvBoardUserName.setText("来自 " + boardBean.getUser().getUsername());
-//                    }
-//                });
-
         String coverUrl = "";
         if (mBoardBean.getPins().size() > 0) {
             String coverKey = mBoardBean.getPins().get(0).getFile().getKey();
@@ -204,6 +178,7 @@ public class BoardActivity extends BaseActivity {
                 coverUrl = getString(R.string.urlImageRoot) + coverKey + getString(R.string.image_suffix_small);
             }
         }
+        mImgBoardCover.setAspectRatio(1.0f);
         if (!TextUtils.isEmpty(coverUrl)) {
             new FrescoLoader.Builder(mContext, mImgBoardCover, coverUrl)
                     .setIsRadius(false)
@@ -212,7 +187,7 @@ public class BoardActivity extends BaseActivity {
                         @Override
                         protected void onNewResultImpl(Bitmap bitmap) {
                             if (bitmap != null) {
-                                Bitmap low = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+                                Bitmap low = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
                                 final Drawable blured = new BitmapDrawable(getResources(), FastBlurUtil.doBlur(low, 10, false));
                                 if (Utils.checkUIThreadBoolean()) {
                                     mAppBar.setBackground(blured);
@@ -275,6 +250,14 @@ public class BoardActivity extends BaseActivity {
             return "";
         }
 
+    }
+
+    private SpannableString setUpUserSpan(String username) {
+        SpannableString ss = new SpannableString("来自 " + username);
+        ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.secondary_text)),
+                0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new RelativeSizeSpan(0.9f), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return ss;
     }
 
 }

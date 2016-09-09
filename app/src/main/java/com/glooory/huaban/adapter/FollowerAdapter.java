@@ -13,7 +13,6 @@ import com.glooory.huaban.entity.FollowerBean;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.util.CompatUtils;
 import com.glooory.huaban.util.Utils;
-import com.orhanobut.logger.Logger;
 
 /**
  * Created by Glooory on 2016/9/7 0007 21:53.
@@ -48,17 +47,12 @@ public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean
         String key = bean.getAvatar().getKey();
         String avatarUrl = mImgUrlRoot + key + mSmallSuffix;
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_avatar), avatarUrl)
-                .setIsCircle(true)
+                .setIsCircle(true, true)
                 .setProgressbarImage(mProgressDrawable)
                 .build();
 
         if (bean.getPins() == null || bean.getPins().size() == 0) {
             holder.getView(R.id.ll_card_follower_tinys).setVisibility(View.GONE);
-        }
-
-        Logger.d(bean.getPins() == null);
-        if (bean.getPins() != null) {
-            Logger.d(bean.getPins().size());
         }
 
         if (bean.getPins().size() > 0) {

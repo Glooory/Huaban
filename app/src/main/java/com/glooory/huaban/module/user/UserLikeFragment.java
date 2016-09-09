@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.PinQuickAdapter;
 import com.glooory.huaban.api.UserApi;
@@ -71,7 +72,8 @@ public class UserLikeFragment extends BaseUserFragment {
                     case R.id.item_card_via_ll:
                         UserActivity.launch(getActivity(),
                                 String.valueOf(mAdapter.getItem(i).getUser_id()),
-                                mAdapter.getItem(i).getUser().getUsername());
+                                mAdapter.getItem(i).getUser().getUsername(),
+                                (SimpleDraweeView) view.findViewById(R.id.item_card_pin_avaterimg));
                         break;
                 }
             }

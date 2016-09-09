@@ -8,7 +8,9 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
+import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.module.user.UserBoardItemBean;
 import com.glooory.huaban.util.CompatUtils;
@@ -33,6 +35,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
     private Context mContext;
     private String img_root_url;
     private String img_suffix_small;
+    private int mDesireWidth;
 
 
     public UserBoardAdapter(Context context, boolean isMe) {
@@ -51,7 +54,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         this.mDrawableEdit = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_mode_edit_black_24dp, R.color.tint_list_grey);
         this.mDrawableFollowing = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_add_black_24dp, R.color.tint_list_grey);
         this.mDrawableFollowed = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_check_black_24dp, R.color.tint_list_grey);
-
+        mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
     }
 
     @Override
@@ -100,14 +103,14 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
 
         String url_img = img_root_url + getFirstPinsFileKey(bean);
 
-        float ratio = 1.0f;
-        ((SimpleDraweeView) holder.getView(R.id.img_card_image)).setAspectRatio(ratio);
+        ((SimpleDraweeView) holder.getView(R.id.img_card_image)).setAspectRatio(1.0f);
 
         Drawable dProgressImg =
                 CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
 
         new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_card_image)), url_img)
                 .setProgressbarImage(dProgressImg)
+                .setResizeOptions(new ResizeOptions(mDesireWidth, mDesireWidth))
                 .build();
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)).setAspectRatio(1.0f);

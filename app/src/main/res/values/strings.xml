@@ -209,5 +209,6 @@
         <item>喜欢</item>
     </string-array>
 
-
+    <string name="board_tran">board_tran</string>
+    <string name="avatar_tran">avatar_tran</string>
 </resources>

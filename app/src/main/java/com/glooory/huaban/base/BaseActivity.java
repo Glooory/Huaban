@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.view.DraweeTransition;
 import com.glooory.huaban.R;
 import com.glooory.huaban.user.UserSingleton;
 import com.glooory.huaban.util.Base64;
@@ -32,6 +34,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract String getTAG();
 
     protected Context mContext;
+
+    public int mScreenWidthPixels;
 
     //用户是否登录
     public boolean isLogin = false;
@@ -73,6 +77,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setUpTransition();
         //对于大于4.4的系统，动态设置状态栏为透明状态
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (isTranslucentStatusBar()) {
@@ -85,6 +90,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutId());
         ButterKnife.bind(this);
         mContext = this;
+        mScreenWidthPixels = this.getResources().getDisplayMetrics().widthPixels;
         getNecessaryData();
         initResAndListener();
     }
@@ -135,5 +141,22 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         isLogin = (boolean) SPUtils.get(getApplicationContext(), Constant.ISLOGIN, Boolean.FALSE);
+    }
+
+    //fresco shared element transition 已经解决的bug 调用以下方法
+    private void setUpTransition() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            TransitionSet transitionSet = new TransitionSet();
+//            transitionSet.addTransition(new ChangeBounds());
+//            transitionSet.addTransition(new DraweeTransition(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
+//            transitionSet.addTransition(new DraweeTransition((ScalingUtils.ScaleType.CENTER_CROP), ScalingUtils.ScaleType.CENTER_CROP));
+//            transitionSet.addTransition(new DraweeTransition(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
+//            getWindow().setSharedElementEnterTransition(transitionSet);
+
+            getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(
+                    ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
+            getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(
+                    ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
+        }
     }
 }

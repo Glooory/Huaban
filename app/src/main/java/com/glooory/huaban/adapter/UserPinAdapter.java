@@ -10,7 +10,9 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
+import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.util.CompatUtils;
@@ -22,11 +24,13 @@ import com.glooory.huaban.util.Utils;
 public class UserPinAdapter extends BaseQuickAdapter<PinsBean>{
     private Context mContext;
     private String imgUrlRoot;
+    private int mDesireWidth;
 
     public UserPinAdapter(Context context) {
         super(R.layout.card_user_item_pin, null);
         this.mContext = context;
         imgUrlRoot = context.getString(R.string.urlImageRoot);
+        mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
     }
 
     @Override
@@ -60,9 +64,11 @@ public class UserPinAdapter extends BaseQuickAdapter<PinsBean>{
                 .addOnClickListener(R.id.linearlayout_user_pin);
         //加载图片
         Drawable progressDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
+        int disireHeight = (int) (mDesireWidth / ratio);
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_user_item_pin),
                 imgUrlRoot + bean.getFile().getKey())
                 .setProgressbarImage(progressDrawable)
+                .setResizeOptions(new ResizeOptions(mDesireWidth, disireHeight))
                 .build();
 
     }

@@ -12,8 +12,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="@drawable/drawable_default_selector"
-        android:transitionName="card_image">
+        android:foreground="@drawable/drawable_default_selector">
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/img_card_image"
@@ -22,6 +21,7 @@
             android:maxHeight="2000dp"
             android:maxWidth="2000dp"
             fresco:progressBarAutoRotateInterval="1000"
+            fresco:actualImageScaleType="centerCrop"
             tools:layout_height="100dp" />
 
         <RelativeLayout

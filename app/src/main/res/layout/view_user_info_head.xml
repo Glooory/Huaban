@@ -15,7 +15,8 @@
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/img_image_user"
         android:layout_width="@dimen/user_head_circle_big_size"
-        android:layout_height="@dimen/user_head_circle_big_size" />
+        android:layout_height="@dimen/user_head_circle_big_size"
+        android:transitionName="@string/avatar_tran"/>
 
     <TextView
         android:id="@+id/tv_user_name"

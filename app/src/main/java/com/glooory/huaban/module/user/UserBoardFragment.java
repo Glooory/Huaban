@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.UserBoardAdapter;
 import com.glooory.huaban.api.UserApi;
@@ -74,7 +75,7 @@ public class UserBoardFragment extends BaseUserFragment{
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.linearlayout_image:
-                        BoardActivity.launch(getActivity(), mAdapter.getData().get(i), mUserName);
+                        BoardActivity.launch(getActivity(), mAdapter.getData().get(i), mUserName,(SimpleDraweeView) view.findViewById(R.id.img_card_image));
                         break;
                     case R.id.relativelayout_board_operate:
                         //// TODO: 2016/9/4 0004 board edit action
@@ -153,7 +154,6 @@ public class UserBoardFragment extends BaseUserFragment{
                 .subscribe(new Subscriber<List<UserBoardItemBean>>() {
                     @Override
                     public void onCompleted() {
-                        Logger.d("LoadMore onCompeted()");
                     }
 
                     @Override

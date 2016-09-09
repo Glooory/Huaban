@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
+import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.util.CompatUtils;
@@ -24,11 +26,15 @@ import com.glooory.huaban.util.Utils;
 public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
     private Context mContext;
     private final String urlRoot;
+    private final String url_suffix;
+    private final int mDesireWidth;
 
     public PinQuickAdapter(Context context) {
         super(R.layout.card_item_pin, null);
         this.mContext = context;
         urlRoot = mContext.getResources().getString(R.string.urlImageRoot);
+        url_suffix = context.getString(R.string.image_suffix_small);
+        mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
     }
     
     @Override
@@ -36,7 +42,7 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
         //图片地址
         String urlImg = urlRoot + pinsBean.getFile().getKey();
         //头像地址
-        String urlAvatar = urlRoot + pinsBean.getUser().getAvatar().getKey();
+        String urlAvatar = urlRoot + pinsBean.getUser().getAvatar().getKey() + url_suffix;
 
         //是否需要显示GIFImageButton
         if (Utils.checkIsGif(pinsBean.getFile().getType())) {
@@ -67,15 +73,15 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
                 .addOnClickListener(R.id.item_card_via_ll);
 
         float ratio = Utils.getAspectRatio(pinsBean.getFile().getWidth(), pinsBean.getFile().getHeight());
+        int disireHeight = (int) (mDesireWidth / ratio);
         ((SimpleDraweeView) holder.getView(R.id.item_card_pin_img)).setAspectRatio(ratio);
 
         Drawable mProgressImage = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
 
         //加载pin图片
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.item_card_pin_img), urlImg)
-                .setPlaceHolderImage(mContext.getResources().getDrawable(R.drawable.ic_account_box_white_36dp))
-                .setFailureIamge(mContext.getResources().getDrawable(R.drawable.ic_account_box_white_36dp))
                 .setProgressbarImage(mProgressImage)
+                .setResizeOptions(new ResizeOptions(mDesireWidth, disireHeight))
                 .build();
 
         //加载头像

@@ -241,7 +241,8 @@ public class MainActivity extends BaseActivity
                 if (isLogin) {
                     UserActivity.launch(MainActivity.this,
                             (String) SPUtils.get(getApplicationContext(), Constant.USERID, ""),
-                            (String) SPUtils.get(getApplicationContext(), Constant.USERNAME, ""));
+                            (String) SPUtils.get(getApplicationContext(), Constant.USERNAME, ""),
+                            mAvatarImg);
                 } else {
                     LoginActivity.launch(this);
                 }

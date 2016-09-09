@@ -6,11 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -39,7 +41,6 @@ import com.glooory.huaban.module.user.UserBoardItemBean;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.FastBlurUtil;
 import com.glooory.huaban.util.Utils;
-import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,11 +77,20 @@ public class BoardActivity extends BaseActivity {
     @BindView(R.id.container_viewpager)
     ViewPager mViewpager;
 
-    public static void launch(Activity activity, UserBoardItemBean boardItemBean, String userName) {
+    public static void launch(Activity activity, UserBoardItemBean boardItemBean, String userName, SimpleDraweeView animView) {
         Intent intent = new Intent(activity, BoardActivity.class);
         intent.putExtra(Constant.BOARD_ITEM_BEAN, boardItemBean);
         intent.putExtra(Constant.USERNAME, userName);
-        activity.startActivity(intent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            animView.setTransitionName(activity.getString(R.string.board_tran));
+            activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    activity, animView, activity.getString(R.string.board_tran)
+            ).toBundle());
+        } else {
+            activity.startActivity(intent);
+        }
+
     }
 
     @Override
@@ -160,8 +170,6 @@ public class BoardActivity extends BaseActivity {
         mCollapsingtoolbar.setExpandedTitleColor(Color.WHITE);
         getSupportActionBar().setTitle(mBoardBean.getTitle());
 
-
-        Logger.d(mUserName == null);
         mTvBoardUserName.setText(setUpUserSpan(mUserName));
 
         if (!TextUtils.isEmpty(mBoardBean.getDescription()) && mBoardBean.getDescription() != null
@@ -254,7 +262,7 @@ public class BoardActivity extends BaseActivity {
 
     private SpannableString setUpUserSpan(String username) {
         SpannableString ss = new SpannableString("来自 " + username);
-        ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.secondary_text)),
+        ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.grey_400)),
                 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new RelativeSizeSpan(0.9f), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return ss;

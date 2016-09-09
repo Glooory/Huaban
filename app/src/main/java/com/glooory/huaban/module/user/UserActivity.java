@@ -6,12 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -27,6 +29,8 @@ import android.widget.TextView;
 
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
@@ -57,7 +61,7 @@ import rx.schedulers.Schedulers;
  * Created by Glooory on 2016/9/3 0003 17:46.
  */
 public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener,
-        BaseUserFragment.FragmentRefreshListener{
+        BaseUserFragment.FragmentRefreshListener {
     public boolean isMe;
     private String mUserId;
     @BindView(R.id.btn_follow_operation)
@@ -119,25 +123,38 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         return "UserActivity";
     }
 
-    public static void launch(Activity activity, String userId, String userName) {
+    public static void launch(Activity activity, String userId, String userName, SimpleDraweeView tranView) {
         Intent intent = new Intent(activity, UserActivity.class);
         intent.putExtra(Constant.USERID, userId);
         intent.putExtra(Constant.USERNAME, userName);
-        activity.startActivity(intent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tranView.setTransitionName(activity.getResources().getString(R.string.avatar_tran));
+            activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    activity, tranView, activity.getResources().getString(R.string.avatar_tran)
+            ).toBundle());
+        } else {
+            activity.startActivity(intent);
+        }
+
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
 
         mUserId = getIntent().getExtras().getString(Constant.USERID);
-        Logger.d(mUserId);
 
         initRes();
         initView();
         httpForUserInfo();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
+            getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
+        }
 
     }
 
@@ -292,13 +309,11 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
      * @param bean
      */
     private void setUserImgInfo(UserInfoBean bean) {
-
-        String avatarKey = bean.getAvatar().getKey();
-        if (!TextUtils.isEmpty(avatarKey)) {
-            String avatarUrl = mHttpRoot + avatarKey;
+        String avatarUrl = mHttpRoot + bean.getAvatar().getKey() + getResources().getString(R.string.image_suffix_small);
+        if (!TextUtils.isEmpty(avatarUrl)) {
+//            String avatarUrl = mHttpRoot + mAvatarUrl + getResources().getString(R.string.image_suffix_small);
 
             new FrescoLoader.Builder(getApplicationContext(), mImgImageUser, avatarUrl)
-                    .setPlaceHolderImage(CompatUtils.getTintDrawable(mContext, R.drawable.ic_avatar_def, Color.WHITE))
                     .setIsCircle(true, true)
                     .setBitmapDataSubscriber(new BaseBitmapDataSubscriber() {
                         @Override

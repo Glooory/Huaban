@@ -74,6 +74,7 @@ public class Constant {
     public static final String PIN_COUNT = "pin_count";
     public static final String FOLLOWER_COUNT = "follower_count";
 
+    public static final String AVATAR_URL = "avatar_url";
 
 
 }

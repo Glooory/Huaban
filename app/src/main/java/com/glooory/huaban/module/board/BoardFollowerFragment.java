@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.FollowerAdapter;
 import com.glooory.huaban.api.BoardApi;
@@ -107,7 +108,8 @@ public class BoardFollowerFragment extends Fragment implements BaseQuickAdapter.
                     case R.id.card_follower:
                         UserActivity.launch(getActivity(),
                                 mAdapter.getItem(i).getUser_id(),
-                                mAdapter.getItem(i).getUsername());
+                                mAdapter.getItem(i).getUsername(),
+                                (SimpleDraweeView) view.findViewById(R.id.img_card_follower_avatar));
                         break;
                 }
             }

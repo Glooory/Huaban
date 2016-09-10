@@ -126,7 +126,6 @@ public class FrescoLoader {
         if (builder.mIsRadius) {
             builderM.setRoundingParams(RoundingParams.fromCornersRadius(builder.mRadius));
         }
-
     }
 
     //构造器

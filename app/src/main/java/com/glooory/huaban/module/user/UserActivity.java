@@ -313,15 +313,18 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         if (!TextUtils.isEmpty(avatarUrl)) {
 //            String avatarUrl = mHttpRoot + mAvatarUrl + getResources().getString(R.string.image_suffix_small);
 
-            new FrescoLoader.Builder(getApplicationContext(), mImgImageUser, avatarUrl)
+            mImgImageUser.setVisibility(View.VISIBLE);
+            new FrescoLoader.Builder(mContext, mImgImageUser, avatarUrl)
                     .setIsCircle(true, true)
+                    .setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP)
                     .setBitmapDataSubscriber(new BaseBitmapDataSubscriber() {
                         @Override
                         protected void onNewResultImpl(Bitmap bitmap) {
                             if (bitmap != null) {
-                                Bitmap low = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
+                                final Bitmap low = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
                                 final Drawable blurDrawable = new BitmapDrawable(getResources(), FastBlurUtil.doBlur(low, 10, false));
                                 if (Utils.checkUIThreadBoolean()) {
+                                    Logger.d("setavcata");
                                     mAppBar.setBackground(blurDrawable);
                                 } else {
                                     runOnUiThread(new Runnable() {

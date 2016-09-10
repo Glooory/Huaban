@@ -188,6 +188,7 @@ public class BoardActivity extends BaseActivity {
         }
         mImgBoardCover.setAspectRatio(1.0f);
         if (!TextUtils.isEmpty(coverUrl)) {
+            mImgBoardCover.setVisibility(View.VISIBLE);
             new FrescoLoader.Builder(mContext, mImgBoardCover, coverUrl)
                     .setIsRadius(false)
                     .setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP)

@@ -21,6 +21,7 @@ import com.glooory.huaban.api.AllApi;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.imagedetail.ImageDetailActivity;
 import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.Constant;
@@ -98,7 +99,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 switch (view.getId()) {
                     case R.id.item_card_pin_img_ll:
                         // TODO: 2016/9/4 0004 launch ImageDetailActivity
-                        Toast.makeText(getContext(), "you just clicked the img", Toast.LENGTH_SHORT).show();
+                        ImageDetailActivity.launch(getActivity());
                         break;
                     case R.id.item_card_via_ll:
                         UserActivity.launch(getActivity(), String.valueOf(mAdapter.getItem(i).getUser_id()),

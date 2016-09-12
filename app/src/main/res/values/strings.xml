@@ -30,12 +30,12 @@
     <string name="snack_message_main_gather">start to gather</string>
     <string name="snack_message_not_notify">not new data</string>
     <string name="snack_message_login_success">login success</string>
-    <string name="snack_message_net_error">network error please to check network</string>
-    <string name="snack_message_timeout_error">time out please to check network</string>
-    <string name="snack_message_password_error">This password is incorrect</string>
-    <string name="snack_message_unknown_error">unknown error</string>
-    <string name="snack_message_data_error">data error</string>
-    <string name="snack_action_to_setting">Setting</string>
+    <string name="snack_message_net_error">网络错误，请检查网络设置</string>
+    <string name="snack_message_timeout_error">请求超时，请重试</string>
+    <string name="snack_message_password_error">密码错误</string>
+    <string name="snack_message_unknown_error">未知错误</string>
+    <string name="snack_message_data_error">数据出错</string>
+    <string name="snack_action_to_setting">设置</string>
 
 
     <string name="nav_user_name">username</string>
@@ -106,14 +106,14 @@
     <string name="text_to">To</string>
     <string name="title_activity_settings">设置</string>
 
-    <string name="dialog_title_gather">Gather</string>
-    <string name="dialog_title_delete">Delete</string>
-    <string name="dialog_title_edit">Edit</string>
-    <string name="dialog_title_add">Add</string>
-    <string name="dialog_negative">Cancel</string>
-    <string name="dialog_gather_positive">Gather</string>
-    <string name="dialog_add_positive">Add</string>
-    <string name="dialog_edit_positive">Confirm</string>
+    <string name="dialog_title_gather">采集</string>
+    <string name="dialog_title_delete">删除</string>
+    <string name="dialog_title_edit">编辑</string>
+    <string name="dialog_title_add">添加</string>
+    <string name="dialog_negative">取消</string>
+    <string name="dialog_gather_positive">采集</string>
+    <string name="dialog_add_positive">添加</string>
+    <string name="dialog_edit_positive">确定</string>
     <string name="dialog_edit_neutral">Delete This</string>
     <string name="dialog_delete_positive">Delete</string>
 
@@ -178,7 +178,7 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="text_gather_warning">has been to gather to %s</string>
+    <string name="text_gather_warning">这张图片已经在你的 %s 画板里了</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="header_user_collection">采集</string>
@@ -221,4 +221,5 @@
     <string name="collection">采集</string>
     <string name="like">喜欢</string>
     <string name="download">下载</string>
+    <string name="gather_anyway">仍要采集</string>
 </resources>

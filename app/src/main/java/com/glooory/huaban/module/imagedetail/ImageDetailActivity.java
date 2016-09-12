@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -14,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -36,6 +38,7 @@ import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.module.user.UserBoardItemBean;
 import com.glooory.huaban.util.CompatUtils;
 import com.glooory.huaban.util.Constant;
+import com.glooory.huaban.util.SPUtils;
 import com.glooory.huaban.util.TimeUtils;
 import com.jakewharton.rxbinding.view.RxView;
 import com.orhanobut.logger.Logger;
@@ -55,7 +58,9 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Glooory on 2016/9/10 0010 19:43.
  */
-public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapter.RequestLoadMoreListener {
+public class ImageDetailActivity extends BaseActivity
+        implements BaseQuickAdapter.RequestLoadMoreListener,
+        GatherDiologFragment.GatherInfoListener {
 
 
     @BindView(R.id.toolbar_image_detail)
@@ -95,6 +100,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
     private int mUserId;
     private String mBoard;
     private boolean mIsLiked;
+    private boolean mIsGathered = false;
     private float mRatio;
     private UserBoardItemBean mBoardBean;
     private PinQuickAdapter mAdapter;
@@ -102,6 +108,9 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
     private int PAGE_SIZE = 20;
     private int mLikeCount;
     private int mGatherCount;
+    private String[] mBoardIds;
+    private String mRawText;
+    private String mGatherBelong;
 
     public static void launch(Activity activity, int pinId, float ratio, SimpleDraweeView image) {
         Intent intent = new Intent(activity, ImageDetailActivity.class);
@@ -137,6 +146,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         mPinId = getIntent().getExtras().getInt(Constant.PIN_ID);
         mRatio = getIntent().getExtras().getFloat(Constant.RATIO);
 
+        httpForIsGathered();
         initAdapter();
         initView();
         mRecyclerView.setAdapter(mAdapter);
@@ -160,9 +170,16 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
                 .subscribe(new Action1<Void>() {
                     @Override
                     public void call(Void aVoid) {
-                        Logger.d("pin linearlayout");
                         mSbtnlPin.performClick();
-                        // TODO: 2016/9/11 0011 pin operation
+                    }
+                });
+
+        RxView.clicks(mSbtnlPin)
+                .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
+                .subscribe(new Action1<Void>() {
+                    @Override
+                    public void call(Void aVoid) {
+                        actionGather();
                     }
                 });
 
@@ -171,9 +188,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
                 .subscribe(new Action1<Void>() {
                     @Override
                     public void call(Void aVoid) {
-                        Logger.d("like linearlayout");
                         mSbtnlLike.performClick();
-                        // TODO: 2016/9/11 0011 pin operation
                     }
                 });
 
@@ -299,6 +314,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         mBoardBean = pinDetailBean.getPin().getBoard();
         mGatherCount = pinDetailBean.getPin().getRepin_count();
         mLikeCount = pinDetailBean.getPin().getLike_count();
+        mRawText = pinDetailBean.getPin().getRaw_text();
 
         //加载图片
         if (mRatio <= 0) {
@@ -330,7 +346,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
 
         //是否已经喜欢以及喜欢和采集数量
         mIsLiked = pinDetailBean.getPin().isLiked();
-        setUpLikeSbtn(mIsLiked);
+        setUpLikeSbtn();
         mTvGathercount.setText(String.format(mGatherFormat, mGatherCount));
         mTvLikecount.setText(String.format(mLikeFormat, mLikeCount));
 
@@ -418,7 +434,6 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
     private void actionLike() {
         if (isLogin) {
             String operate = mIsLiked ? Constant.OPERATEUNLIKE : Constant.OPERATELIKE;
-            Logger.d(operate);
             new RetrofitClient().createService(OperateApi.class)
                     .httpLikePinService(mAuthorization, mPinId, operate)
                     .subscribeOn(Schedulers.io())
@@ -431,6 +446,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
 
                         @Override
                         public void onError(Throwable e) {
+                            mSbtnlLike.setChecked(false);
                             checkException(e, mCoordinator);
                         }
 
@@ -438,7 +454,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
                         public void onNext(LikePinOperateBean likePinOperateBean) {
                             setUpWithLikeTv();
                             mIsLiked = !mIsLiked;
-                            setUpLikeSbtn(mIsLiked);
+                            setUpLikeSbtn();
                         }
                     });
 
@@ -447,26 +463,108 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         }
     }
 
-    private void setUpLikeSbtn(boolean isLiked) {
-        mSbtnlLike.setChecked(isLiked);
+    private void actionGather() {
+
+        setUpPinSbtn();
+        if (isLogin) {
+            if (mIsGathered) {
+                Snackbar snackbar = Snackbar.make(mCoordinator,
+                        String.format(getString(R.string.text_gather_warning), mGatherBelong), Snackbar.LENGTH_LONG);
+                snackbar.setAction(R.string.gather_anyway, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showGatherDialog();
+                    }
+                }).show();
+            } else {
+                showGatherDialog();
+            }
+        } else {
+            showLoginSnackbar(ImageDetailActivity.this, mCoordinator);
+            mSbtnlPin.setChecked(mIsGathered);
+        }
+
+    }
+
+    private void setUpPinSbtn() {
+        mSbtnlPin.setChecked(mIsGathered);
+    }
+
+    private void setUpLikeSbtn() {
+        mSbtnlLike.setChecked(mIsLiked);
     }
 
     private void setUpWithGatherTv() {
-        mGatherCount = mIsLiked ? --mGatherCount : ++mGatherCount;
+        mGatherCount = mIsGathered ? --mGatherCount : ++mGatherCount;
         mTvGathercount.setText(String.format(mGatherFormat, mGatherCount));
     }
 
     private void setUpWithLikeTv() {
-        Logger.d(mLikeCount);
         mLikeCount = mIsLiked ? --mLikeCount : ++mLikeCount;
-        Logger.d(mLikeCount);
         mTvLikecount.setText(String.format(mLikeFormat, mLikeCount));
+    }
+
+    private void showGatherDialog() {
+
+        String boardTitleArray = (String) SPUtils.get(getApplicationContext(), Constant.BOARDTITLEARRAY, "");
+        String mBoardId = (String) SPUtils.get(getApplicationContext(), Constant.BOARDIDARRAY, "");
+
+        String[] array = boardTitleArray != null ? boardTitleArray.split(Constant.SEPARATECOMMA) : new String[0];
+        mBoardIds = mBoardId != null ? mBoardId.split(Constant.SEPARATECOMMA) : new String[0];
+        GatherDiologFragment.create(mAuthorization, mPinId, mRawText, array).show(getSupportFragmentManager(), null);
+
+    }
+
+    //检查图片是否已经采集过
+    private void httpForIsGathered() {
+
+        new RetrofitClient().createService(OperateApi.class)
+                .httpGatheredInfoService(mAuthorization, mPinId, Constant.OPERATECHECK)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GatherInfoBean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(GatherInfoBean gatherInfoBean) {
+                        if (gatherInfoBean.getExist_pin() != null) {
+                            mIsGathered = true;
+                            mSbtnlPin.setChecked(true);
+                            mGatherBelong = gatherInfoBean.getExist_pin().getBoard().getTitle();
+                        }
+                    }
+                });
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_image_detail, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.memu_action_pin:
+                mSbtnlPin.performClick();
+                return true;
+            case R.id.memu_action_like:
+                mSbtnlLike.performClick();
+                return true;
+            case R.id.memu_action_download:
+                // TODO: 2016/9/12 0012 download
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -477,5 +575,40 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
                 httpForMore();
             }
         });
+    }
+
+    @Override
+    public void onGatherInfoDone(String gatherDes, int selection) {
+        String toBoardId = mBoardIds[selection];
+
+        new RetrofitClient().createService(OperateApi.class)
+                .httpGatherPinService(mAuthorization, toBoardId, gatherDes, String.valueOf(mPinId))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GatherResultBean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mSbtnlPin.setChecked(false);
+                        checkException(e, mCoordinator);
+                    }
+
+                    @Override
+                    public void onNext(GatherResultBean gatherResultBean) {
+                        setUpWithGatherTv();
+                        mIsGathered = true;
+                        setUpPinSbtn();
+                    }
+                });
+
+    }
+
+    @Override
+    public void onGatherCancel() {
+        mSbtnlPin.setChecked(false);
     }
 }

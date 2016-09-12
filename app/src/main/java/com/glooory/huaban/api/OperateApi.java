@@ -1,11 +1,17 @@
 package com.glooory.huaban.api;
 
+import com.glooory.huaban.module.imagedetail.GatherInfoBean;
+import com.glooory.huaban.module.imagedetail.GatherResultBean;
 import com.glooory.huaban.module.imagedetail.LikePinOperateBean;
 import com.glooory.huaban.util.Constant;
 
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -21,5 +27,19 @@ public interface OperateApi {
                                                       @Path("pinId") int pinId,
                                                       @Path("operate") String operate);
 
+    //采集图片前判断是否已经在自己的采集中
+    //https:api.huaban.com/pins/134541447/repin?check=true
+    @GET("pins/{viaId}/repin/")
+    Observable<GatherInfoBean> httpGatheredInfoService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                       @Path("viaId") int viaId,
+                                                       @Query("check") boolean check);
 
+    //采集某个图片
+    //https://api.huaban.com/pins/ body=board_id=17891564&text=描述内容&via=707423726
+    @FormUrlEncoded
+    @POST("pins/")
+    Observable<GatherResultBean> httpGatherPinService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                      @Field("board_id") String boardId,
+                                                      @Field("text") String des,
+                                                      @Field("via") String pinsId);
 }

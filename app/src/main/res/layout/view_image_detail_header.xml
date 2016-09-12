@@ -46,7 +46,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
-                android:text="12 采集"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp" />
 
@@ -80,7 +79,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
-                android:text="21 喜欢"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp" />
 
@@ -96,7 +94,6 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="8dp"
-        android:text="该采集的详细描述，暂时没有任何描述"
         android:textColor="@color/primary_text"
         android:textSize="18sp" />
 

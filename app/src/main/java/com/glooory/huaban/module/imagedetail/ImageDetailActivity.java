@@ -126,7 +126,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_detail_temp;
+        return R.layout.activity_image_detail;
     }
 
     @Override

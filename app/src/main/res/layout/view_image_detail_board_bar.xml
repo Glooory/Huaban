@@ -17,8 +17,7 @@
         android:id="@+id/img_image_detail_board"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        fresco:backgroundImage="@color/accent"
-        fresco:placeholderImage="@drawable/ic_avatar_def" />
+        fresco:backgroundImage="@color/transparent" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -42,7 +41,6 @@
         android:layout_toRightOf="@id/img_image_detail_board"
         android:ellipsize="marquee"
         android:maxLines="1"
-        android:text="画板名称"
         android:textColor="@color/primary_text"
         android:textSize="18sp" />
 
@@ -53,6 +51,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:background="@color/transparent"
-        android:src="@drawable/ic_chevron_right_black_24dp" />
+        android:src="@drawable/ic_more_right_arrow" />
 
 </RelativeLayout>

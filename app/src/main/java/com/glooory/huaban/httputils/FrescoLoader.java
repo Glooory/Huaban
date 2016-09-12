@@ -45,6 +45,7 @@ public class FrescoLoader {
         ImageRequest request = ImageRequestBuilder
                 .newBuilderWithSource(Uri.parse(builder.mUrl))
                 .setResizeOptions(builder.mResizeOption)
+                .setProgressiveRenderingEnabled(true)//设置渐进式加载
                 .build();
 
         //初始化C层， 用于控制图片的加载  是主要的实现控制类
@@ -55,6 +56,8 @@ public class FrescoLoader {
         }
 
         builderC.setImageRequest(request);
+        //配置渐进式加载
+        builderC.setOldController(builder.mSimpleDraweeView.getController());
 
         setViewPerformance(builder, builderM, builderC);
 
@@ -147,7 +150,7 @@ public class FrescoLoader {
         private boolean mIsRadius = false; //是否有圆角
         private boolean mIsBorder = false; //是否有包边
         private float mRadius = 5; //默认的圆角半径
-        private ResizeOptions mResizeOption = new ResizeOptions(3000, 3000);
+        private ResizeOptions mResizeOption = new ResizeOptions(720, 1280);
 
         private ControllerListener mControllerListener; //图片加载的回调
 

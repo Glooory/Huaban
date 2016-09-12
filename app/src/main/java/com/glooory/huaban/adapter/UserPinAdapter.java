@@ -64,10 +64,15 @@ public class UserPinAdapter extends BaseQuickAdapter<PinsBean>{
                 .addOnClickListener(R.id.linearlayout_user_pin);
         //加载图片
         Drawable progressDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
+        Drawable retryDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_retry_36dp, R.color.tint_list_grey);
+        Drawable failDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_load_failed_36dp, R.color.tint_list_grey);
+
         int disireHeight = (int) (mDesireWidth / ratio);
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_user_item_pin),
                 String.format(mGeneralImgUrl, bean.getFile().getKey()))
                 .setProgressbarImage(progressDrawable)
+                .setRetryImage(retryDrawable)
+                .setFailureIamge(failDrawable)
                 .setResizeOptions(new ResizeOptions(mDesireWidth, disireHeight))
                 .build();
 

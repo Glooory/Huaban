@@ -103,12 +103,15 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
 
         ((SimpleDraweeView) holder.getView(R.id.img_card_image)).setAspectRatio(1.0f);
 
-        Drawable dProgressImg =
-                CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
+        Drawable dProgressImg = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
+        Drawable retryDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_retry_36dp, R.color.tint_list_grey);
+        Drawable failDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_load_failed_36dp, R.color.tint_list_grey);
 
         new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_card_image)),
                 String.format(mGeneralImgUrl, getFirstPinsFileKey(bean)))
                 .setProgressbarImage(dProgressImg)
+                .setRetryImage(retryDrawable)
+                .setFailureIamge(failDrawable)
                 .setResizeOptions(new ResizeOptions(mDesireWidth, mDesireWidth))
                 .build();
 

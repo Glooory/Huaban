@@ -2,6 +2,7 @@ package com.glooory.huaban.module.imagedetail;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.PinQuickAdapter;
@@ -291,8 +293,21 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         String pinKey = pinDetailBean.getPin().getFile().getKey();
         if (!TextUtils.isEmpty(pinKey)) {
             Drawable mProgress = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
+            Drawable retryDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_retry_36dp, R.color.tint_list_grey);
+            Drawable failDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_load_failed_36dp, R.color.tint_list_grey);
             new FrescoLoader.Builder(mContext, mImageDetail, String.format(mBigImgUrl, pinKey))
                     .setProgressbarImage(mProgress)
+                    .setRetryImage(retryDrawable)
+                    .setFailureIamge(failDrawable)
+                    .setControllerListenrr(new BaseControllerListener(){
+                        @Override
+                        public void onFinalImageSet(String id, Object imageInfo, Animatable animatable) {
+                            super.onFinalImageSet(id, imageInfo, animatable);
+                            if (animatable != null) {
+                                animatable.start();
+                            }
+                        }
+                    })
                     .build();
         }
 

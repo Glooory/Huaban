@@ -77,10 +77,14 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
         ((SimpleDraweeView) holder.getView(R.id.item_card_pin_img)).setAspectRatio(ratio);
 
         Drawable mProgressImage = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
+        Drawable retryDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_retry_36dp, R.color.tint_list_grey);
+        Drawable failDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_load_failed_36dp, R.color.tint_list_grey);
 
         //加载pin图片
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.item_card_pin_img), urlImg)
                 .setProgressbarImage(mProgressImage)
+                .setRetryImage(retryDrawable)
+                .setFailureIamge(failDrawable)
                 .setResizeOptions(new ResizeOptions(mDesireWidth, disireHeight))
                 .build();
 

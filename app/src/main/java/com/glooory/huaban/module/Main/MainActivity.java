@@ -83,7 +83,7 @@ public class MainActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container_main, new PinsFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.container_main, PinsFragment.newInstance(mAuthorization)).commit();
     }
 
     @Override

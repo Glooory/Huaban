@@ -1,6 +1,7 @@
 package com.glooory.huaban.module.main;
 
-import android.graphics.Color;
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -23,7 +24,6 @@ import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.imagedetail.ImageDetailActivity;
 import com.glooory.huaban.module.user.UserActivity;
-import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.NetworkUtils;
 import com.orhanobut.logger.Logger;
@@ -52,29 +52,43 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private PinQuickAdapter mAdapter;
     private int mMaxId;
     private final int PAGE_SIZE = 20;
+    private Context mContext;
+    private Resources mResources;
 
+    public static PinsFragment newInstance(String authorization) {
+        Bundle args = new Bundle();
+        args.putString(Constant.AUTHORIZATION, authorization);
+        PinsFragment fragment = new PinsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.mContext = context;
+        mResources = context.getResources();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAuthorization = getArguments().getString(Constant.AUTHORIZATION);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_swiperefresh_recycler, container, false);
         ButterKnife.bind(this, view);
-        boolean isLogin = ((MainActivity) getActivity()).isLogin;
-        Logger.d("Fragment onCreate" + "///////////" + isLogin);
-
-        if (isLogin) {
-            mAuthorization = ((MainActivity) getActivity()).mAuthorization;
-            Logger.d("logged in -----" + mAuthorization);
-        } else {
-            mAuthorization = Base64.CLIENTINFO;
-        }
         initViews();
         getHttpFirst();
         return view;
     }
 
     private void initViews() {
-        mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN);
+        mSwipeRefreshLayout.setColorSchemeColors(mResources.getColor(R.color.blue_g_i), mResources.getColor(R.color.red_g_i),
+                mResources.getColor(R.color.yellow_g_i), mResources.getColor(R.color.green_g_i));
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         initAdapter();
@@ -83,9 +97,9 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private void initAdapter() {
 
-        mAdapter = new PinQuickAdapter(getContext());
+        mAdapter = new PinQuickAdapter(mContext);
         //设置上滑自动建在的正在加载更多的自定义View
-        View loadMoreView = LayoutInflater.from(getContext()).inflate(R.layout.custom_loadmore_view, mSwipeRefreshLayout, false);
+        View loadMoreView = LayoutInflater.from(mContext).inflate(R.layout.custom_loadmore_view, mSwipeRefreshLayout, false);
         mAdapter.setLoadingView(loadMoreView);
 
         //当当前position等于PAGE_SIZE 时，就回调用onLoadMoreRequested() 自动加载下一页数据

@@ -6,6 +6,7 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -25,6 +26,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.PinQuickAdapter;
 import com.glooory.huaban.api.ImageDetailApi;
+import com.glooory.huaban.api.OperateApi;
 import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.httputils.FrescoLoader;
@@ -60,9 +62,11 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
     Toolbar mToolbar;
     @BindView(R.id.img_image_detail)
     SimpleDraweeView mImageDetail;
+    @BindView(R.id.coordinator_image_detail)
+    CoordinatorLayout mCoordinator;
     private LinearLayout mLlPin;
     private ShineButton mSbtnlPin;
-    private TextView mTvPincount;
+    private TextView mTvGathercount;
     private LinearLayout mLllLike;
     private ShineButton mSbtnlLike;
     private TextView mTvLikecount;
@@ -90,12 +94,14 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
     private String mUserName;
     private int mUserId;
     private String mBoard;
-    private boolean isLiked;
+    private boolean mIsLiked;
     private float mRatio;
     private UserBoardItemBean mBoardBean;
     private PinQuickAdapter mAdapter;
     private int mPage = 1;
     private int PAGE_SIZE = 20;
+    private int mLikeCount;
+    private int mGatherCount;
 
     public static void launch(Activity activity, int pinId, float ratio, SimpleDraweeView image) {
         Intent intent = new Intent(activity, ImageDetailActivity.class);
@@ -171,6 +177,15 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
                     }
                 });
 
+        RxView.clicks(mSbtnlLike)
+                .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
+                .subscribe(new Action1<Void>() {
+                    @Override
+                    public void call(Void aVoid) {
+                        actionLike();
+                    }
+                });
+
         RxView.clicks(mRlUserBar)
                 .subscribe(new Action1<Void>() {
                     @Override
@@ -205,7 +220,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         View headerView = LayoutInflater.from(mContext).inflate(R.layout.view_image_detail_header, mRecyclerView, false);
         mLlPin = ButterKnife.findById(headerView, R.id.ll_iamge_detail_pin);
         mSbtnlPin = ButterKnife.findById(headerView, R.id.sbtn_image_detail_pin);
-        mTvPincount = ButterKnife.findById(headerView, R.id.tv_image_detail_pincount);
+        mTvGathercount = ButterKnife.findById(headerView, R.id.tv_image_detail_pincount);
         mLllLike = ButterKnife.findById(headerView, R.id.ll_iamge_detail_like);
         mSbtnlLike = ButterKnife.findById(headerView, R.id.sbtn_image_detail_like);
         mTvLikecount = ButterKnife.findById(headerView, R.id.tv_image_detail_likecount);
@@ -282,6 +297,8 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         mUserId = pinDetailBean.getPin().getUser().getUser_id();
         mUserName = pinDetailBean.getPin().getUser().getUsername();
         mBoardBean = pinDetailBean.getPin().getBoard();
+        mGatherCount = pinDetailBean.getPin().getRepin_count();
+        mLikeCount = pinDetailBean.getPin().getLike_count();
 
         //加载图片
         if (mRatio <= 0) {
@@ -299,7 +316,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
                     .setProgressbarImage(mProgress)
                     .setRetryImage(retryDrawable)
                     .setFailureIamge(failDrawable)
-                    .setControllerListenrr(new BaseControllerListener(){
+                    .setControllerListenrr(new BaseControllerListener() {
                         @Override
                         public void onFinalImageSet(String id, Object imageInfo, Animatable animatable) {
                             super.onFinalImageSet(id, imageInfo, animatable);
@@ -312,12 +329,10 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         }
 
         //是否已经喜欢以及喜欢和采集数量
-        isLiked = pinDetailBean.getPin().isLiked();
-        if (isLiked) {
-            mSbtnlLike.setChecked(true);
-        }
-        mTvPincount.setText(String.format(mGatherFormat, pinDetailBean.getPin().getRepin_count()));
-        mTvLikecount.setText(String.format(mLikeFormat, pinDetailBean.getPin().getLike_count()));
+        mIsLiked = pinDetailBean.getPin().isLiked();
+        setUpLikeSbtn(mIsLiked);
+        mTvGathercount.setText(String.format(mGatherFormat, mGatherCount));
+        mTvLikecount.setText(String.format(mLikeFormat, mLikeCount));
 
         //设置图片的描述信息
         if (!TextUtils.isEmpty(pinDetailBean.getPin().getRaw_text())) {
@@ -398,6 +413,54 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
                     }
                 });
 
+    }
+
+    private void actionLike() {
+        if (isLogin) {
+            String operate = mIsLiked ? Constant.OPERATEUNLIKE : Constant.OPERATELIKE;
+            Logger.d(operate);
+            new RetrofitClient().createService(OperateApi.class)
+                    .httpLikePinService(mAuthorization, mPinId, operate)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<LikePinOperateBean>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            checkException(e, mCoordinator);
+                        }
+
+                        @Override
+                        public void onNext(LikePinOperateBean likePinOperateBean) {
+                            setUpWithLikeTv();
+                            mIsLiked = !mIsLiked;
+                            setUpLikeSbtn(mIsLiked);
+                        }
+                    });
+
+        } else {
+            showLoginSnackbar(ImageDetailActivity.this, mCoordinator);
+        }
+    }
+
+    private void setUpLikeSbtn(boolean isLiked) {
+        mSbtnlLike.setChecked(isLiked);
+    }
+
+    private void setUpWithGatherTv() {
+        mGatherCount = mIsLiked ? --mGatherCount : ++mGatherCount;
+        mTvGathercount.setText(String.format(mGatherFormat, mGatherCount));
+    }
+
+    private void setUpWithLikeTv() {
+        Logger.d(mLikeCount);
+        mLikeCount = mIsLiked ? --mLikeCount : ++mLikeCount;
+        Logger.d(mLikeCount);
+        mTvLikecount.setText(String.format(mLikeFormat, mLikeCount));
     }
 
     @Override

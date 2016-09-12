@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -39,7 +38,6 @@ import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.base.BaseUserFragment;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.httputils.RetrofitClient;
-import com.glooory.huaban.module.login.LoginActivity;
 import com.glooory.huaban.module.login.UserInfoBean;
 import com.glooory.huaban.util.CompatUtils;
 import com.glooory.huaban.util.Constant;
@@ -149,11 +147,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         initRes();
         initView();
         httpForUserInfo();
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
-//            getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
-//        }
 
     }
 
@@ -419,13 +412,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                             // TODO: 2016/9/6 0006 follow operate
                         }
                     } else {
-                        Snackbar snackbar = Snackbar.make(mCoordinator, R.string.need_login, Snackbar.LENGTH_LONG);
-                        snackbar.setAction(R.string.go_to_login, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                LoginActivity.launch(UserActivity.this);
-                            }
-                        }).show();
+                        showLoginSnackbar(UserActivity.this, mCoordinator);
                     }
                 }
             }

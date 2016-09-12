@@ -43,4 +43,9 @@
 
     <color name="pink_a500">#60E91E63</color>
 
+    <color name="blue_g_i">#4885ed</color>
+    <color name="red_g_i">#db3236</color>
+    <color name="green_g_i">#3cba54</color>
+    <color name="yellow_g_i">#f4c20d</color>
+
 </resources>

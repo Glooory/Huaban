@@ -1,9 +1,12 @@
 package com.glooory.huaban.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -12,6 +15,7 @@ import android.view.WindowManager;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.DraweeTransition;
 import com.glooory.huaban.R;
+import com.glooory.huaban.module.login.LoginActivity;
 import com.glooory.huaban.user.UserSingleton;
 import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.Constant;
@@ -158,5 +162,16 @@ public abstract class BaseActivity extends AppCompatActivity {
             getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(
                     ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
         }
+    }
+
+    //提示登录
+    public void showLoginSnackbar(final Activity activity, CoordinatorLayout coordinatorLayout) {
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, R.string.need_login, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.go_to_login, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginActivity.launch(activity);
+            }
+        }).show();
     }
 }

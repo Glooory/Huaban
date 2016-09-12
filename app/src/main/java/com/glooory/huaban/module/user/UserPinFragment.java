@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.UserPinAdapter;
 import com.glooory.huaban.api.UserApi;
@@ -15,6 +15,7 @@ import com.glooory.huaban.base.BaseUserFragment;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.imagedetail.ImageDetailActivity;
 import com.glooory.huaban.util.Constant;
 import com.orhanobut.logger.Logger;
 
@@ -65,8 +66,12 @@ public class UserPinFragment extends BaseUserFragment {
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.linearlayout_user_pin:
-                        // TODO: 2016/9/4 0004 launch ImageDetailActivity
-                        Toast.makeText(mContext, "launch ImageDetailActivity", Toast.LENGTH_SHORT).show();
+                        float ratioTemp = mAdapter.getItem(i).getFile().getWidth() /
+                                ((float) mAdapter.getItem(i).getFile().getHeight());
+                        ImageDetailActivity.launch(getActivity(),
+                                mAdapter.getItem(i).getPin_id(),
+                                ratioTemp,
+                                (SimpleDraweeView) view.findViewById(R.id.img_user_item_pin));
                         break;
                 }
             }

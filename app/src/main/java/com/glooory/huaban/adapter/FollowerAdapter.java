@@ -19,15 +19,13 @@ import com.glooory.huaban.util.Utils;
  */
 public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean> {
     private Context mContext;
-    private String mImgUrlRoot;
-    private String mSmallSuffix;
+    private String mSmallImgUrl;
 
 
     public FollowerAdapter(Context context) {
         super(R.layout.card_follower, null);
         this.mContext = context;
-        mImgUrlRoot = mContext.getString(R.string.urlImageRoot);
-        mSmallSuffix = mContext.getString(R.string.image_suffix_small);
+        mSmallImgUrl = mContext.getString(R.string.format_url_image_small);
     }
 
     @Override
@@ -44,8 +42,7 @@ public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean
                 .addOnClickListener(R.id.card_follower);
 
         Drawable mProgressDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
-        String key = bean.getAvatar().getKey();
-        String avatarUrl = mImgUrlRoot + key + mSmallSuffix;
+        String avatarUrl = String.format(mSmallImgUrl, bean.getAvatar().getKey());
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_avatar), avatarUrl)
                 .setIsCircle(true, true)
                 .setProgressbarImage(mProgressDrawable)
@@ -59,7 +56,7 @@ public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean
             ((SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_first)).setAspectRatio(1.0f);
             String keyF = bean.getPins().get(0).getFile().getKey();
             if (!TextUtils.isEmpty(keyF)) {
-                String tinyFUrl = mImgUrlRoot + keyF + mSmallSuffix;
+                String tinyFUrl = String.format(mSmallImgUrl, keyF);
                 new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_first), tinyFUrl)
                         .setIsRadius(true, 8)
                         .build();
@@ -70,7 +67,7 @@ public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean
             ((SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_second)).setAspectRatio(1.0f);
             String keyS = bean.getPins().get(1).getFile().getKey();
             if (!TextUtils.isEmpty(keyS)) {
-                String tinySUrl = mImgUrlRoot + keyS + mSmallSuffix;
+                String tinySUrl = String.format(mSmallImgUrl, keyS);
                 new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_second), tinySUrl)
                         .setIsRadius(true, 8)
                         .build();
@@ -81,7 +78,7 @@ public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean
             ((SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_third)).setAspectRatio(1.0f);
             String keyT = bean.getPins().get(2).getFile().getKey();
             if (!TextUtils.isEmpty(keyT)) {
-                String tinyTUrl = mImgUrlRoot + keyT + mSmallSuffix;
+                String tinyTUrl = String.format(mSmallImgUrl, keyT);
                 new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_third), tinyTUrl)
                         .setIsRadius(true, 8)
                         .build();

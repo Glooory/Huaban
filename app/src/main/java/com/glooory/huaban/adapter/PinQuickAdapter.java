@@ -25,24 +25,24 @@ import com.glooory.huaban.util.Utils;
  */
 public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
     private Context mContext;
-    private final String urlRoot;
-    private final String url_suffix;
+    private final String mGeneralImgUrl;
+    private final String mSmallImgUrl;
     private final int mDesireWidth;
 
     public PinQuickAdapter(Context context) {
         super(R.layout.card_item_pin, null);
         this.mContext = context;
-        urlRoot = mContext.getResources().getString(R.string.urlImageRoot);
-        url_suffix = context.getString(R.string.image_suffix_small);
+        mGeneralImgUrl = context.getString(R.string.format_url_image_general);
+        mSmallImgUrl = context.getString(R.string.format_url_image_small);
         mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
     }
     
     @Override
     protected void convert(BaseViewHolder holder, PinsBean pinsBean) {
         //图片地址
-        String urlImg = urlRoot + pinsBean.getFile().getKey();
+        String urlImg = String.format(mGeneralImgUrl, pinsBean.getFile().getKey());
         //头像地址
-        String urlAvatar = urlRoot + pinsBean.getUser().getAvatar().getKey() + url_suffix;
+        String urlAvatar = String.format(mSmallImgUrl, pinsBean.getUser().getAvatar().getKey());
 
         //是否需要显示GIFImageButton
         if (Utils.checkIsGif(pinsBean.getFile().getType())) {

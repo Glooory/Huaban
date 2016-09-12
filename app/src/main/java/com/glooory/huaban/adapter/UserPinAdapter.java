@@ -23,13 +23,13 @@ import com.glooory.huaban.util.Utils;
  */
 public class UserPinAdapter extends BaseQuickAdapter<PinsBean>{
     private Context mContext;
-    private String imgUrlRoot;
+    private String mGeneralImgUrl;
     private int mDesireWidth;
 
     public UserPinAdapter(Context context) {
         super(R.layout.card_user_item_pin, null);
         this.mContext = context;
-        imgUrlRoot = context.getString(R.string.urlImageRoot);
+        mGeneralImgUrl = context.getString(R.string.format_url_image_general);
         mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
     }
 
@@ -66,7 +66,7 @@ public class UserPinAdapter extends BaseQuickAdapter<PinsBean>{
         Drawable progressDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
         int disireHeight = (int) (mDesireWidth / ratio);
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_user_item_pin),
-                imgUrlRoot + bean.getFile().getKey())
+                String.format(mGeneralImgUrl, bean.getFile().getKey()))
                 .setProgressbarImage(progressDrawable)
                 .setResizeOptions(new ResizeOptions(mDesireWidth, disireHeight))
                 .build();

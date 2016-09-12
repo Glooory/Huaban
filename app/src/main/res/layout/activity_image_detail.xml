@@ -28,7 +28,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:transitionName="@string/image_tran"
-                app:layout_collapseMode="parallax"/>
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_image_detail"

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
@@ -16,6 +15,7 @@ import com.glooory.huaban.base.BaseUserFragment;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.imagedetail.ImageDetailActivity;
 import com.glooory.huaban.util.Constant;
 
 import java.util.List;
@@ -66,8 +66,12 @@ public class UserLikeFragment extends BaseUserFragment {
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.item_card_pin_img_ll:
-                        // TODO: 2016/9/4 0004 launch ImageDetailActivity
-                        Toast.makeText(getContext(), "you just clicked the img", Toast.LENGTH_SHORT).show();
+                        float ratioTemp = mAdapter.getItem(i).getFile().getWidth() /
+                                ((float) mAdapter.getItem(i).getFile().getHeight());
+                        ImageDetailActivity.launch(getActivity(),
+                                mAdapter.getItem(i).getPin_id(),
+                                ratioTemp,
+                                (SimpleDraweeView) view.findViewById(R.id.item_card_pin_img));
                         break;
                     case R.id.item_card_via_ll:
                         UserActivity.launch(getActivity(),

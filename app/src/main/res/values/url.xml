@@ -12,7 +12,7 @@
     <string name="image_suffix_big">_fw658</string>//大图
     <string name="image_suffix_small">_sq75sf</string>//小图
 
-    <string name="url_image_general">http://img.hb.aicdn.com/%s_fw320sf</string>
-    <string name="url_image_big">http://img.hb.aicdn.com/%s_fw658</string>
-    <string name="url_image_small">http://img.hb.aicdn.com/%s_sq75sf</string>
+    <string name="format_url_image_general">http://img.hb.aicdn.com/%s_fw320sf</string>
+    <string name="format_url_image_big">http://img.hb.aicdn.com/%s_fw658</string>
+    <string name="format_url_image_small">http://img.hb.aicdn.com/%s_sq75sf</string>
 </resources>

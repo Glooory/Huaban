@@ -30,7 +30,6 @@ import android.widget.TextView;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
@@ -106,11 +105,11 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @BindColor(R.color.colorPrimary)
     int mColorTabIndicator;
 
-    @BindString(R.string.url_image_small)
+    @BindString(R.string.format_url_image_small)
     String mFormatUrlSmall;
     @BindString(R.string.urlImageRoot)
     String mHttpRoot;
-    @BindString(R.string.text_fans_attention)
+    @BindString(R.string.format_fans_follow)
     String mFansFollowingFormat;
 
     @Override
@@ -151,10 +150,10 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         initView();
         httpForUserInfo();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
-            getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
+//            getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
+//        }
 
     }
 
@@ -258,9 +257,9 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mLikeCount = bean.getLike_count();
         mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewpager.setAdapter(mPagerAdapter);
-        String title1 = String.valueOf(bean.getBoard_count()) + " 画板";
-        String title2 = String.valueOf(bean.getPin_count()) + " 采集";
-        String title3 = String.valueOf(bean.getLike_count()) + " 关注";
+        String title1 = String.format(getString(R.string.format_board_number), bean.getBoard_count());
+        String title2 = String.format(getString(R.string.format_gather_number), bean.getPin_count());
+        String title3 = String.format(getString(R.string.format_like_number), bean.getLike_count());
         titles = new String[]{title1, title2, title3};
         mViewpager.getAdapter().notifyDataSetChanged();
     }
@@ -309,9 +308,8 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
      * @param bean
      */
     private void setUserImgInfo(UserInfoBean bean) {
-        String avatarUrl = mHttpRoot + bean.getAvatar().getKey() + getResources().getString(R.string.image_suffix_small);
+        String avatarUrl = String.format(getString(R.string.format_url_image_small), bean.getAvatar().getKey());
         if (!TextUtils.isEmpty(avatarUrl)) {
-//            String avatarUrl = mHttpRoot + mAvatarUrl + getResources().getString(R.string.image_suffix_small);
 
             mImgImageUser.setVisibility(View.VISIBLE);
             new FrescoLoader.Builder(mContext, mImgImageUser, avatarUrl)

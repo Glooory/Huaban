@@ -183,7 +183,7 @@ public class BoardActivity extends BaseActivity {
         if (mBoardBean.getPins().size() > 0) {
             String coverKey = mBoardBean.getPins().get(0).getFile().getKey();
             if (!TextUtils.isEmpty(coverKey)) {
-                coverUrl = getString(R.string.urlImageRoot) + coverKey + getString(R.string.image_suffix_small);
+                coverUrl = String.format(getString(R.string.format_url_image_small), coverKey);
             }
         }
         mImgBoardCover.setAspectRatio(1.0f);
@@ -252,9 +252,9 @@ public class BoardActivity extends BaseActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return String.valueOf(mBoardBean.getPin_count()) + " 采集";
+                    return String.format(getString(R.string.format_gather_number), mBoardBean.getPin_count());
                 case 1:
-                    return "被 " + mBoardBean.getFollow_count() + " 人关注";
+                    return String.format(getString(R.string.format_board_follower_number), mBoardBean.getFollow_count());
             }
             return "";
         }

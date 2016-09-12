@@ -13,7 +13,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -41,6 +40,7 @@ import com.sackcentury.shinebuttonlib.ShineButton;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
@@ -54,48 +54,35 @@ import rx.schedulers.Schedulers;
 public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapter.RequestLoadMoreListener {
 
 
-//    @BindView(R.id.sbtn_image_detail_pin)
-    ShineButton mSbtnlPin;
-//    @BindView(R.id.ll_iamge_detail_pin)
-    LinearLayout mLlPin;
-    @BindView(R.id.img_image_detail)
-    SimpleDraweeView mImageDetail;
-//    @BindView(R.id.tv_image_detail_pincount)
-    TextView mTvPincount;
-//    @BindView(R.id.sbtn_image_detail_like)
-    ShineButton mSbtnlLike;
-//    @BindView(R.id.tv_image_detail_likecount)
-    TextView mTvLikecount;
-//    @BindView(R.id.ll_iamge_detail_like)
-    LinearLayout mLllLike;
-//    @BindView(R.id.tv_image_detail_des)
-    TextView mTvDes;
-//    @BindView(R.id.img_image_detail_avatar)
-    SimpleDraweeView mImgAvatar;
-//    @BindView(R.id.tv_image_detail_username)
-    TextView mTvUserName;
-//    @BindView(R.id.tv_image_detail_pin_time)
-    TextView mTvPinTime;
-//    @BindView(R.id.imgbtn_image_detail_user)
-    ImageButton mImgbtnUser;
-//    @BindView(R.id.rl_iamge_detail_user_bar)
-    RelativeLayout mRlUserBar;
-//    @BindView(R.id.img_image_detail_board)
-    SimpleDraweeView mImgBoard;
-//    @BindView(R.id.tv_image_detail_boardname)
-    TextView mTvBoardname;
-//    @BindView(R.id.imgbtn_image_detail_board)
-    ImageButton mImgbtnBoard;
-//    @BindView(R.id.rl_iamge_detail_board_bar)
-    RelativeLayout mRlBoardBar;
     @BindView(R.id.toolbar_image_detail)
     Toolbar mToolbar;
+    @BindView(R.id.img_image_detail)
+    SimpleDraweeView mImageDetail;
+    private LinearLayout mLlPin;
+    private ShineButton mSbtnlPin;
+    private TextView mTvPincount;
+    private LinearLayout mLllLike;
+    private ShineButton mSbtnlLike;
+    private TextView mTvLikecount;
+    private TextView mTvDes;
+    private RelativeLayout mRlUserBar;
+    private SimpleDraweeView mImgAvatar;
+    private TextView mTvUserName;
+    private TextView mTvPinTime;
+    private RelativeLayout mRlBoardBar;
+    private SimpleDraweeView mImgBoard;
+    private TextView mTvBoardname;
     @BindView(R.id.recycler_view_image_detail)
     RecyclerView mRecyclerView;
-//    @BindView(R.id.app_bar)
-//    Toolbar mToolbar;
-//    @BindView(R.id.collapsing_toolbar)
-//    CollapsingToolbarLayout mCollapsingToolbar;
+
+    @BindString(R.string.format_url_image_big)
+    String mBigImgUrl;
+    @BindString(R.string.format_url_image_small)
+    String mSmallImgUrl;
+    @BindString(R.string.format_gather_number)
+    String mGatherFormat;
+    @BindString(R.string.format_like_number)
+    String mLikeFormat;
 
     private int mPinId;
     private String mUserName;
@@ -137,7 +124,6 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
 
         mPinId = getIntent().getExtras().getInt(Constant.PIN_ID);
@@ -215,21 +201,20 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
 
         //设置headerview
         View headerView = LayoutInflater.from(mContext).inflate(R.layout.view_image_detail_header, mRecyclerView, false);
+        mLlPin = ButterKnife.findById(headerView, R.id.ll_iamge_detail_pin);
         mSbtnlPin = ButterKnife.findById(headerView, R.id.sbtn_image_detail_pin);
         mTvPincount = ButterKnife.findById(headerView, R.id.tv_image_detail_pincount);
+        mLllLike = ButterKnife.findById(headerView, R.id.ll_iamge_detail_like);
         mSbtnlLike = ButterKnife.findById(headerView, R.id.sbtn_image_detail_like);
         mTvLikecount = ButterKnife.findById(headerView, R.id.tv_image_detail_likecount);
-//        mImageDetail = ButterKnife.findById(headerView, R.id.img_image_detail);
         mTvDes = ButterKnife.findById(headerView, R.id.tv_image_detail_des);
+        mRlUserBar = ButterKnife.findById(headerView, R.id.rl_iamge_detail_user_bar);
         mImgAvatar = ButterKnife.findById(headerView, R.id.img_image_detail_avatar);
         mTvUserName = ButterKnife.findById(headerView, R.id.tv_image_detail_username);
         mTvPinTime = ButterKnife.findById(headerView, R.id.tv_image_detail_pin_time);
+        mRlBoardBar = ButterKnife.findById(headerView, R.id.rl_iamge_detail_board_bar);
         mImgBoard = ButterKnife.findById(headerView, R.id.img_image_detail_board);
         mTvBoardname = ButterKnife.findById(headerView, R.id.tv_image_detail_boardname);
-        mLlPin = ButterKnife.findById(headerView, R.id.ll_iamge_detail_pin);
-        mLllLike = ButterKnife.findById(headerView, R.id.ll_iamge_detail_like);
-        mRlUserBar = ButterKnife.findById(headerView, R.id.rl_iamge_detail_user_bar);
-        mRlBoardBar = ButterKnife.findById(headerView, R.id.rl_iamge_detail_board_bar);
         mAdapter.addHeaderView(headerView);
 
         //设置上滑自动建在的正在加载更多的自定义View
@@ -246,7 +231,11 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.item_card_pin_img_ll:
-                        // TODO: 2016/9/4 0004 launch ImageDetailActivity
+                        float ratioTemp = mAdapter.getItem(i).getFile().getWidth() / ((float) mAdapter.getItem(i).getFile().getHeight());
+                        ImageDetailActivity.launch(ImageDetailActivity.this,
+                                mAdapter.getItem(i).getPin_id(),
+                                ratioTemp,
+                                (SimpleDraweeView) view.findViewById(R.id.item_card_pin_img));
                         break;
                     case R.id.item_card_via_ll:
                         UserActivity.launch(ImageDetailActivity.this,
@@ -293,16 +282,16 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         mBoardBean = pinDetailBean.getPin().getBoard();
 
         //加载图片
-//        float ratio = pinDetailBean.getPin().getFile().getWidth() /
-//                ((float) pinDetailBean.getPin().getFile().getHeight());
-//        mImageDetail.setAspectRatio(ratio);
-//        Logger.d(ratio);
+        if (mRatio <= 0) {
+            float ratio = pinDetailBean.getPin().getFile().getWidth() /
+                    ((float) pinDetailBean.getPin().getFile().getHeight());
+            mImageDetail.setAspectRatio(ratio);
+        }
         mImageDetail.setVisibility(View.VISIBLE);
         String pinKey = pinDetailBean.getPin().getFile().getKey();
         if (!TextUtils.isEmpty(pinKey)) {
             Drawable mProgress = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
-            String pinUrl = getString(R.string.urlImageRoot) + pinKey + getString(R.string.image_suffix_big);
-            new FrescoLoader.Builder(mContext, mImageDetail, pinUrl)
+            new FrescoLoader.Builder(mContext, mImageDetail, String.format(mBigImgUrl, pinKey))
                     .setProgressbarImage(mProgress)
                     .build();
         }
@@ -312,8 +301,8 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         if (isLiked) {
             mSbtnlLike.setChecked(true);
         }
-        mTvPincount.setText(String.valueOf(pinDetailBean.getPin().getRepin_count()) + " 采集");
-        mTvLikecount.setText(String.valueOf(pinDetailBean.getPin().getLike_count()) + " 喜欢");
+        mTvPincount.setText(String.format(mGatherFormat, pinDetailBean.getPin().getRepin_count()));
+        mTvLikecount.setText(String.format(mLikeFormat, pinDetailBean.getPin().getLike_count()));
 
         //设置图片的描述信息
         if (!TextUtils.isEmpty(pinDetailBean.getPin().getRaw_text())) {
@@ -325,8 +314,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         //设置用户的头像和名称
         String avatarKey = pinDetailBean.getPin().getUser().getAvatar().getKey();
         if (!TextUtils.isEmpty(avatarKey)) {
-            String avatarUrl = getString(R.string.urlImageRoot) + avatarKey + getString(R.string.image_suffix_small);
-            new FrescoLoader.Builder(mContext, mImgAvatar, avatarUrl)
+            new FrescoLoader.Builder(mContext, mImgAvatar, String.format(mSmallImgUrl, avatarKey))
                     .setIsCircle(true)
                     .build();
         }
@@ -337,8 +325,7 @@ public class ImageDetailActivity extends BaseActivity implements BaseQuickAdapte
         if (pinDetailBean.getPin().getBoard().getPins() != null) {
             String boardKey = pinDetailBean.getPin().getBoard().getPins().get(0).getFile().getKey();
             if (!TextUtils.isEmpty(boardKey)) {
-                String boardUrl = getString(R.string.urlImageRoot) + boardKey + getString(R.string.image_suffix_small);
-                new FrescoLoader.Builder(mContext, mImgBoard, boardUrl)
+                new FrescoLoader.Builder(mContext, mImgBoard, String.format(mSmallImgUrl, boardKey))
                         .build();
             }
         }

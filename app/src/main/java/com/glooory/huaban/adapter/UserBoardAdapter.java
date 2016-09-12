@@ -33,8 +33,8 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
     private final Drawable mDrawableFollowed;
 
     private Context mContext;
-    private String img_root_url;
-    private String img_suffix_small;
+    private String mGeneralImgUrl;
+    private String mSmallImgUrl;
     private int mDesireWidth;
 
 
@@ -43,10 +43,10 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         mContext = context;
         this.isMe = isMe;
         Resources resources = mContext.getResources();
-        img_root_url = resources.getString(R.string.urlImageRoot);
-        img_suffix_small = resources.getString(R.string.image_suffix_small);
-        this.mGatherFormat = resources.getString(R.string.text_gather_number);
-        this.mAttentionFormat = resources.getString(R.string.text_attention_number);
+        mGeneralImgUrl = resources.getString(R.string.format_url_image_general);
+        mSmallImgUrl = resources.getString(R.string.format_url_image_small);
+        this.mGatherFormat = resources.getString(R.string.format_gather_number);
+        this.mAttentionFormat = resources.getString(R.string.format_attention_number);
         this.mOperateEdit = resources.getString(R.string.text_edit);
         this.mOperateFollowing = resources.getString(R.string.text_following);
         this.mOperateFollowed = resources.getString(R.string.text_followed);
@@ -101,21 +101,20 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         holder.addOnClickListener(R.id.linearlayout_image)
                 .addOnClickListener(R.id.relativelayout_board_operate);
 
-        String url_img = img_root_url + getFirstPinsFileKey(bean);
-
         ((SimpleDraweeView) holder.getView(R.id.img_card_image)).setAspectRatio(1.0f);
 
         Drawable dProgressImg =
                 CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
 
-        new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_card_image)), url_img)
+        new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_card_image)),
+                String.format(mGeneralImgUrl, getFirstPinsFileKey(bean)))
                 .setProgressbarImage(dProgressImg)
                 .setResizeOptions(new ResizeOptions(mDesireWidth, mDesireWidth))
                 .build();
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)).setAspectRatio(1.0f);
         if (bean.getPins().size() > 1) {
-            String firstImgUrl = img_root_url + bean.getPins().get(1).getFile().getKey() + img_suffix_small;
+            String firstImgUrl = String.format(mSmallImgUrl, bean.getPins().get(1).getFile().getKey());
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)), firstImgUrl)
                     .setIsRadius(true, 8)
                     .build();
@@ -123,7 +122,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_second)).setAspectRatio(1.0f);
         if (bean.getPins().size() > 2) {
-            String firstImgUrl = img_root_url + bean.getPins().get(2).getFile().getKey() + img_suffix_small;
+            String firstImgUrl = String.format(mSmallImgUrl, bean.getPins().get(2).getFile().getKey());
 
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_second)), firstImgUrl)
                     .setIsRadius(true, 8)
@@ -132,7 +131,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_third)).setAspectRatio(1.0f);
         if (bean.getPins().size() > 3) {
-            String firstImgUrl = img_root_url + bean.getPins().get(3).getFile().getKey() + img_suffix_small;
+            String firstImgUrl = String.format(mSmallImgUrl, bean.getPins().get(3).getFile().getKey());
 
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_third)), firstImgUrl)
                     .setIsRadius(true, 8)

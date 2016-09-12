@@ -204,14 +204,19 @@
     <string name="follow_action_unfollow">取消关注</string>
 
     <string-array name="user_appbar_title_array">
-        <item>画板</item>
-        <item>采集</item>
-        <item>喜欢</item>
+        <item>@string/board</item>
+        <item>@string/collection</item>
+        <item>@string/like</item>
     </string-array>
 
     <string name="board_tran">board_tran</string>
     <string name="avatar_tran">avatar_tran</string>
+    <string name="image_tran">image_tran</string>
 
     <string name="collect_to">采集到</string>
     <string name="related_recommend">相关推荐</string>
+    <string name="board">画板</string>
+    <string name="collection">采集</string>
+    <string name="like">喜欢</string>
+    <string name="download">下载</string>
 </resources>

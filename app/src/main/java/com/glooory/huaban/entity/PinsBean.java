@@ -70,7 +70,8 @@ public class PinsBean implements Parcelable {
             "updated_at":1472264524,
             "deleting":0,
             "is_private":0,
-            "extra":null
+            "extra":
+            "pins":[]
             }
     }
     */
@@ -90,10 +91,28 @@ public class PinsBean implements Parcelable {
     private int original;
     private int created_at;
     private int like_count;
+    private int seq;
     private int comment_count;
     private int repin_count;
     private int is_private;
     private String orig_source;
+    private boolean liked;
+
+    public int getSeq() {
+        return seq;
+    }
+
+    public void setSeq(int seq) {
+        this.seq = seq;
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
 
     private PinsUserBean user;
 
@@ -280,10 +299,12 @@ public class PinsBean implements Parcelable {
         dest.writeInt(this.original);
         dest.writeInt(this.created_at);
         dest.writeInt(this.like_count);
+        dest.writeInt(this.seq);
         dest.writeInt(this.comment_count);
         dest.writeInt(this.repin_count);
         dest.writeInt(this.is_private);
         dest.writeString(this.orig_source);
+        dest.writeByte(this.liked ? (byte) 1 : (byte) 0);
         dest.writeParcelable(this.user, flags);
         dest.writeParcelable(this.board, flags);
     }
@@ -306,15 +327,17 @@ public class PinsBean implements Parcelable {
         this.original = in.readInt();
         this.created_at = in.readInt();
         this.like_count = in.readInt();
+        this.seq = in.readInt();
         this.comment_count = in.readInt();
         this.repin_count = in.readInt();
         this.is_private = in.readInt();
         this.orig_source = in.readString();
+        this.liked = in.readByte() != 0;
         this.user = in.readParcelable(PinsUserBean.class.getClassLoader());
         this.board = in.readParcelable(PinsBoardBean.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<PinsBean> CREATOR = new Parcelable.Creator<PinsBean>() {
+    public static final Creator<PinsBean> CREATOR = new Creator<PinsBean>() {
         @Override
         public PinsBean createFromParcel(Parcel source) {
             return new PinsBean(source);

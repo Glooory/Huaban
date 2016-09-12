@@ -26,8 +26,8 @@ public class PinsSimpleBean implements Parcelable {
      * like_count : 0
      * comment_count : 0
      * repin_count : 0
-     * is_private : 0
-     * orig_source : http://images.yxpjw.net:8818/allimg/150811/152J1E34-7.jpg
+     * orig_source : http:/
+     * is_private : 0/images.yxpjw.net:8818/allimg/150811/152J1E34-7.jpg
      */
 
     private int pin_id;

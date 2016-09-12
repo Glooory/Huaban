@@ -3,6 +3,8 @@ package com.glooory.huaban.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 /**
  * Created by Glooory on 2016/8/27 0027.
  */
@@ -40,6 +42,7 @@ public class PinsBoardBean implements Parcelable {
     private int updated_at;
     private int deleting;
     private int is_private;
+    private List<PinsSimpleBean> pins;
 
     public int getBoard_id() {
         return board_id;
@@ -145,6 +148,13 @@ public class PinsBoardBean implements Parcelable {
         this.is_private = is_private;
     }
 
+    public List<PinsSimpleBean> getPins() {
+        return pins;
+    }
+
+    public void setPins(List<PinsSimpleBean> pins) {
+        this.pins = pins;
+    }
 
     @Override
     public int describeContents() {
@@ -166,6 +176,7 @@ public class PinsBoardBean implements Parcelable {
         dest.writeInt(this.updated_at);
         dest.writeInt(this.deleting);
         dest.writeInt(this.is_private);
+        dest.writeTypedList(this.pins);
     }
 
     public PinsBoardBean() {
@@ -185,6 +196,7 @@ public class PinsBoardBean implements Parcelable {
         this.updated_at = in.readInt();
         this.deleting = in.readInt();
         this.is_private = in.readInt();
+        this.pins = in.createTypedArrayList(PinsSimpleBean.CREATOR);
     }
 
     public static final Parcelable.Creator<PinsBoardBean> CREATOR = new Parcelable.Creator<PinsBoardBean>() {

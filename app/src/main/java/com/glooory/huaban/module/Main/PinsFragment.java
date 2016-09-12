@@ -98,8 +98,12 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.item_card_pin_img_ll:
-                        // TODO: 2016/9/4 0004 launch ImageDetailActivity
-                        ImageDetailActivity.launch(getActivity());
+                        float ratio = mAdapter.getItem(i).getFile().getWidth()
+                                / ((float) mAdapter.getItem(i).getFile().getHeight());
+                        ImageDetailActivity.launch(getActivity(),
+                                mAdapter.getItem(i).getPin_id(),
+                                ratio,
+                                (SimpleDraweeView) view.findViewById(R.id.item_card_pin_img));
                         break;
                     case R.id.item_card_via_ll:
                         UserActivity.launch(getActivity(), String.valueOf(mAdapter.getItem(i).getUser_id()),

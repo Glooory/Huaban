@@ -6,7 +6,7 @@
     android:id="@+id/rl_iamge_detail_user_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
+    android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:paddingBottom="8dp"
     android:paddingLeft="16dp"
@@ -21,7 +21,7 @@
         fresco:placeholderImage="@drawable/ic_avatar_def" />
 
     <TextView
-        android:id="@+id/tv_image_detail_avatar"
+        android:id="@+id/tv_image_detail_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/img_image_detail_avatar"

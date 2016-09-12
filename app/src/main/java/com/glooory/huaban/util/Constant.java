@@ -75,6 +75,8 @@ public class Constant {
     public static final String FOLLOWER_COUNT = "follower_count";
 
     public static final String AVATAR_URL = "avatar_url";
+    public static final String PIN_ID = "pin_id";
+    public static final String RATIO = "ratio";
 
 
 }

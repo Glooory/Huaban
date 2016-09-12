@@ -4,15 +4,14 @@
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/img_image_detail"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@android:color/holo_blue_dark" />
+    <!--<com.facebook.drawee.view.SimpleDraweeView-->
+        <!--android:id="@+id/img_image_detail"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:transitionName="@string/image_tran" />-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -93,12 +92,11 @@
         android:id="@+id/tv_image_detail_des"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:lineSpacingMultiplier="1.3"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp"
         android:text="该采集的详细描述，暂时没有任何描述"
-        android:lineSpacingMultiplier="1.3"
         android:textColor="@color/primary_text"
         android:textSize="18sp" />
 
@@ -106,6 +104,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginLeft="80dp"
+        android:layout_marginTop="8dp"
         android:background="@color/grey_300" />
 
     <include layout="@layout/view_image_detail_user_bar" />

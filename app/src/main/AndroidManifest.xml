@@ -40,6 +40,8 @@
         <activity
             android:name=".module.imagedetail.ImageDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <service android:name=".service.DownloadPinService" />
     </application>
 
 </manifest>

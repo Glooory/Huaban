@@ -65,4 +65,6 @@ dependencies {
     compile 'com.orhanobut:logger:1.15'
 
     compile 'com.sackcentury:shinebutton:0.1.6'
+
+    compile 'com.yanzhenjie:permission:1.0.0'
 }

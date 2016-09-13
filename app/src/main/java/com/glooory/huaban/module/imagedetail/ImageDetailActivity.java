@@ -36,6 +36,7 @@ import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.board.BoardActivity;
 import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.module.user.UserBoardItemBean;
+import com.glooory.huaban.service.DownloadPinService;
 import com.glooory.huaban.util.CompatUtils;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.SPUtils;
@@ -111,6 +112,8 @@ public class ImageDetailActivity extends BaseActivity
     private String[] mBoardIds;
     private String mRawText;
     private String mGatherBelong;
+    private String mPinKey;
+    private String mPinType;
 
     public static void launch(Activity activity, int pinId, float ratio, SimpleDraweeView image) {
         Intent intent = new Intent(activity, ImageDetailActivity.class);
@@ -315,6 +318,8 @@ public class ImageDetailActivity extends BaseActivity
         mGatherCount = pinDetailBean.getPin().getRepin_count();
         mLikeCount = pinDetailBean.getPin().getLike_count();
         mRawText = pinDetailBean.getPin().getRaw_text();
+        mPinKey = pinDetailBean.getPin().getFile().getKey();
+        mPinType = pinDetailBean.getPin().getFile().getType();
 
         //加载图片
         if (mRatio <= 0) {
@@ -561,7 +566,11 @@ public class ImageDetailActivity extends BaseActivity
                 mSbtnlLike.performClick();
                 return true;
             case R.id.memu_action_download:
-                // TODO: 2016/9/12 0012 download
+                if (TextUtils.isEmpty(mPinKey)) {
+                    Snackbar.make(mCoordinator, "数据还未加载完毕，请稍后再试", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    DownloadPinService.launch(ImageDetailActivity.this, mPinKey, mPinType);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

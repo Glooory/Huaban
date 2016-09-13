@@ -78,4 +78,23 @@ public final class Utils {
         }
     }
 
+    /**
+     * 返回图片的后缀
+     * @param type
+     * @return
+     */
+    public static String getPinType(String type) {
+
+        if (type.contains("png")) {
+            return ".png";
+        }
+
+        if (type.contains("gif")) {
+            return ".gif";
+        }
+
+        return ".jpeg";
+
+    }
+
 }

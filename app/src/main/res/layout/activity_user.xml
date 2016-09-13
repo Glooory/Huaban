@@ -20,16 +20,20 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/transparent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:layout_scrollFlags="scroll"
             app:statusBarScrim="@color/transparent">
 
-            <include layout="@layout/view_user_info_head" />
+            <include
+                layout="@layout/view_user_info_head"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_user"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
                 <Button
@@ -38,8 +42,8 @@
                     android:layout_height="32dp"
                     android:layout_gravity="right"
                     android:layout_marginRight="8dp"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:background="@drawable/bg_btn_follow_operation"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:text="@string/follow_action_follow"
                     android:textSize="18sp" />
 

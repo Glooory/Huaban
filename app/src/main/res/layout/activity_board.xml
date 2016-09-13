@@ -19,22 +19,24 @@
             android:layout_width="match_parent"
             android:layout_height="192dp"
             android:fitsSystemWindows="true"
-            app:titleEnabled="false"
             app:contentScrim="@color/transparent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:statusBarScrim="@color/transparent">
+            app:layout_scrollFlags="scroll"
+            app:statusBarScrim="@color/transparent"
+            app:titleEnabled="false">
 
-            <include layout="@layout/view_board_info_header"
+            <include
+                layout="@layout/view_board_info_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|bottom"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_board"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
                 <Button
@@ -43,8 +45,8 @@
                     android:layout_height="32dp"
                     android:layout_gravity="right"
                     android:layout_marginRight="8dp"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:background="@drawable/bg_btn_follow_operation"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:text="@string/follow_action_follow"
                     android:textSize="18sp" />
 
@@ -65,6 +67,6 @@
         android:id="@+id/container_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </android.support.design.widget.CoordinatorLayout>

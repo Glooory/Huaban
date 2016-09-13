@@ -150,6 +150,17 @@ public class BoardActivity extends BaseActivity {
                 float t = mAppBar.getTotalScrollRange();
                 float a = (float) (1.0 - c / (t / 2));
                 mRlBoardInfo.setAlpha(a);
+                if (c == appBarLayout.getTotalScrollRange()) {
+                    mBtnTopOperation.setAlpha(0.0f);
+                    mToolbar.setAlpha(0.0f);
+                    mCollapsingtoolbar.setAlpha(0.0f);
+                } else {
+                    //当Collapsingtoolbar 滑动到最顶端时，隐藏从通明状态栏能看得见的View，
+                    // 如果不隐藏，从透明状态栏能看见部分toolbar，影响用户体验
+                    mBtnTopOperation.setAlpha(1.0f);
+                    mToolbar.setAlpha(1.0f);
+                    mCollapsingtoolbar.setAlpha(1.0f);
+                }
             }
         });
 

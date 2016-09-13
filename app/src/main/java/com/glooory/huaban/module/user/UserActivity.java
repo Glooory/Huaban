@@ -173,6 +173,17 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 float off = -verticalOffset;
                 float alpha = 1.0f - off / (appBarLayout.getTotalScrollRange() / 2.0f);
                 mLinearlayoutUserInfo.setAlpha(alpha);
+                if (off == appBarLayout.getTotalScrollRange()) {
+                    mBtnFollowOperation.setAlpha(0.0f);
+                    mToolbar.setAlpha(0.0f);
+                    mCollapsingtoolbar.setAlpha(0.0f);
+                } else {
+                    //当Collapsingtoolbar 滑动到最顶端时，隐藏从通明状态栏能看得见的View，
+                    // 如果不隐藏，从透明状态栏能看见部分toolbar，影响用户体验
+                    mBtnFollowOperation.setAlpha(1.0f);
+                    mToolbar.setAlpha(1.0f);
+                    mCollapsingtoolbar.setAlpha(1.0f);
+                }
             }
         });
 

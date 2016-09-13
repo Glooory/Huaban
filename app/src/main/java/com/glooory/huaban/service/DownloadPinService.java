@@ -12,7 +12,6 @@ import com.glooory.huaban.R;
 import com.glooory.huaban.httputils.PinDownloadCallback;
 import com.glooory.huaban.httputils.PinResponseBody;
 import com.glooory.huaban.util.Utils;
-import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +58,6 @@ public class DownloadPinService extends IntentService {
         String pinType = intent.getExtras().getString(KEY_TYPE);
         mPinName = String.valueOf(System.currentTimeMillis()) + Utils.getPinType(pinType);
         actionDownload();
-        Logger.d(mPinUrlKey);
     }
 
     /**

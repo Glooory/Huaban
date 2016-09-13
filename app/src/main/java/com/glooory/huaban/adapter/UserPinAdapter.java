@@ -75,6 +75,7 @@ public class UserPinAdapter extends BaseQuickAdapter<PinsBean>{
                 .setFailureIamge(failDrawable)
                 .setResizeOptions(new ResizeOptions(mDesireWidth, disireHeight))
                 .build();
+        ((SimpleDraweeView) holder.getView(R.id.img_user_item_pin)).setVisibility(View.VISIBLE);
 
     }
 }

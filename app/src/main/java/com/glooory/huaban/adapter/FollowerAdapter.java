@@ -47,6 +47,7 @@ public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean
                 .setIsCircle(true, true)
                 .setProgressbarImage(mProgressDrawable)
                 .build();
+        ((SimpleDraweeView) holder.getView(R.id.img_card_follower_avatar)).setVisibility(View.VISIBLE);
 
         if (bean.getPins() == null || bean.getPins().size() == 0) {
             holder.getView(R.id.ll_card_follower_tinys).setVisibility(View.GONE);

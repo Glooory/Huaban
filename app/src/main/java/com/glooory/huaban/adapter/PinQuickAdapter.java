@@ -87,6 +87,7 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
                 .setFailureIamge(failDrawable)
                 .setResizeOptions(new ResizeOptions(mDesireWidth, disireHeight))
                 .build();
+        ((SimpleDraweeView) holder.getView(R.id.item_card_pin_img)).setVisibility(View.VISIBLE);
 
         //加载头像
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.item_card_pin_avaterimg), urlAvatar)

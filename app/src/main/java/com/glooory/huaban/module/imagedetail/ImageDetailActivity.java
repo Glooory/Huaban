@@ -1,14 +1,18 @@
 package com.glooory.huaban.module.imagedetail;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +48,11 @@ import com.glooory.huaban.util.TimeUtils;
 import com.jakewharton.rxbinding.view.RxView;
 import com.orhanobut.logger.Logger;
 import com.sackcentury.shinebuttonlib.ShineButton;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.PermissionNo;
+import com.yanzhenjie.permission.PermissionYes;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RationaleListener;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -96,6 +105,7 @@ public class ImageDetailActivity extends BaseActivity
     @BindString(R.string.format_like_number)
     String mLikeFormat;
 
+    private static final int PERMISION_REQUEST_CODE = 409;
     private int mPinId;
     private String mUserName;
     private int mUserId;
@@ -284,6 +294,9 @@ public class ImageDetailActivity extends BaseActivity
 
     }
 
+    /**
+     * 加载图片
+     */
     private void httpForImg() {
 
         new RetrofitClient().createService(ImageDetailApi.class)
@@ -384,6 +397,9 @@ public class ImageDetailActivity extends BaseActivity
 
     }
 
+    /**
+     * 第一次请求相关推荐的数据
+     */
     private void httpForFirst() {
 
         new RetrofitClient().createService(ImageDetailApi.class)
@@ -410,6 +426,9 @@ public class ImageDetailActivity extends BaseActivity
 
     }
 
+    /**
+     * 相关推荐的上拉自动加载更多方法
+     */
     private void httpForMore() {
 
         new RetrofitClient().createService(ImageDetailApi.class)
@@ -436,6 +455,9 @@ public class ImageDetailActivity extends BaseActivity
 
     }
 
+    /**
+     * 喜欢按钮的点击事件
+     */
     private void actionLike() {
         if (isLogin) {
             String operate = mIsLiked ? Constant.OPERATEUNLIKE : Constant.OPERATELIKE;
@@ -464,10 +486,14 @@ public class ImageDetailActivity extends BaseActivity
                     });
 
         } else {
+            mSbtnlLike.setChecked(false);
             showLoginSnackbar(ImageDetailActivity.this, mCoordinator);
         }
     }
 
+    /**
+     * 采集按钮的点击事件
+     */
     private void actionGather() {
 
         setUpPinSbtn();
@@ -491,24 +517,39 @@ public class ImageDetailActivity extends BaseActivity
 
     }
 
+    /**
+     * 根据登录状态和是否已经采集设置采集按钮的状态
+     */
     private void setUpPinSbtn() {
         mSbtnlPin.setChecked(mIsGathered);
     }
 
+    /**
+     * 根据登录状态和是否已经喜欢设置喜欢按钮的状态
+     */
     private void setUpLikeSbtn() {
         mSbtnlLike.setChecked(mIsLiked);
     }
 
+    /**
+     * 成功采集后更改采集数量
+     */
     private void setUpWithGatherTv() {
         mGatherCount = mIsGathered ? --mGatherCount : ++mGatherCount;
         mTvGathercount.setText(String.format(mGatherFormat, mGatherCount));
     }
 
+    /**
+     * 成功喜欢后更新喜欢数量
+     */
     private void setUpWithLikeTv() {
         mLikeCount = mIsLiked ? --mLikeCount : ++mLikeCount;
         mTvLikecount.setText(String.format(mLikeFormat, mLikeCount));
     }
 
+    /**
+     * 显示采集选项对话框
+     */
     private void showGatherDialog() {
 
         String boardTitleArray = (String) SPUtils.get(getApplicationContext(), Constant.BOARDTITLEARRAY, "");
@@ -569,7 +610,12 @@ public class ImageDetailActivity extends BaseActivity
                 if (TextUtils.isEmpty(mPinKey)) {
                     Snackbar.make(mCoordinator, "数据还未加载完毕，请稍后再试", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    DownloadPinService.launch(ImageDetailActivity.this, mPinKey, mPinType);
+                    AndPermission.with(this)
+                            .requestCode(201)
+                            .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .rationale(mRationaleListener)
+                            .send();
+
                 }
                 return true;
         }
@@ -618,6 +664,45 @@ public class ImageDetailActivity extends BaseActivity
 
     @Override
     public void onGatherCancel() {
-        mSbtnlPin.setChecked(false);
+        mSbtnlPin.setChecked(mIsGathered);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        AndPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    //获取权限成功的回调
+    @PermissionYes(201)
+    private void startDownload() {
+        DownloadPinService.launch(ImageDetailActivity.this, mPinKey, mPinType);
+    }
+
+    //获取权限失败的回调
+    @PermissionNo(201)
+    private void cancelDownload() {
+        Snackbar.make(mCoordinator, "获取访问文件权限失败，无法下载图片！", Snackbar.LENGTH_SHORT).show();
+    }
+
+    //请求权限被拒绝后提示
+    private RationaleListener mRationaleListener = new RationaleListener() {
+        @Override
+        public void showRequestPermissionRationale(int requestCode, final Rationale rationale) {
+            new AlertDialog.Builder(ImageDetailActivity.this)
+                    .setTitle("友情提示")
+                    .setMessage("没有访问文件权限将不能下载图片， 请把访问文件权限赐予给我吧！")
+                    .setPositiveButton("好，给你", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            rationale.resume();
+                        }
+                    })
+                    .setNegativeButton("我拒绝", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            rationale.cancel();
+                        }
+                    }).show();
+        }
+    };
 }

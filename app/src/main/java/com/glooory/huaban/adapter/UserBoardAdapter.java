@@ -3,6 +3,7 @@ package com.glooory.huaban.adapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.view.View;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -114,6 +115,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
                 .setFailureIamge(failDrawable)
                 .setResizeOptions(new ResizeOptions(mDesireWidth, mDesireWidth))
                 .build();
+        ((SimpleDraweeView) holder.getView(R.id.img_card_image)).setVisibility(View.VISIBLE);
 
         ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)).setAspectRatio(1.0f);
         if (bean.getPins().size() > 1) {

@@ -1,6 +1,5 @@
 package com.glooory.huaban.module.login;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,9 +13,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.glooory.huaban.R;
 import com.glooory.huaban.api.LoginApi;
 import com.glooory.huaban.api.UserApi;
@@ -65,11 +64,9 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.edit_password)
     EditText mEditPassword;
     @BindView(R.id.btn_login)
-    Button mBtnLogin;
+    ActionProcessButton mBtnLogin;
     @BindView(R.id.btn_register)
     Button mBtnRegister;
-    @BindView(R.id.progress_login)
-    ProgressBar mProgressLogin;
     @BindView(R.id.ll_login)
     LinearLayout mLinearLogin;
     @BindView(R.id.scroll_login_form)
@@ -111,7 +108,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -126,6 +122,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initResAndListener() {
         super.initResAndListener();
+
+        mBtnLogin.setMode(ActionProcessButton.Mode.ENDLESS);
 
         RxTextView.editorActions(mEditPassword, new Func1<Integer, Boolean>() {
             @Override
@@ -195,7 +193,7 @@ public class LoginActivity extends BaseActivity {
 
     private void attemptLogin() {
 
-        //清楚错误信息
+        //清除错误信息
         mACTVUsername.setError(null);
         mEditPassword.setError(null);
 
@@ -234,7 +232,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void httpLogin(final String username, final String password) {
-        Logger.d("httpLogin() excuted");
+        mBtnLogin.setProgress(1);
 
         RetrofitClient.createService(LoginApi.class)
                 .httpsTokenRx(mAuthorization, PASSWORD, username, password)
@@ -265,14 +263,6 @@ public class LoginActivity extends BaseActivity {
                 .subscribe(new Subscriber<BoardListInfoBean>() {
 
                     @Override
-                    public void onStart() {
-                        Logger.d("观察者 start() excuted");
-
-                        super.onStart();
-                        showProgress(true);
-                    }
-
-                    @Override
                     public void onCompleted() {
 
                     }
@@ -280,14 +270,14 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
                         Logger.d(e.getMessage());
-                        showProgress(false);
+                        mBtnLogin.setProgress(-1);
                         NetworkUtils.checkHttpException(mContext, e, mScrollLoginForm);
                     }
 
                     @Override
                     public void onNext(BoardListInfoBean boardListInfoBean) {
-                        Logger.d("onNext() excuted" + boardListInfoBean.getBoards().size());
-                        showProgress(false);
+                        mBtnLogin.setProgress(100);
+                        saveUserInfo(mUserBean, mTokenBean, username, password, boardListInfoBean.getBoards());
                         NetworkUtils.showSnackbar(mScrollLoginForm, snackLoginSuccess).setCallback(new Snackbar.Callback() {
                             @Override
                             public void onDismissed(Snackbar snackbar, int event) {
@@ -296,7 +286,6 @@ public class LoginActivity extends BaseActivity {
                                 finish();
                             }
                         });
-                        saveUserInfo(mUserBean, mTokenBean, username, password, boardListInfoBean.getBoards());
                     }
                 });
     }
@@ -347,36 +336,6 @@ public class LoginActivity extends BaseActivity {
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
-    }
-
-    private void showProgress(final boolean show) {
-
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-        mProgressLogin.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-        mProgressLogin.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0)
-                .setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animator) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-                        mProgressLogin.setVisibility(show ? View.VISIBLE : View.GONE);
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animator) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animator) {
-
-                    }
-                });
-
     }
 
 }

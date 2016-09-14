@@ -67,4 +67,6 @@ dependencies {
     compile 'com.sackcentury:shinebutton:0.1.6'
 
     compile 'com.yanzhenjie:permission:1.0.0'
+
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
 }

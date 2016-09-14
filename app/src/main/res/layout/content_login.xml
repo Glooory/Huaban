@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login_blurred_bg"
@@ -91,17 +92,35 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <Button
+            <!--<Button-->
+                <!--android:id="@+id/btn_login"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="12dp"-->
+                <!--android:layout_marginTop="12dp"-->
+                <!--android:background="?colorAccent"-->
+                <!--android:text="@string/action_sign_in"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="18sp"-->
+                <!--android:textStyle="bold" />-->
+
+            <com.dd.processbutton.iml.ActionProcessButton
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:layout_marginTop="12dp"
-                android:background="?colorAccent"
                 android:text="@string/action_sign_in"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                custom:pb_colorComplete="@color/green_complete"
+                custom:pb_colorNormal="@color/colorPrimary"
+                custom:pb_colorPressed="@color/colorPrimaryDark"
+                custom:pb_colorProgress="@color/purple_progress"
+                custom:pb_textComplete="登录成功"
+                custom:pb_textProgress="正在登录..."
+                custom:pb_textError="登录失败"
+                custom:pb_colorError="@color/red_error" />
 
             <Button
                 android:id="@+id/btn_register"
@@ -114,15 +133,6 @@
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
-            <ProgressBar
-                android:id="@+id/progress_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:indeterminateDrawable="@drawable/rotate_loadmore_windmild"
-                android:visibility="invisible"
-                tools:visibility="visible" />
 
         </LinearLayout>
 

@@ -1,5 +1,6 @@
 package com.glooory.huaban.api;
 
+import com.glooory.huaban.module.board.FollowBoardOperateBean;
 import com.glooory.huaban.module.imagedetail.GatherInfoBean;
 import com.glooory.huaban.module.imagedetail.GatherResultBean;
 import com.glooory.huaban.module.imagedetail.LikePinOperateBean;
@@ -49,4 +50,11 @@ public interface OperateApi {
     Observable<Void> httpFollowUserService(@Header(Constant.AUTHORIZATION) String authorization,
                                            @Path("userId") String userId,
                                            @Path("operate") String operate);
+
+    //关注某个画板
+    //https:api.huaban.com/boards/{boardId}/{follow or unfollow}\
+    @POST("boards/{boardId}/{operate}")
+    Observable<FollowBoardOperateBean> httpFollowBoardService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                              @Path("boardId") int boardId,
+                                                              @Path("operate") String operate);
 }

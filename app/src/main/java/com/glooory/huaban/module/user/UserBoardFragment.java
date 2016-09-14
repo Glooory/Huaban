@@ -12,10 +12,12 @@ import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.UserBoardAdapter;
+import com.glooory.huaban.api.OperateApi;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseUserFragment;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.board.BoardActivity;
+import com.glooory.huaban.module.board.FollowBoardOperateBean;
 import com.glooory.huaban.util.Constant;
 import com.orhanobut.logger.Logger;
 
@@ -78,8 +80,11 @@ public class UserBoardFragment extends BaseUserFragment{
                         BoardActivity.launch(getActivity(), mAdapter.getData().get(i), mUserName,(SimpleDraweeView) view.findViewById(R.id.img_card_image));
                         break;
                     case R.id.relativelayout_board_operate:
-                        //// TODO: 2016/9/4 0004 board edit action
-                        Toast.makeText(getContext(), "edit action", Toast.LENGTH_SHORT).show();
+                        if (isMe) {
+                            // TODO: 2016/9/14 0014 edit board action
+                        } else {
+                            actionBoardFollow(mAdapter.getItem(i).getBoard_id(), mAdapter.getItem(i).isFollowing(), i);
+                        }
                         break;
                 }
             }
@@ -170,6 +175,10 @@ public class UserBoardFragment extends BaseUserFragment{
                 });
     }
 
+    /**
+     * 保存这次请求的maxId ， 后面联网请求数据要带上
+     * @param beans
+     */
     private void setMaxId(List<UserBoardItemBean> beans) {
         mMaxId = beans.get(beans.size() - 1).getBoard_id();
     }
@@ -190,6 +199,44 @@ public class UserBoardFragment extends BaseUserFragment{
         }
     }
 
+    /**
+     * 针对画板的关注和取消关注操作
+     * @param isFollowing
+     */
+    private void actionBoardFollow(int boardId, final boolean isFollowing, final int position) {
+        String operateString = isFollowing ? Constant.OPERATEUNFOLLOW : Constant.OPERATEFOLLOW;
+
+        new RetrofitClient().createService(OperateApi.class)
+                .httpFollowBoardService(mAuthorization, boardId, operateString)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<FollowBoardOperateBean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(mContext, getString(R.string.operate_request_failed), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(FollowBoardOperateBean followBoardOperateBean) {
+                        boolean following = !isFollowing;
+                        mAdapter.getItem(position).setFollowing(following);
+                        mAdapter.notifyItemChanged(position);
+                        Toast.makeText(mContext,
+                                isFollowing ? getString(R.string.unfollow_operate_success) : getString(R.string.follow_operate_success),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
+
+    /**
+     * 滑动到底部的自动加载数据的回调
+     */
     @Override
     public void onLoadMoreRequested() {
         mRecyclerView.post(new Runnable() {

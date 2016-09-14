@@ -92,18 +92,6 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <!--<Button-->
-                <!--android:id="@+id/btn_login"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginBottom="12dp"-->
-                <!--android:layout_marginTop="12dp"-->
-                <!--android:background="?colorAccent"-->
-                <!--android:text="@string/action_sign_in"-->
-                <!--android:textColor="@color/white"-->
-                <!--android:textSize="18sp"-->
-                <!--android:textStyle="bold" />-->
-
             <com.dd.processbutton.iml.ActionProcessButton
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"

@@ -105,9 +105,9 @@
                 custom:pb_colorNormal="@color/colorPrimary"
                 custom:pb_colorPressed="@color/colorPrimaryDark"
                 custom:pb_colorProgress="@color/purple_progress"
-                custom:pb_textComplete="登录成功"
-                custom:pb_textProgress="正在登录..."
-                custom:pb_textError="登录失败"
+                custom:pb_textComplete="@string/login_success"
+                custom:pb_textProgress="@string/logining_in"
+                custom:pb_textError="@string/login_error"
                 custom:pb_colorError="@color/red_error" />
 
             <Button

@@ -207,6 +207,9 @@
     <string name="add_new_collection">添加采集</string>
     <string name="follow_action_follow">关注</string>
     <string name="follow_action_unfollow">取消关注</string>
+    <string name="follow_operate_success">关注成功</string>
+    <string name="unfollow_operate_success">取消关注成功</string>
+    <string name="operate_request_failed">请求操作失败</string>
 
     <string-array name="user_appbar_title_array">
         <item>@string/board</item>

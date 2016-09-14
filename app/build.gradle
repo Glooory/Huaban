@@ -69,4 +69,5 @@ dependencies {
     compile 'com.yanzhenjie:permission:1.0.0'
 
     compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
+    compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
 }

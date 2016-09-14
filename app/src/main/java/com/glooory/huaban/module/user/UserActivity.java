@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -22,10 +23,10 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dd.CircularProgressButton;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -33,6 +34,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.glooory.huaban.R;
+import com.glooory.huaban.api.OperateApi;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.base.BaseUserFragment;
@@ -62,7 +64,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     public boolean isMe;
     private String mUserId;
     @BindView(R.id.btn_follow_operation)
-    Button mBtnFollowOperation;
+    CircularProgressButton mBtnFollowOperation;
     @BindView(R.id.coordinator_user)
     CoordinatorLayout mCoordinator;
     private String[] titles;
@@ -156,6 +158,8 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mBtnFollowOperation.setVisibility(View.GONE);//最初先隐藏，后面再根据情况显示
+        mBtnFollowOperation.setIndeterminateProgressMode(true);
+        mBtnFollowOperation.setIdleText(isFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
         setUpToolBtn();
         topActionBtnSetOnListener();
 
@@ -437,11 +441,12 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     }
                 } else {
                     if (isLogin) {
-                        if (isFollowing) {
-                            // TODO: 2016/9/6 0006 unfollow operate
-                        } else {
-                            // TODO: 2016/9/6 0006 follow operate
-                        }
+                        actionFollowUser();
+//                        if (isFollowing) {
+//                            // TODO: 2016/9/6 0006 unfollow operate
+//                        } else {
+//                            // TODO: 2016/9/6 0006 follow operate
+//                        }
                     } else {
                         showLoginSnackbar(UserActivity.this, mCoordinator);
                     }
@@ -493,6 +498,40 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         if (likeFragment != null) {
             likeFragment.setDateItemCount(mLikeCount);
         }
+    }
+
+    /**
+     * 关注或取消关注 某用户
+     */
+    private void actionFollowUser() {
+        mBtnFollowOperation.setProgress(1);
+        String operateString = isFollowing ? Constant.OPERATEUNFOLLOW : Constant.OPERATEFOLLOW;
+
+        new RetrofitClient().createService(OperateApi.class)
+                .httpFollowUserService(mAuthorization, mUserId, operateString)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mBtnFollowOperation.setProgress(0);
+                        Snackbar.make(mCoordinator, getString(R.string.operate_request_failed), Snackbar.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+                        mBtnFollowOperation.setProgress(0);
+                        isFollowing = !isFollowing;
+                        mBtnFollowOperation.setIdleText(isFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
+                        Snackbar.make(mCoordinator,
+                                isFollowing ? getString(R.string.unfollow_operate_success) : getString(R.string.follow_operate_success),
+                                Snackbar.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override

@@ -42,4 +42,11 @@ public interface OperateApi {
                                                       @Field("board_id") String boardId,
                                                       @Field("text") String des,
                                                       @Field("via") String pinsId);
+
+    //关注某个用户的操作
+    //https://api.huaban.com/users/13643543/{follow or unfollow}
+    @POST("users/{userId}/{operate}")
+    Observable<Void> httpFollowUserService(@Header(Constant.AUTHORIZATION) String authorization,
+                                           @Path("userId") String userId,
+                                           @Path("operate") String operate);
 }

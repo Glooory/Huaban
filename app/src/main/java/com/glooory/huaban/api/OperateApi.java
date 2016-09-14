@@ -4,6 +4,7 @@ import com.glooory.huaban.module.board.FollowBoardOperateBean;
 import com.glooory.huaban.module.imagedetail.GatherInfoBean;
 import com.glooory.huaban.module.imagedetail.GatherResultBean;
 import com.glooory.huaban.module.imagedetail.LikePinOperateBean;
+import com.glooory.huaban.module.user.UserBoardSingleBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.Field;
@@ -57,4 +58,13 @@ public interface OperateApi {
     Observable<FollowBoardOperateBean> httpFollowBoardService(@Header(Constant.AUTHORIZATION) String authorization,
                                                               @Path("boardId") int boardId,
                                                               @Path("operate") String operate);
+
+    //新建画板
+    //https://api.huaban.com/boards  body=category=类型&description=描述&title=标题
+    @FormUrlEncoded
+    @POST("boards/")
+    Observable<UserBoardSingleBean> httpAddBoard(@Header(Constant.AUTHORIZATION) String authorization,
+                                                 @Field("title") String title,
+                                                 @Field("description") String des,
+                                                 @Field("category") String category);
 }

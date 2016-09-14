@@ -210,6 +210,8 @@
     <string name="follow_operate_success">关注成功</string>
     <string name="unfollow_operate_success">取消关注成功</string>
     <string name="operate_request_failed">请求操作失败</string>
+    <string name="add_board_operate_success">创建成功</string>
+
 
     <string-array name="user_appbar_title_array">
         <item>@string/board</item>

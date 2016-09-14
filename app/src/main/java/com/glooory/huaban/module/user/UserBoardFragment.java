@@ -83,7 +83,11 @@ public class UserBoardFragment extends BaseUserFragment{
                         if (isMe) {
                             // TODO: 2016/9/14 0014 edit board action
                         } else {
-                            actionBoardFollow(mAdapter.getItem(i).getBoard_id(), mAdapter.getItem(i).isFollowing(), i);
+                            if (mIsLogin) {
+                                actionBoardFollow(mAdapter.getItem(i).getBoard_id(), mAdapter.getItem(i).isFollowing(), i);
+                            } else {
+                                ((UserActivity) getActivity()).showLoginMessage();
+                            }
                         }
                         break;
                 }

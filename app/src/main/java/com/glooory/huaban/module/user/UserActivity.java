@@ -152,15 +152,19 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpOperateBtn();
+    }
+
     private void initView() {
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mBtnFollowOperation.setVisibility(View.GONE);//最初先隐藏，后面再根据情况显示
         mBtnFollowOperation.setIndeterminateProgressMode(true);
-        mBtnFollowOperation.setIdleText(isFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
-        setUpToolBtn();
+        setUpOperateBtn();
         topActionBtnSetOnListener();
 
         mCollapsingtoolbar.setExpandedTitleColor(Color.TRANSPARENT);//展开时文字为透明的
@@ -195,7 +199,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                setUpToolBtn();
+                setUpOperateBtn();
                 mViewpager.setCurrentItem(tab.getPosition());
             }
 
@@ -375,7 +379,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private void setUserIsFollowing(UserInfoBean bean) {
 
         isFollowing = bean.getFollowing() == 1;
-        setUpToolBtn();
+        setUpOperateBtn();
 
     }
 
@@ -388,34 +392,39 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     //根据登录状态和是否是自己的用户信息来决定toolbar 上面的button的文字
-    private void setUpToolBtn() {
-
+    private void setUpOperateBtn() {
+        mBtnFollowOperation.setProgress(0);
         if (isMe) {
             switch (mTablayout.getSelectedTabPosition()) {
                 case 0:
+                    Logger.d("00000");
                     mBtnFollowOperation.setText(R.string.create_new_board);
+                    mBtnFollowOperation.setIdleText(getString(R.string.create_new_board));
                     mBtnFollowOperation.setVisibility(View.VISIBLE);
                     break;
                 case 1:
-                    mBtnFollowOperation.setText(R.string.add_new_collection);
-                    mBtnFollowOperation.setVisibility(View.VISIBLE);
+                    mBtnFollowOperation.setIdleText("");
+                    mBtnFollowOperation.setVisibility(View.INVISIBLE);
                     break;
                 case 2:
-                    mBtnFollowOperation.setText("");
-                    mBtnFollowOperation.setVisibility(View.GONE);
+                    mBtnFollowOperation.setIdleText("");
+                    mBtnFollowOperation.setVisibility(View.INVISIBLE);
                     break;
             }
         } else {
             if (isLogin) {
                 if (isFollowing) {
                     mBtnFollowOperation.setText(R.string.follow_action_unfollow);
+                    mBtnFollowOperation.setIdleText(getString(R.string.follow_action_unfollow));
                     mBtnFollowOperation.setVisibility(View.VISIBLE);
                 } else {
                     mBtnFollowOperation.setText(R.string.follow_action_follow);
+                    mBtnFollowOperation.setIdleText(getString(R.string.follow_action_follow));
                     mBtnFollowOperation.setVisibility(View.VISIBLE);
                 }
             } else {
                 mBtnFollowOperation.setText(R.string.follow_action_follow);
+                mBtnFollowOperation.setIdleText(getString(R.string.follow_action_follow));
                 mBtnFollowOperation.setVisibility(View.VISIBLE);
             }
         }
@@ -433,22 +442,14 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 if (isMe) {
                     switch (mTablayout.getSelectedTabPosition()) {
                         case 0:
-                            // TODO: 2016/9/6 0006 create new board operate
-                            break;
-                        case 1:
-                            // TODO: 2016/9/6 0006 add a new pin operate
+                            showAddBoardDiolog();
                             break;
                     }
                 } else {
                     if (isLogin) {
                         actionFollowUser();
-//                        if (isFollowing) {
-//                            // TODO: 2016/9/6 0006 unfollow operate
-//                        } else {
-//                            // TODO: 2016/9/6 0006 follow operate
-//                        }
                     } else {
-                        showLoginSnackbar(UserActivity.this, mCoordinator);
+                        showLoginMessage();
                     }
                 }
             }
@@ -526,12 +527,55 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     public void onNext(Void aVoid) {
                         mBtnFollowOperation.setProgress(0);
                         isFollowing = !isFollowing;
-                        mBtnFollowOperation.setIdleText(isFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
+                        setUpOperateBtn();
                         Snackbar.make(mCoordinator,
                                 isFollowing ? getString(R.string.follow_operate_success) : getString(R.string.unfollow_operate_success),
                                 Snackbar.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void showAddBoardDiolog() {
+
+        BoardAddDialogFragment dialogFragment = BoardAddDialogFragment.create();
+        dialogFragment.setListener(new BoardAddDialogFragment.BoardEditListener() {
+            @Override
+            public void onEditDone(String name, String des, String type) {
+                mBtnFollowOperation.setProgress(1);
+                new RetrofitClient().createService(OperateApi.class)
+                        .httpAddBoard(mAuthorization, name, des, type)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<UserBoardSingleBean>() {
+                            @Override
+                            public void onCompleted() {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                mBtnFollowOperation.setProgress(0);
+                                Snackbar.make(mCoordinator, R.string.operate_request_failed, Snackbar.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onNext(UserBoardSingleBean userBoardSingleBean) {
+                                String boardId = String.valueOf(userBoardSingleBean.getBoards().getBoard_id());
+                                if (!TextUtils.isEmpty(boardId)) {
+                                    mBtnFollowOperation.setProgress(0);
+                                    setUpOperateBtn();
+                                    Snackbar.make(mCoordinator, R.string.add_board_operate_success, Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        });
+
+        dialogFragment.show(getSupportFragmentManager(), null);
+    }
+
+    public void showLoginMessage() {
+        showLoginSnackbar(UserActivity.this, mCoordinator);
     }
 
     @Override

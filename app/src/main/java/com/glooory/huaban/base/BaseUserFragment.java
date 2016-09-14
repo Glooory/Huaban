@@ -29,6 +29,7 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
     protected View mFooterView;
     protected int mDateItemCount;
     protected FragmentRefreshListener mRefreshListener;
+    protected boolean mIsLogin;
 
     @Override
     public void onAttach(Context context) {
@@ -37,6 +38,7 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
         if (context instanceof UserActivity) {
             mAuthorization = ((UserActivity) context).mAuthorization;
             isMe = ((UserActivity) context).isMe;
+            mIsLogin = ((UserActivity) context).isLogin;
             mRefreshListener = ((UserActivity) context);
         }
     }
@@ -62,6 +64,11 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
         return mRecyclerView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mIsLogin = ((UserActivity) getActivity()).isLogin;
+    }
 
     public void setDateItemCount(int dateItemCount) {
         this.mDateItemCount = dateItemCount;

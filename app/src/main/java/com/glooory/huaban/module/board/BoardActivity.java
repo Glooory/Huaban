@@ -43,6 +43,7 @@ import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.user.UserBoardItemBean;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.FastBlurUtil;
+import com.glooory.huaban.util.SPUtils;
 import com.glooory.huaban.util.Utils;
 import com.jakewharton.rxbinding.view.RxView;
 
@@ -68,6 +69,7 @@ public class BoardActivity extends BaseActivity {
     private BoardSectionAdapter mAdapter;
     private String mUserName;
     private boolean mIsFollowing;
+    private boolean mIsMe;
 
     @BindView(R.id.tv_board_board_des)
     TextView mTvBoardDes;
@@ -122,8 +124,18 @@ public class BoardActivity extends BaseActivity {
         mBoardBean = getIntent().getParcelableExtra(Constant.BOARD_ITEM_BEAN);
         mUserName = getIntent().getExtras().getString(Constant.USERNAME);
         mIsFollowing = mBoardBean.isFollowing();
+        checkIsMe();
         initView();
         setUpViews();
+    }
+
+    private void checkIsMe() {
+        if (isLogin) {
+            String myName = (String) SPUtils.get(getApplicationContext(), Constant.USERNAME, "");
+            mIsMe = myName.equals(mUserName);
+        } else {
+            mIsMe = false;
+        }
     }
 
     private void initView() {
@@ -131,8 +143,13 @@ public class BoardActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mBtnTopOperation.setIdleText(mIsFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
-        mBtnTopOperation.setIndeterminateProgressMode(true);
+        //如果是自己的画板， 隐藏button
+        if (mIsMe) {
+            mBtnTopOperation.setVisibility(View.INVISIBLE);
+        } else {
+            mBtnTopOperation.setIdleText(mIsFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
+            mBtnTopOperation.setIndeterminateProgressMode(true);
+        }
 
         mTablayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimary));
         mTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -184,7 +201,11 @@ public class BoardActivity extends BaseActivity {
                 .subscribe(new Action1<Void>() {
                     @Override
                     public void call(Void aVoid) {
-                        actionFollowBoard();
+                        if (isLogin) {
+                            actionFollowBoard();
+                        } else {
+                            showLoginSnackbar(BoardActivity.this, mCoordinator);
+                        }
                     }
                 });
 
@@ -278,6 +299,7 @@ public class BoardActivity extends BaseActivity {
                         mBtnTopOperation.setProgress(0);
                         mIsFollowing = !mIsFollowing;
                         mBtnTopOperation.setIdleText(mIsFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
+                        mBoardBean.setFollowing(mIsFollowing);
                         Snackbar.make(mCoordinator,
                                 mIsFollowing ? R.string.follow_operate_success : R.string.unfollow_operate_success,
                                 Snackbar.LENGTH_SHORT)

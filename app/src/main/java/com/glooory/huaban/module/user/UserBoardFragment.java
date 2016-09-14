@@ -2,6 +2,7 @@ package com.glooory.huaban.module.user;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +82,10 @@ public class UserBoardFragment extends BaseUserFragment{
                         break;
                     case R.id.relativelayout_board_operate:
                         if (isMe) {
-                            // TODO: 2016/9/14 0014 edit board action
+                            showEditDialog(String.valueOf(mAdapter.getItem(i).getBoard_id()),
+                                    mAdapter.getItem(i).getTitle(),
+                                    mAdapter.getItem(i).getDescription(),
+                                    mAdapter.getItem(i).getCategory_id());
                         } else {
                             if (mIsLogin) {
                                 actionBoardFollow(mAdapter.getItem(i).getBoard_id(), mAdapter.getItem(i).isFollowing(), i);
@@ -231,12 +235,88 @@ public class UserBoardFragment extends BaseUserFragment{
                         mAdapter.getItem(position).setFollowing(following);
                         mAdapter.notifyItemChanged(position);
                         Toast.makeText(mContext,
-                                isFollowing ? R.string.follow_operate_success : R.string.unfollow_operate_success,
+                                following ? R.string.follow_operate_success : R.string.unfollow_operate_success,
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
 
     }
+
+    private void showEditDialog(String boardId, final String boardName, String des, String type) {
+
+        BoardEditDialogFragment fragment = BoardEditDialogFragment
+                .create(boardId, boardName, des, type);
+        fragment.setListener(new BoardEditDialogFragment.BoardEditListener() {
+            @Override
+            public void onEditDone(String boardId, String name, String des, String type) {
+                httpForCommitEdit(boardId, name, des, type);
+            }
+
+            @Override
+            public void onNeutralClicked(String boardId) {
+                httpForCommitDelete(boardId);
+            }
+        });
+        fragment.show(getActivity().getSupportFragmentManager(), null);
+    }
+
+    private void httpForCommitEdit(String boardId, String name, String des, String type) {
+
+        new RetrofitClient().createService(OperateApi.class)
+                .httpEditBoardService(mAuthorization, boardId, name, des, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<UserBoardSingleBean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(mContext, R.string.operate_request_failed, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(UserBoardSingleBean userBoardSingleBean) {
+                        String pinId = String.valueOf(userBoardSingleBean.getBoards().getBoard_id());
+                        if (!TextUtils.isEmpty(pinId)) {
+                            ((UserActivity) getActivity()).requestRefresh();
+                            Toast.makeText(mContext, R.string.edit_board_operate_success, Toast.LENGTH_SHORT).show();
+                            httpForFirstTime();
+                        }
+                    }
+                });
+
+    }
+
+    private void httpForCommitDelete(String boardId) {
+
+        new RetrofitClient().createService(OperateApi.class)
+                .httpDeleteBoardService(mAuthorization, boardId, Constant.OPERATEDELETEBOARD)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<UserBoardSingleBean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(mContext, R.string.operate_request_failed, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(UserBoardSingleBean userBoardSingleBean) {
+                        ((UserActivity) getActivity()).requestRefresh();
+                        Toast.makeText(mContext, R.string.delete_board_operate_success, Toast.LENGTH_SHORT).show();
+                        httpForFirstTime();
+                    }
+                });
+
+    }
+
 
     /**
      * 滑动到底部的自动加载数据的回调

@@ -115,7 +115,7 @@
     <string name="dialog_add_positive">添加</string>
     <string name="dialog_edit_positive">确定</string>
     <string name="dialog_edit_neutral">Delete This</string>
-    <string name="dialog_delete_positive">Delete</string>
+    <string name="dialog_delete_positive">删除画板</string>
 
     <string name="dialog_delete_message">will delete all image in this %s board</string>
 
@@ -211,6 +211,8 @@
     <string name="unfollow_operate_success">取消关注成功</string>
     <string name="operate_request_failed">请求操作失败</string>
     <string name="add_board_operate_success">创建成功</string>
+    <string name="edit_board_operate_success">修改成功</string>
+    <string name="delete_board_operate_success">已删除</string>
 
 
     <string-array name="user_appbar_title_array">

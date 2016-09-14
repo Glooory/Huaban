@@ -397,7 +397,6 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         if (isMe) {
             switch (mTablayout.getSelectedTabPosition()) {
                 case 0:
-                    Logger.d("00000");
                     mBtnFollowOperation.setText(R.string.create_new_board);
                     mBtnFollowOperation.setIdleText(getString(R.string.create_new_board));
                     mBtnFollowOperation.setVisibility(View.VISIBLE);
@@ -531,6 +530,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         Snackbar.make(mCoordinator,
                                 isFollowing ? getString(R.string.follow_operate_success) : getString(R.string.unfollow_operate_success),
                                 Snackbar.LENGTH_SHORT).show();
+                        onRefresh();
                     }
                 });
     }
@@ -538,7 +538,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private void showAddBoardDiolog() {
 
         BoardAddDialogFragment dialogFragment = BoardAddDialogFragment.create();
-        dialogFragment.setListener(new BoardAddDialogFragment.BoardEditListener() {
+        dialogFragment.setListener(new BoardAddDialogFragment.BoardAddListener() {
             @Override
             public void onEditDone(String name, String des, String type) {
                 mBtnFollowOperation.setProgress(1);
@@ -562,6 +562,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                             public void onNext(UserBoardSingleBean userBoardSingleBean) {
                                 String boardId = String.valueOf(userBoardSingleBean.getBoards().getBoard_id());
                                 if (!TextUtils.isEmpty(boardId)) {
+                                    onRefresh();
                                     mBtnFollowOperation.setProgress(0);
                                     setUpOperateBtn();
                                     Snackbar.make(mCoordinator, R.string.add_board_operate_success, Snackbar.LENGTH_SHORT).show();

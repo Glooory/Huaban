@@ -30,8 +30,9 @@
     <EditText
         android:id="@+id/edit_board_edit_des"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="72dp"
         android:gravity="left"
+        android:maxLines="2"
         android:paddingLeft="0dp"
         android:paddingRight="0dp" />
 

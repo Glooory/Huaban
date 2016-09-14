@@ -32,7 +32,7 @@ public class BoardAddDialogFragment extends AppCompatDialogFragment {
     private String mBoardType;
     private String[] titles;
     private boolean isChange = false; //输入值是否有变化\
-    private BoardEditListener mListener;
+    private BoardAddListener mListener;
 
     public static BoardAddDialogFragment create() {
 
@@ -124,11 +124,11 @@ public class BoardAddDialogFragment extends AppCompatDialogFragment {
 
     }
 
-    public void setListener(BoardEditListener listener) {
+    public void setListener(BoardAddListener listener) {
         this.mListener = listener;
     }
 
-    public interface BoardEditListener{
+    public interface BoardAddListener {
 
         public abstract void onEditDone(String name, String des, String type);
 

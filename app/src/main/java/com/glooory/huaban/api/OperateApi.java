@@ -67,4 +67,23 @@ public interface OperateApi {
                                                  @Field("title") String title,
                                                  @Field("description") String des,
                                                  @Field("category") String category);
+
+    //修改某个画板的信息
+    //https://api.huaban.com/boards/29646779 category=photography&description=%E6%B7%BB%E5%8A%A0%E6%8F%8F%E8%BF%B0&title=%E6%B7%BB%E5%8A%A0
+    @FormUrlEncoded
+    @POST("boards/{boardId}")
+    Observable<UserBoardSingleBean> httpEditBoardService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                         @Path("boardId") String boardId,
+                                                         @Field("title") String title,
+                                                         @Field("description") String des,
+                                                         @Field("category") String category);
+
+    //删除某个画板
+    //https://api.huaban.com/boards/29653031 POST BODY= _method=DELETE
+    @FormUrlEncoded
+    @POST("boards/{boardId}")
+    Observable<UserBoardSingleBean> httpDeleteBoardService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                           @Path("boardId") String boardId,
+                                                           @Field("_method") String operate);
+
 }

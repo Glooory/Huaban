@@ -212,6 +212,9 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mTablayout.setupWithViewPager(mViewpager);
         mViewpager.setOffscreenPageLimit(3);
         mViewpager.setCurrentItem(mCurrentPosition, true);
+        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mViewpager.setAdapter(mPagerAdapter);
+
 
     }
 
@@ -224,6 +227,9 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         titles = getResources().getStringArray(R.array.user_appbar_title_array);
     }
 
+    /**
+     * 先请求用户信息
+     */
     private void httpForUserInfo() {
 
         mSwipeRefreshLayout.setRefreshing(true);
@@ -255,19 +261,28 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     }
 
+    /**
+     * 保存用户信息及更新tablayout标题栏的数据
+     *
+     * @param bean
+     */
     private void saveItemsCount(UserInfoBean bean) {
         mBoardCount = bean.getBoard_count();
         mCollectionCount = bean.getPin_count();
         mLikeCount = bean.getLike_count();
-        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mViewpager.setAdapter(mPagerAdapter);
         String title1 = String.format(getString(R.string.format_board_number), bean.getBoard_count());
         String title2 = String.format(getString(R.string.format_gather_number), bean.getPin_count());
         String title3 = String.format(getString(R.string.format_like_number), bean.getLike_count());
         titles = new String[]{title1, title2, title3};
+        updateFragmentData();
         mViewpager.getAdapter().notifyDataSetChanged();
     }
 
+    /**
+     * 将请求到的用户数据展示出来
+     *
+     * @param bean
+     */
     private void setUserTextInfo(UserInfoBean bean) {
 
         //设置用户名
@@ -348,6 +363,11 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     }
 
+    /**
+     * 判断是否已经关注该用户
+     *
+     * @param bean
+     */
     private void setUserIsFollowing(UserInfoBean bean) {
 
         isFollowing = bean.getFollowing() == 1;
@@ -431,6 +451,9 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     }
 
+    /**
+     * 刷新 viewpager 的 currentItem
+     */
     private void requestFragmentRefresh() {
 
         int currentIndex = mViewpager.getCurrentItem();
@@ -452,6 +475,24 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 break;
         }
 
+    }
+
+    /**
+     * 用户数据请求成功将数据pass给fragment
+     */
+    private void updateFragmentData() {
+
+        if (boardFragment != null) {
+            boardFragment.setDateItemCount(mBoardCount);
+        }
+
+        if (pinFragment != null) {
+            pinFragment.setDateItemCount(mCollectionCount);
+        }
+
+        if (likeFragment != null) {
+            likeFragment.setDateItemCount(mLikeCount);
+        }
     }
 
     @Override

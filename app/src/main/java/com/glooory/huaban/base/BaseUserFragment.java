@@ -62,6 +62,11 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
         return mRecyclerView;
     }
 
+
+    public void setDateItemCount(int dateItemCount) {
+        this.mDateItemCount = dateItemCount;
+    }
+
     public abstract <T extends BaseQuickAdapter> T getMAdapter();
 
     public abstract void httpForFirstTime();

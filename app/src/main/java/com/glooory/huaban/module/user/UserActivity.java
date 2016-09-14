@@ -528,7 +528,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         isFollowing = !isFollowing;
                         mBtnFollowOperation.setIdleText(isFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
                         Snackbar.make(mCoordinator,
-                                isFollowing ? getString(R.string.unfollow_operate_success) : getString(R.string.follow_operate_success),
+                                isFollowing ? getString(R.string.follow_operate_success) : getString(R.string.unfollow_operate_success),
                                 Snackbar.LENGTH_SHORT).show();
                     }
                 });

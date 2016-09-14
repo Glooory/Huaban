@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -24,10 +25,10 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dd.CircularProgressButton;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -35,15 +36,24 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.glooory.huaban.R;
+import com.glooory.huaban.api.OperateApi;
 import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.httputils.FrescoLoader;
+import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.user.UserBoardItemBean;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.FastBlurUtil;
 import com.glooory.huaban.util.Utils;
+import com.jakewharton.rxbinding.view.RxView;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Glooory on 2016/9/7 0007 9:29.
@@ -53,10 +63,11 @@ public class BoardActivity extends BaseActivity {
     @BindView(R.id.relative_board_board_info)
     RelativeLayout mRlBoardInfo;
     @BindView(R.id.coordinator_board)
-    CoordinatorLayout coordinatorBoard;
+    CoordinatorLayout mCoordinator;
     private UserBoardItemBean mBoardBean;
     private BoardSectionAdapter mAdapter;
     private String mUserName;
+    private boolean mIsFollowing;
 
     @BindView(R.id.tv_board_board_des)
     TextView mTvBoardDes;
@@ -65,7 +76,7 @@ public class BoardActivity extends BaseActivity {
     @BindView(R.id.tv_board_board_user)
     TextView mTvBoardUserName;
     @BindView(R.id.btn_board_top_operation)
-    Button mBtnTopOperation;
+    CircularProgressButton mBtnTopOperation;
     @BindView(R.id.toolbar_board)
     Toolbar mToolbar;
     @BindView(R.id.collapsingtoolbar_board)
@@ -110,6 +121,7 @@ public class BoardActivity extends BaseActivity {
 
         mBoardBean = getIntent().getParcelableExtra(Constant.BOARD_ITEM_BEAN);
         mUserName = getIntent().getExtras().getString(Constant.USERNAME);
+        mIsFollowing = mBoardBean.isFollowing();
         initView();
         setUpViews();
     }
@@ -118,6 +130,9 @@ public class BoardActivity extends BaseActivity {
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mBtnTopOperation.setIdleText(mIsFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
+        mBtnTopOperation.setIndeterminateProgressMode(true);
 
         mTablayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimary));
         mTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -164,18 +179,21 @@ public class BoardActivity extends BaseActivity {
             }
         });
 
+        RxView.clicks(mBtnTopOperation)
+                .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)
+                .subscribe(new Action1<Void>() {
+                    @Override
+                    public void call(Void aVoid) {
+                        actionFollowBoard();
+                    }
+                });
+
     }
 
     private void setUpViews() {
 
         if (mBoardBean == null) {
             return;
-        }
-
-        if (mBoardBean.isFollowing()) {
-            mBtnTopOperation.setText(R.string.follow_action_unfollow);
-        } else {
-            mBtnTopOperation.setText(R.string.follow_action_follow);
         }
 
         mCollapsingtoolbar.setExpandedTitleColor(Color.WHITE);
@@ -229,6 +247,43 @@ public class BoardActivity extends BaseActivity {
                     })
                     .build();
         }
+
+    }
+
+    /**
+     * 对画板的关注或取消关注操作
+     */
+    private void actionFollowBoard() {
+        mBtnTopOperation.setProgress(1);
+        String operateString = mIsFollowing ? Constant.OPERATEUNFOLLOW : Constant.OPERATEFOLLOW;
+
+        new RetrofitClient().createService(OperateApi.class)
+                .httpFollowBoardService(mAuthorization, mBoardBean.getBoard_id(), operateString)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<FollowBoardOperateBean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mBtnTopOperation.setProgress(0);
+                        checkException(e, mCollapsingtoolbar);
+                    }
+
+                    @Override
+                    public void onNext(FollowBoardOperateBean followBoardOperateBean) {
+                        mBtnTopOperation.setProgress(0);
+                        mIsFollowing = !mIsFollowing;
+                        mBtnTopOperation.setIdleText(mIsFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
+                        Snackbar.make(mCoordinator,
+                                mIsFollowing ? R.string.follow_operate_success : R.string.unfollow_operate_success,
+                                Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+                });
 
     }
 

@@ -227,7 +227,7 @@ public class UserBoardFragment extends BaseUserFragment{
                         mAdapter.getItem(position).setFollowing(following);
                         mAdapter.notifyItemChanged(position);
                         Toast.makeText(mContext,
-                                isFollowing ? getString(R.string.unfollow_operate_success) : getString(R.string.follow_operate_success),
+                                isFollowing ? R.string.follow_operate_success : R.string.unfollow_operate_success,
                                 Toast.LENGTH_SHORT).show();
                     }
                 });

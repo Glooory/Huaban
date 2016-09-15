@@ -11,7 +11,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
@@ -19,6 +18,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.PinQuickAdapter;
 import com.glooory.huaban.api.AllApi;
+import com.glooory.huaban.entity.ListPinsBean;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
@@ -42,6 +42,10 @@ import rx.schedulers.Schedulers;
  */
 public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
         BaseQuickAdapter.RequestLoadMoreListener {
+    public static final int HOME_FRAGMENT_INDEX = 0;
+    public static final int NEWEST_FRAGMENT_INDEX = 1;
+    public static final int POPULAR_FRAGMENT_INDEX = 2;
+    public static final String FRAGMENT_TYPE_INDEX = "fragment_type_index";
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -54,10 +58,12 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private final int PAGE_SIZE = 20;
     private Context mContext;
     private Resources mResources;
+    private int mTypeIndex;
 
-    public static PinsFragment newInstance(String authorization) {
+    public static PinsFragment newInstance(String authorization, int typeIndex) {
         Bundle args = new Bundle();
         args.putString(Constant.AUTHORIZATION, authorization);
+        args.putInt(FRAGMENT_TYPE_INDEX, typeIndex);
         PinsFragment fragment = new PinsFragment();
         fragment.setArguments(args);
         return fragment;
@@ -74,6 +80,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuthorization = getArguments().getString(Constant.AUTHORIZATION);
+        mTypeIndex = getArguments().getInt(FRAGMENT_TYPE_INDEX);
     }
 
     @Nullable
@@ -82,7 +89,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         View view = inflater.inflate(R.layout.fragment_swiperefresh_recycler, container, false);
         ButterKnife.bind(this, view);
         initViews();
-        getHttpFirst();
+        httpFirstTime();
         return view;
     }
 
@@ -131,15 +138,95 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        getHttpFirst();
+        httpFirstTime();
     }
 
     /**
      * 第一次加载数据
      */
-    private void getHttpFirst() {
+    private void httpFirstTime() {
         mSwipeRefreshLayout.setRefreshing(true);
 
+        switch (mTypeIndex) {
+            case HOME_FRAGMENT_INDEX:
+                httpHomeFirst();
+                break;
+            case NEWEST_FRAGMENT_INDEX:
+                httpNewestFirst();
+                break;
+            case POPULAR_FRAGMENT_INDEX:
+                httpPopularFirst();
+                break;
+        }
+
+    }
+
+    /**
+     * 后续上拉自动加载数据
+     */
+    public void httpForMoreData() {
+
+        switch (mTypeIndex) {
+            case HOME_FRAGMENT_INDEX:
+                httpHomeMore();
+                break;
+            case NEWEST_FRAGMENT_INDEX:
+                httpNewestMore();
+                break;
+            case POPULAR_FRAGMENT_INDEX:
+                httpPopularMore();
+                break;
+        }
+
+    }
+
+    /**
+     * 首次加载首页模块的数据
+     */
+    private void httpHomeFirst() {
+
+        new RetrofitClient().createService(AllApi.class)
+                .httpHomePinsService(mAuthorization, Constant.LIMIT)
+                .map(new Func1<ListPinsBean, List<PinsBean>>() {
+                    @Override
+                    public List<PinsBean> call(ListPinsBean listPinsBean) {
+                        return listPinsBean.getPins();
+                    }
+                })
+                .filter(new Func1<List<PinsBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<PinsBean> list) {
+                        return list.size() > 0;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<PinsBean>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        checkException(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(List<PinsBean> list) {
+                        setMaxId(list);
+                        mAdapter.setNewData(list);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+
+    }
+
+    /**
+     * 首次加载最新模块的数据
+     */
+    private void httpNewestFirst() {
         RetrofitClient.createService(AllApi.class)
                 .httpAllService(mAuthorization, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
@@ -175,22 +262,100 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
+    }
+
+    /**
+     * 第一次请求热门采集
+     */
+    private void httpPopularFirst() {
+
+        new RetrofitClient().createService(AllApi.class)
+                .httpPopularPinsService(mAuthorization, Constant.LIMIT)
+                .map(new Func1<ListPinsBean, List<PinsBean>>() {
+                    @Override
+                    public List<PinsBean> call(ListPinsBean listPinsBean) {
+                        return listPinsBean.getPins();
+                    }
+                })
+                .filter(new Func1<List<PinsBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<PinsBean> list) {
+                        return list.size() > 0;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<PinsBean>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        checkException(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(List<PinsBean> list) {
+                        setMaxId(list);
+                        mAdapter.setNewData(list);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                });
 
     }
 
     /**
-     * 后续上拉自动加载数据
-     *
-     * @param max
+     * 后续自动加载首页模块的更多数据
      */
-    public void getHttpMaxId(int max) {
+    private void httpHomeMore() {
 
-        Logger.d(mMaxId);
+        new RetrofitClient().createService(AllApi.class)
+                .httpHomePinsMaxService(mAuthorization, mMaxId, Constant.LIMIT)
+                .map(new Func1<ListPinsBean, List<PinsBean>>() {
+                    @Override
+                    public List<PinsBean> call(ListPinsBean listPinsBean) {
+                        return listPinsBean.getPins();
+                    }
+                })
+                .filter(new Func1<List<PinsBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<PinsBean> list) {
+                        return list.size() > 0;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<PinsBean>>() {
+                    @Override
+                    public void onCompleted() {
 
-        Logger.d(max);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        checkException(e);
+                        mAdapter.showLoadMoreFailedView();
+                    }
+
+                    @Override
+                    public void onNext(List<PinsBean> list) {
+                        setMaxId(list);
+                        mAdapter.addData(list);
+                    }
+                });
+
+    }
+
+    /**
+     * 后续自动加载最新模块的更多数据
+     */
+    private void httpNewestMore() {
 
         RetrofitClient.createService(AllApi.class)
-                .httpAllMaxService(mAuthorization, Constant.LIMIT, max)
+                .httpAllMaxService(mAuthorization, Constant.LIMIT, mMaxId)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
                     @Override
@@ -207,15 +372,54 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     @Override
                     public void onError(Throwable e) {
-                        Logger.d("getHttpMaxId()  onError()  call----" + e.getMessage());
-                        e.printStackTrace();
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        checkException(e);
                         mAdapter.showLoadMoreFailedView();
                     }
 
                     @Override
                     public void onNext(List<PinsBean> list) {
-                        Logger.d(list.size());
+                        setMaxId(list);
+                        mAdapter.addData(list);
+                    }
+                });
+
+    }
+
+    /**
+     * 后续自动加载更多热门采集
+     */
+    private void httpPopularMore() {
+
+        new RetrofitClient().createService(AllApi.class)
+                .httpPopularPinsMaxService(mAuthorization, mMaxId, Constant.LIMIT)
+                .map(new Func1<ListPinsBean, List<PinsBean>>() {
+                    @Override
+                    public List<PinsBean> call(ListPinsBean listPinsBean) {
+                        return listPinsBean.getPins();
+                    }
+                })
+                .filter(new Func1<List<PinsBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<PinsBean> list) {
+                        return list.size() > 0;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<PinsBean>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        checkException(e);
+                        mAdapter.showLoadMoreFailedView();
+                    }
+
+                    @Override
+                    public void onNext(List<PinsBean> list) {
                         setMaxId(list);
                         mAdapter.addData(list);
                     }
@@ -225,7 +429,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onLoadMoreRequested() {
-        getHttpMaxId(mMaxId);
+        httpForMoreData();
     }
 
     /**
@@ -245,4 +449,9 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         NetworkUtils.checkHttpException(getContext(), throwable, mRecyclerView);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Logger.d(mTypeIndex + "Destroyed");
+    }
 }

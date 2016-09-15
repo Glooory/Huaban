@@ -189,11 +189,11 @@
 
     <string name="nav_homepage">首页</string>
     <string name="nav_newest">最新</string>
+    <string name="nav_popular">热门</string>
     <string name="nav_discover">发现</string>
-    <string name="nav_more">更多</string>
     <string name="nav_settings">设置</string>
     <string name="nav_about">关于</string>
-    <string name="nav_exit">退出</string>
+    <string name="nav_exit">退出账号</string>
     <string name="menu_action_search">搜索</string>
 
     <string name="login_skip">随便看看</string>

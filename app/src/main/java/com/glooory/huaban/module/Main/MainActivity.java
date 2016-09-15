@@ -3,6 +3,8 @@ package com.glooory.huaban.module.main;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +16,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +45,7 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        View.OnClickListener{
+        View.OnClickListener {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -52,6 +55,12 @@ public class MainActivity extends BaseActivity
     NavigationView mNavView;
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+    @BindView(R.id.container_main)
+    FrameLayout containerMain;
+    @BindView(R.id.coordinator_main)
+    CoordinatorLayout mCoordinator;
+    @BindView(R.id.appbar_layout_main)
+    AppBarLayout mAppbar;
 
     private LinearLayout mDrawerAvatarLL;
     private LinearLayout mDrawerCollection;
@@ -68,6 +77,7 @@ public class MainActivity extends BaseActivity
     private TextView mBoardCountTv;
     //侧滑菜单粉丝数
     private TextView mFansCountTv;
+    private FragmentManager mFragmentManager;
 
     @Override
     protected int getLayoutId() {
@@ -82,14 +92,26 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container_main, PinsFragment.newInstance(mAuthorization)).commit();
+        mFragmentManager = getSupportFragmentManager();
+        if (isLogin) {
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.container_main, PinsFragment.newInstance(mAuthorization, PinsFragment.HOME_FRAGMENT_INDEX))
+                    .commit();
+        } else {
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.container_main, PinsFragment.newInstance(mAuthorization, PinsFragment.NEWEST_FRAGMENT_INDEX))
+                    .commit();
+        }
     }
 
     @Override
     protected void initResAndListener() {
         setSupportActionBar(mToolbar);
-        mToolbar.setTitle(mNavView.getMenu().getItem(0).getTitle());
+        if (isLogin) {
+            getSupportActionBar().setTitle(R.string.nav_homepage);
+        } else {
+            getSupportActionBar().setTitle(R.string.nav_newest);
+        }
         RxView.clicks(mFab)
                 .throttleFirst(Constant.THROTTDURATION, TimeUnit.MILLISECONDS)  //防抖动处理
                 .subscribe(new Action1<Void>() {
@@ -105,6 +127,21 @@ public class MainActivity extends BaseActivity
         mNavView.setNavigationItemSelectedListener(this);
         initDrawerHeader();
         initDrawerMenu();
+
+        mAppbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                float off = -verticalOffset;
+                Logger.d(off);
+                if (off > 70) {
+                    mToolbar.setAlpha(0.0f);
+                } else {
+                    //当Collapsingtoolbar 滑动到最顶端时，隐藏从通明状态栏能看得见的View，
+                    // 如果不隐藏，从透明状态栏能看见部分toolbar，影响用户体验
+                    mToolbar.setAlpha(1.0f);
+                }
+            }
+        });
     }
 
     //手动填充DrawerLayout 的headerView
@@ -131,7 +168,7 @@ public class MainActivity extends BaseActivity
 
     private void initDrawerMenu() {
         Menu memu = mNavView.getMenu();
-        memu.getItem(0).setChecked(true);
+        memu.getItem(isLogin ? 0 : 1).setChecked(true);
     }
 
     @Override
@@ -221,9 +258,24 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_homepage) {
-            // Handle the camera action
+            if (isLogin) {
+                mFragmentManager.beginTransaction()
+                        .replace(R.id.container_main, PinsFragment.newInstance(mAuthorization, PinsFragment.HOME_FRAGMENT_INDEX))
+                        .commit();
+                getSupportActionBar().setTitle(R.string.nav_homepage);
+            } else {
+                showLoginSnackbar(MainActivity.this, mCoordinator);
+            }
         } else if (id == R.id.nav_newest) {
-
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.container_main, PinsFragment.newInstance(mAuthorization, PinsFragment.NEWEST_FRAGMENT_INDEX))
+                    .commit();
+            getSupportActionBar().setTitle(R.string.nav_newest);
+        } else if (id == R.id.nav_popular) {
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.container_main, PinsFragment.newInstance(mAuthorization, PinsFragment.POPULAR_FRAGMENT_INDEX))
+                    .commit();
+            getSupportActionBar().setTitle(R.string.nav_popular);
         } else if (id == R.id.nav_discover) {
 
         }

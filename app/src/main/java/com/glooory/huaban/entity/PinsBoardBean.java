@@ -42,7 +42,7 @@ public class PinsBoardBean implements Parcelable {
     private int updated_at;
     private int deleting;
     private int is_private;
-    private List<PinsSimpleBean> pins;
+    private List<PinsBean> pins;
 
     public int getBoard_id() {
         return board_id;
@@ -148,11 +148,11 @@ public class PinsBoardBean implements Parcelable {
         this.is_private = is_private;
     }
 
-    public List<PinsSimpleBean> getPins() {
+    public List<PinsBean> getPins() {
         return pins;
     }
 
-    public void setPins(List<PinsSimpleBean> pins) {
+    public void setPins(List<PinsBean> pins) {
         this.pins = pins;
     }
 
@@ -196,7 +196,7 @@ public class PinsBoardBean implements Parcelable {
         this.updated_at = in.readInt();
         this.deleting = in.readInt();
         this.is_private = in.readInt();
-        this.pins = in.createTypedArrayList(PinsSimpleBean.CREATOR);
+        this.pins = in.createTypedArrayList(PinsBean.CREATOR);
     }
 
     public static final Parcelable.Creator<PinsBoardBean> CREATOR = new Parcelable.Creator<PinsBoardBean>() {

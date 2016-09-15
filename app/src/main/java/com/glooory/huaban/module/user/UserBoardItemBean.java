@@ -3,7 +3,7 @@ package com.glooory.huaban.module.user;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.glooory.huaban.entity.PinsSimpleBean;
+import com.glooory.huaban.entity.PinsBean;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -46,14 +46,14 @@ public class UserBoardItemBean implements Parcelable {
     private int is_private;
     private boolean following;
 
-    private List<PinsSimpleBean> pins;
+    private List<PinsBean> pins;
     private ExtraBean extra;
 
-    public void setPins(List<PinsSimpleBean> pins) {
+    public void setPins(List<PinsBean> pins) {
         this.pins = pins;
     }
 
-    public List<PinsSimpleBean> getPins() {
+    public List<PinsBean> getPins() {
         return pins;
     }
 
@@ -327,7 +327,7 @@ public class UserBoardItemBean implements Parcelable {
         this.deleting = in.readInt();
         this.is_private = in.readInt();
         this.following = in.readByte() != 0;
-        this.pins = in.createTypedArrayList(PinsSimpleBean.CREATOR);
+        this.pins = in.createTypedArrayList(PinsBean.CREATOR);
         this.extra = in.readParcelable(ExtraBean.class.getClassLoader());
     }
 

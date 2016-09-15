@@ -11,13 +11,14 @@
             android:icon="@drawable/ic_newest"
             android:title="@string/nav_newest" />
         <item
+            android:id="@+id/nav_popular"
+            android:icon="@drawable/ic_popular_24dp"
+            android:title="@string/nav_popular" />
+        <item
             android:id="@+id/nav_discover"
             android:icon="@drawable/ic_discover"
             android:title="@string/nav_discover" />
-        <item
-            android:id="@+id/nav_more"
-            android:icon="@drawable/ic_more"
-            android:title="@string/nav_more" />
+
     </group>
 
     <item android:title="花瓣">

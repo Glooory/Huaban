@@ -98,6 +98,10 @@ public class PinsBean implements Parcelable {
     private String orig_source;
     private boolean liked;
 
+    private PinsUserBean user;
+
+    private PinsBoardBean board;
+
     public int getSeq() {
         return seq;
     }
@@ -113,10 +117,6 @@ public class PinsBean implements Parcelable {
     public void setLiked(boolean liked) {
         this.liked = liked;
     }
-
-    private PinsUserBean user;
-
-    private PinsBoardBean board;
 
     public int getPin_id() {
         return pin_id;
@@ -348,4 +348,5 @@ public class PinsBean implements Parcelable {
             return new PinsBean[size];
         }
     };
+
 }

@@ -71,12 +71,14 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     public int mBoardCount;
     public int mCollectionCount;
     public int mLikeCount;
+    public int mFollowingCount;
     private SectionsPagerAdapter mPagerAdapter;
     private boolean isFollowing;
     private int mCurrentPosition = 0;
-    private UserBoardFragment boardFragment;
-    private UserPinFragment pinFragment;
-    private UserLikeFragment likeFragment;
+    private UserBoardFragment mBoardFragment;
+    private UserPinFragment mPinFragment;
+    private UserLikeFragment mLikeFragment;
+    private UserFollowingFragment mFollowingFragment;
     private String mUserName;
 
     @BindView(R.id.img_image_user)
@@ -218,7 +220,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mTablayout.setupWithViewPager(mViewpager);
-        mViewpager.setOffscreenPageLimit(3);
+        mViewpager.setOffscreenPageLimit(4);
         mViewpager.setCurrentItem(mCurrentPosition, true);
         mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewpager.setAdapter(mPagerAdapter);
@@ -278,10 +280,12 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mBoardCount = bean.getBoard_count();
         mCollectionCount = bean.getPin_count();
         mLikeCount = bean.getLike_count();
+        mFollowingCount = bean.getFollowing_count();
         String title1 = String.format(getString(R.string.format_board_number), bean.getBoard_count());
         String title2 = String.format(getString(R.string.format_gather_number), bean.getPin_count());
         String title3 = String.format(getString(R.string.format_like_number), bean.getLike_count());
-        titles = new String[]{title1, title2, title3};
+        String title4 = String.format(getString(R.string.format_attention_number), bean.getFollowing_count());
+        titles = new String[]{title1, title2, title3, title4};
         updateFragmentData();
         mViewpager.getAdapter().notifyDataSetChanged();
     }
@@ -409,6 +413,10 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     mBtnFollowOperation.setIdleText("");
                     mBtnFollowOperation.setVisibility(View.INVISIBLE);
                     break;
+                case 3:
+                    mBtnFollowOperation.setIdleText("");
+                    mBtnFollowOperation.setVisibility(View.INVISIBLE);
+                    break;
             }
         } else {
             if (isLogin) {
@@ -464,18 +472,23 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         int currentIndex = mViewpager.getCurrentItem();
         switch (currentIndex) {
             case 0:
-                if (boardFragment != null) {
-                    boardFragment.refreshData();
+                if (mBoardFragment != null) {
+                    mBoardFragment.refreshData();
                 }
                 break;
             case 1:
-                if (pinFragment != null) {
-                    pinFragment.refreshData();
+                if (mPinFragment != null) {
+                    mPinFragment.refreshData();
                 }
                 break;
             case 2:
-                if (likeFragment != null) {
-                    likeFragment.refreshData();
+                if (mLikeFragment != null) {
+                    mLikeFragment.refreshData();
+                }
+                break;
+            case 3:
+                if (mFollowingFragment != null) {
+                    mFollowingFragment.refreshData();
                 }
                 break;
         }
@@ -487,16 +500,20 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
      */
     private void updateFragmentData() {
 
-        if (boardFragment != null) {
-            boardFragment.setDateItemCount(mBoardCount);
+        if (mBoardFragment != null) {
+            mBoardFragment.setDateItemCount(mBoardCount);
         }
 
-        if (pinFragment != null) {
-            pinFragment.setDateItemCount(mCollectionCount);
+        if (mPinFragment != null) {
+            mPinFragment.setDateItemCount(mCollectionCount);
         }
 
-        if (likeFragment != null) {
-            likeFragment.setDateItemCount(mLikeCount);
+        if (mLikeFragment != null) {
+            mLikeFragment.setDateItemCount(mLikeCount);
+        }
+
+        if (mFollowingFragment != null) {
+            mFollowingFragment.setDateItemCount(mFollowingCount);
         }
     }
 
@@ -604,6 +621,8 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     return UserPinFragment.newInstance(mUserId, mCollectionCount);
                 case 2:
                     return UserLikeFragment.newInstance(mUserId, mLikeCount);
+                case 3:
+                    return UserFollowingFragment.newInstance(mUserId, mFollowingCount);
                 default:
                     return null;
             }
@@ -614,20 +633,24 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
             switch (position) {
                 case 0:
-                    boardFragment = (UserBoardFragment) createdFragment;
+                    mBoardFragment = (UserBoardFragment) createdFragment;
                     break;
                 case 1:
-                    pinFragment = (UserPinFragment) createdFragment;
+                    mPinFragment = (UserPinFragment) createdFragment;
                     break;
                 case 2:
-                    likeFragment = (UserLikeFragment) createdFragment;
+                    mLikeFragment = (UserLikeFragment) createdFragment;
+                    break;
+                case 3:
+                    mFollowingFragment = (UserFollowingFragment) createdFragment;
+                    break;
             }
             return createdFragment;
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override

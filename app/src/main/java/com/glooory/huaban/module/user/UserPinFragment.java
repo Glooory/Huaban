@@ -3,7 +3,6 @@ package com.glooory.huaban.module.user;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
@@ -31,7 +30,6 @@ import rx.schedulers.Schedulers;
  */
 public class UserPinFragment extends BaseUserFragment {
     private UserPinAdapter mAdapter;
-    private int mCurrentCount;
 
     public static UserPinFragment newInstance(String userId, int dataCount) {
         Bundle args = new Bundle();
@@ -43,12 +41,12 @@ public class UserPinFragment extends BaseUserFragment {
     }
 
     @Override
-    public UserPinAdapter getMAdapter() {
-        initAdapter();
+    public UserPinAdapter getAdapter() {
         return mAdapter;
     }
 
-    private void initAdapter() {
+    @Override
+    public void initAdapter() {
         mAdapter = new UserPinAdapter(mContext);
 
         //设置上滑自动建在的正在加载更多的自定义View
@@ -124,22 +122,8 @@ public class UserPinFragment extends BaseUserFragment {
 
     }
 
-    public void checkIfAddFooter() {
-        if (mDateItemCount < PAGESIZE) {
-            if (mFooterView.getParent() != null) {
-                ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
-            }
-            mRecyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.loadComplete();
-                    mAdapter.addFooterView(mFooterView);
-                }
-            });
-        }
-    }
-
-    private void httpForMorePins() {
+    @Override
+    public void httpForMoreData() {
 
         new RetrofitClient().createService(UserApi.class)
                 .httpUserPinsMaxService(mAuthorization, mUserId, mMaxId, Constant.LIMIT)
@@ -172,33 +156,18 @@ public class UserPinFragment extends BaseUserFragment {
 
     }
 
-    private void setMaxId(List<PinsBean> beans) {
-        if (beans != null) {
-            if (beans.size() > 0) {
-                mMaxId = beans.get(beans.size() - 1).getPin_id();
+    /**
+     * 保存本次网络数据请求的max值，后续联网需要
+     *
+     * @param list
+     */
+    private void setMaxId(List<PinsBean> list) {
+        if (list != null) {
+            if (list.size() > 0) {
+                mMaxId = list.get(list.size() - 1).getPin_id();
+                mDataCountLastRequested = list.size();
             }
         }
     }
 
-    @Override
-    public void onLoadMoreRequested() {
-
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mCurrentCount >= mDateItemCount) {
-                    mAdapter.loadComplete();
-                    mAdapter.addFooterView(mFooterView);
-                } else {
-                    httpForMorePins();
-                }
-            }
-        });
-
-    }
-
-    @Override
-    public void refreshData() {
-        httpForFirstTime();
-    }
 }

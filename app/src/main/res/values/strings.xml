@@ -221,6 +221,7 @@
         <item>@string/board</item>
         <item>@string/collection</item>
         <item>@string/like</item>
+        <item>@string/following</item>
     </string-array>
 
     <string name="board_tran">board_tran</string>
@@ -232,6 +233,7 @@
     <string name="board">画板</string>
     <string name="collection">采集</string>
     <string name="like">喜欢</string>
+    <string name="following">关注</string>
     <string name="download">下载</string>
     <string name="gather_anyway">仍要采集</string>
 </resources>

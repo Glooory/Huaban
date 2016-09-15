@@ -34,9 +34,8 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Glooory on 2016/9/3 0003 18:18.
  */
-public class UserBoardFragment extends BaseUserFragment{
+public class UserBoardFragment extends BaseUserFragment {
     private UserBoardAdapter mAdapter;
-    private int mCurrentCount;
     private String mUserName;
 
     public static UserBoardFragment newInstance(String userId, int boardCount, String userName) {
@@ -56,12 +55,12 @@ public class UserBoardFragment extends BaseUserFragment{
     }
 
     @Override
-    public UserBoardAdapter getMAdapter() {
-        initAdapter();
+    public UserBoardAdapter getAdapter() {
         return mAdapter;
     }
 
-    private void initAdapter() {
+    @Override
+    public void initAdapter() {
         mAdapter = new UserBoardAdapter(mContext, isMe);
 
 
@@ -80,7 +79,7 @@ public class UserBoardFragment extends BaseUserFragment{
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.linearlayout_image:
-                        BoardActivity.launch(getActivity(), mAdapter.getData().get(i), mUserName,(SimpleDraweeView) view.findViewById(R.id.img_card_image));
+                        BoardActivity.launch(getActivity(), mAdapter.getData().get(i), mUserName, (SimpleDraweeView) view.findViewById(R.id.img_card_image));
                         break;
                     case R.id.relativelayout_board_operate:
                         if (isMe) {
@@ -148,9 +147,10 @@ public class UserBoardFragment extends BaseUserFragment{
 
     }
 
-    private void moreHttpRequest() {
+    @Override
+    public void httpForMoreData() {
 
-         new RetrofitClient().createService(UserApi.class)
+        new RetrofitClient().createService(UserApi.class)
                 .httpUserBoardMaxService(mAuthorization, mUserId, mMaxId, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
@@ -187,30 +187,18 @@ public class UserBoardFragment extends BaseUserFragment{
 
     /**
      * 保存这次请求的maxId ， 后面联网请求数据要带上
-     * @param beans
+     *
+     * @param list
      */
-    private void setMaxId(List<UserBoardItemBean> beans) {
-        mMaxId = beans.get(beans.size() - 1).getBoard_id();
+    private void setMaxId(List<UserBoardItemBean> list) {
+        mMaxId = list.get(list.size() - 1).getBoard_id();
+        mDataCountLastRequested = list.size();
     }
 
-    public void checkIfAddFooter() {
-        if (mDateItemCount < PAGESIZE) {
-            if (mFooterView.getParent() != null) {
-                ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
-            }
-
-            mRecyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.loadComplete();
-                    mAdapter.addFooterView(mFooterView);
-                }
-            });
-        }
-    }
 
     /**
      * 针对画板的关注和取消关注操作
+     *
      * @param isFollowing
      */
     private void actionBoardFollow(int boardId, final boolean isFollowing, final int position) {
@@ -244,6 +232,14 @@ public class UserBoardFragment extends BaseUserFragment{
 
     }
 
+    /**
+     * 显示编辑对话框
+     *
+     * @param boardId
+     * @param boardName
+     * @param des
+     * @param type
+     */
     private void showEditDialog(String boardId, final String boardName, String des, String type) {
 
         BoardEditDialogFragment fragment = BoardEditDialogFragment
@@ -273,6 +269,14 @@ public class UserBoardFragment extends BaseUserFragment{
         fragment.show(getActivity().getSupportFragmentManager(), null);
     }
 
+    /**
+     * 联网提交对画板的修改
+     *
+     * @param boardId
+     * @param name
+     * @param des
+     * @param type
+     */
     private void httpForCommitEdit(String boardId, String name, String des, String type) {
 
         new RetrofitClient().createService(OperateApi.class)
@@ -304,7 +308,8 @@ public class UserBoardFragment extends BaseUserFragment{
     }
 
     /**
-     *联网删除画板操作
+     * 联网删除画板操作
+     *
      * @param boardId
      */
     private void httpForCommitDelete(String boardId) {
@@ -334,28 +339,13 @@ public class UserBoardFragment extends BaseUserFragment{
 
     }
 
-
-    /**
-     * 滑动到底部的自动加载数据的回调
-     */
     @Override
-    public void onLoadMoreRequested() {
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mCurrentCount >= mDateItemCount) {
-                    mAdapter.loadComplete();
-                    mAdapter.addFooterView(mFooterView);
-                } else {
-                    moreHttpRequest();
-                }
-            }
-        });
-    }
-
-    @Override
-    public void refreshData() {
-        httpForFirstTime();
+    public void setAdapterLoadComplete() {
+        if (mFooterView.getParent() != null) {
+            ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
+        }
+        mAdapter.loadComplete();
+        mAdapter.addFooterView(mFooterView);
     }
 
 }

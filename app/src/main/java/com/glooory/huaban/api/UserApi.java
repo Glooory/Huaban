@@ -4,6 +4,7 @@ import com.glooory.huaban.entity.BoardListInfoBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.module.login.UserInfoBean;
 import com.glooory.huaban.module.user.UserBoardListBean;
+import com.glooory.huaban.module.user.UserFollowingBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.GET;
@@ -73,6 +74,21 @@ public interface UserApi {
                                                      @Path("userId") String userId,
                                                      @Query("max") int max,
                                                      @Query("limit") int limit);
+
+    //用户所关注的用户
+    //https:api.huaban.com/users/{userId}/following?limit=20
+    @GET("users/{userId}/following")
+    Observable<UserFollowingBean> httpUserFollowingService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                           @Path("userId") String userId,
+                                                           @Query("limit") int limit);
+
+    //用户所关注的用户
+    //https:api.huaban.com/users/{userId}/following?max=1354654143&limit=20
+    @GET("users/{userId}/following")
+    Observable<UserFollowingBean> httpUserFollowingMaxService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                           @Path("userId") String userId,
+                                                           @Query("max") int seq,
+                                                           @Query("limit") int limit);
 
 }
 

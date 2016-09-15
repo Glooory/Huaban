@@ -21,13 +21,25 @@ import com.glooory.huaban.util.Constant;
 public abstract class BaseUserFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
     protected boolean isMe;
     protected String mAuthorization;
+    /**
+     * 每次请求加载数据的数量，用来触发LoadMoreListener回调方法
+     */
     protected final int PAGESIZE = 20;
     protected String mUserId;
     protected RecyclerView mRecyclerView;
     protected Context mContext;
     protected int mMaxId;
     protected View mFooterView;
-    protected int mDateItemCount;
+    protected int mDataItemCount;
+    /**
+     * 上次网络请求得到的数据数量，用来判断数据是否加载完毕 如果小于PAGESIZE 则可认为加载完毕
+     */
+    protected int mDataCountLastRequested = 0;
+    /**
+     * 当前已经请求到的数据的总数， 用来判断数据是否加载完毕，如果 mCurrentCount >= mDataItemCount
+     * 则判定加载完毕
+     */
+    protected int mCurrentCount = 0;
     protected FragmentRefreshListener mRefreshListener;
     protected boolean mIsLogin;
 
@@ -50,7 +62,7 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
         }
         super.onCreate(savedInstanceState);
         mUserId = getArguments().getString(Constant.USERID);
-        mDateItemCount = getArguments().getInt(Constant.DATA_ITEM_COUNT);
+        mDataItemCount = getArguments().getInt(Constant.DATA_ITEM_COUNT);
     }
 
     @Nullable
@@ -58,8 +70,9 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_user_recyclerview, container, false);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        mRecyclerView.setAdapter(getMAdapter());
-        mFooterView = inflater.inflate(R.layout.view_no_more_data_footer, container, false);
+        initAdapter();
+        mRecyclerView.setAdapter(getAdapter());
+        mFooterView = inflater.inflate(R.layout.view_no_more_data_footer, null);
         httpForFirstTime();
         return mRecyclerView;
     }
@@ -70,21 +83,92 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
         mIsLogin = ((UserActivity) getActivity()).isLogin;
     }
 
+    /**
+     * 复制当前用户的采集、画报或者喜欢数量， 每个子类用来判断自动加载
+     * @param dateItemCount
+     */
     public void setDateItemCount(int dateItemCount) {
-        this.mDateItemCount = dateItemCount;
+        this.mDataItemCount = dateItemCount;
     }
 
-    public abstract <T extends BaseQuickAdapter> T getMAdapter();
+    /**
+     * 初始化Adpater，子类实现各自Adapter的初始化
+     */
+    public abstract void initAdapter();
 
+    public abstract <T extends BaseQuickAdapter> T getAdapter();
+
+    /**
+     * 第一次联网请求数据
+     */
     public abstract void httpForFirstTime();
 
-    public abstract void refreshData();
+    /**
+     * 刷新当前子类的数据，提供给Activity调用
+     */
+    public void refreshData(){
+        httpForFirstTime();
+    }
 
+    /**
+     * 子类刷新数据时，请求Activity对应操作的回调
+     */
     public interface FragmentRefreshListener {
 
         void requestRefresh();
 
         void requestRefreshDone();
+    }
+
+    /**
+     * 上滑自动加载更多数据
+     */
+    public abstract void httpForMoreData();
+
+    /**
+     * 数据加载完毕，adapter加上footerview
+     */
+    public void setAdapterLoadComplete() {
+        if (mFooterView.getParent() != null) {
+            ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
+        }
+        getAdapter().loadComplete();
+        getAdapter().addFooterView(mFooterView);
+    }
+
+    /**
+     * 判断当前数据是否已经加载完毕和加没有更多了的FooterView
+     */
+    public void checkIfAddFooter() {
+
+        if (mDataCountLastRequested < PAGESIZE
+                || mCurrentCount >= mDataItemCount) {
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    setAdapterLoadComplete();
+                }
+            });
+        }
+    }
+
+    /**
+     * Adapter上滑自动加载更多数据的回调
+     */
+    @Override
+    public void onLoadMoreRequested() {
+
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mDataCountLastRequested < PAGESIZE
+                        || mCurrentCount >= mDataItemCount) {
+                    setAdapterLoadComplete();
+                } else {
+                    httpForMoreData();
+                }
+            }
+        });
 
     }
 }

@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -63,6 +64,7 @@ import butterknife.ButterKnife;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -116,7 +118,7 @@ public class ImageDetailActivity extends BaseActivity
     private UserBoardItemBean mBoardBean;
     private PinQuickAdapter mAdapter;
     private int mPage = 1;
-    private int PAGE_SIZE = 20;
+    private int PAGE_SIZE = 10;
     private int mLikeCount;
     private int mGatherCount;
     private String[] mBoardIds;
@@ -124,6 +126,7 @@ public class ImageDetailActivity extends BaseActivity
     private String mGatherBelong;
     private String mPinKey;
     private String mPinType;
+    private View mFooterView;
 
     public static void launch(Activity activity, int pinId, float ratio, SimpleDraweeView image) {
         Intent intent = new Intent(activity, ImageDetailActivity.class);
@@ -176,6 +179,8 @@ public class ImageDetailActivity extends BaseActivity
         if (mRatio > 0) {
             mImageDetail.setAspectRatio(mRatio);
         }
+
+        mFooterView = LayoutInflater.from(mContext).inflate(R.layout.view_no_more_data_footer, null);
 
         //设置点击事件监听
         RxView.clicks(mLlPin)
@@ -403,7 +408,13 @@ public class ImageDetailActivity extends BaseActivity
     private void httpForFirst() {
 
         new RetrofitClient().createService(ImageDetailApi.class)
-                .httpRecommendService(mAuthorization, mPinId, mPage, Constant.LIMIT)
+                .httpRecommendService(mAuthorization, mPinId, mPage, PAGE_SIZE)
+                .filter(new Func1<List<PinsBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<PinsBean> list) {
+                        return list.size() > 0;
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<PinsBean>>() {
@@ -421,6 +432,7 @@ public class ImageDetailActivity extends BaseActivity
                     public void onNext(List<PinsBean> list) {
                         mAdapter.setNewData(list);
                         mPage++;
+                        checkIfAddFooter(list.size());
                     }
                 });
 
@@ -432,7 +444,13 @@ public class ImageDetailActivity extends BaseActivity
     private void httpForMore() {
 
         new RetrofitClient().createService(ImageDetailApi.class)
-                .httpRecommendService(mAuthorization, mPinId, mPage, Constant.LIMIT)
+                .httpRecommendService(mAuthorization, mPinId, mPage, PAGE_SIZE)
+                .filter(new Func1<List<PinsBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<PinsBean> list) {
+                        return list.size() > 0;
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<PinsBean>>() {
@@ -450,6 +468,7 @@ public class ImageDetailActivity extends BaseActivity
                     public void onNext(List<PinsBean> list) {
                         mAdapter.addData(list);
                         mPage++;
+                        checkIfAddFooter(list.size());
                     }
                 });
 
@@ -589,6 +608,24 @@ public class ImageDetailActivity extends BaseActivity
                     }
                 });
 
+    }
+
+    /**
+     * 判断是否加没有更多了的FooterView
+     */
+    public void checkIfAddFooter(int dataSize) {
+        if (dataSize < PAGE_SIZE) {
+            if (mFooterView.getParent() != null) {
+                ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
+            }
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.loadComplete();
+                    mAdapter.addFooterView(mFooterView);
+                }
+            });
+        }
     }
 
     @Override

@@ -29,6 +29,6 @@ public interface ImageDetailApi {
     Observable<List<PinsBean>> httpRecommendService(@Header(Constant.AUTHORIZATION) String authorization,
                                                     @Path("pinId") int pinId,
                                                     @Query("page") int page,
-                                                    @Query("limit") int limit);
+                                                    @Query("per_page") int perPage);
 
 }

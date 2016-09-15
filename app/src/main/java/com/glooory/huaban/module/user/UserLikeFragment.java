@@ -176,6 +176,9 @@ public class UserLikeFragment extends BaseUserFragment {
         }
     }
 
+    /**
+     * 判断是否加没有更多了的FooterView
+     */
     public void checkIfAddFooter() {
         if (mDateItemCount < PAGESIZE) {
             if (mFooterView.getParent() != null) {

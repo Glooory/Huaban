@@ -116,7 +116,7 @@ public class BoardEditDialogFragment extends AppCompatDialogFragment {
     private void setData() {
 
         //画板名称
-        if (!TextUtils.isEmpty(mBoardDesIn)) {
+        if (!TextUtils.isEmpty(mBoardNameIn)) {
             mEditTextBoardName.setText(mBoardNameIn);
         } else {
             mEditTextBoardName.setText(R.string.text_is_default);

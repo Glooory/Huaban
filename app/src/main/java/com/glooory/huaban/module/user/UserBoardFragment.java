@@ -1,7 +1,9 @@
 package com.glooory.huaban.module.user;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -253,8 +255,19 @@ public class UserBoardFragment extends BaseUserFragment{
             }
 
             @Override
-            public void onNeutralClicked(String boardId) {
-                httpForCommitDelete(boardId);
+            public void onNeutralClicked(final String boardId) {
+                //删除画板， 提示用户是否确定删除
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
+                        .setTitle(R.string.dialog_delete_attention_title)
+                        .setMessage(R.string.dialog_delete_attention_content)
+                        .setPositiveButton(R.string.dialog_title_delete, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                httpForCommitDelete(boardId);
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_negative, null);
+                builder.create().show();
             }
         });
         fragment.show(getActivity().getSupportFragmentManager(), null);
@@ -290,6 +303,10 @@ public class UserBoardFragment extends BaseUserFragment{
 
     }
 
+    /**
+     *联网删除画板操作
+     * @param boardId
+     */
     private void httpForCommitDelete(String boardId) {
 
         new RetrofitClient().createService(OperateApi.class)

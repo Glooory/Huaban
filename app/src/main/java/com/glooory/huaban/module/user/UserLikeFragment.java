@@ -95,6 +95,12 @@ public class UserLikeFragment extends BaseUserFragment {
                         return pinsListBean.getPins();
                     }
                 })
+                .filter(new Func1<List<PinsBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<PinsBean> list) {
+                        return list.size() > 0;
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<PinsBean>>() {

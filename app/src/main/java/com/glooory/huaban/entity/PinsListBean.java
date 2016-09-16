@@ -1,5 +1,7 @@
 package com.glooory.huaban.entity;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 
 /**
@@ -33,6 +35,11 @@ public class PinsListBean {
      */
 
     private List<PinsBean> pins;
+
+    public static PinsListBean objectFromData(String str) {
+
+        return new Gson().fromJson(str, PinsListBean.class);
+    }
 
     public List<PinsBean> getPins() {
         return pins;

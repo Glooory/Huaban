@@ -25,6 +25,7 @@ import com.glooory.huaban.R;
 import com.glooory.huaban.api.SearchApi;
 import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.type.TypeActivity;
 import com.glooory.huaban.util.CompatUtils;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.SPUtils;
@@ -277,7 +278,7 @@ public class SearchActivity extends BaseActivity {
         mItemWidth = Utils.getScreenWidth(mContext) / mItemCountEachLine - mItemMargin * 2;
 
         for (int i = 0; i < mTypeNameList.length; i++) {
-            addChildButton(flowLayout, mTypeNameList[i], mTypeValueList[i], Constant.TYPE_ICON_RES_IDS[i]);
+            addChildButton(flowLayout, mTypeNameList[i], mTypeValueList[i], Constant.TYPE_ICON_RES_IDS[i], i);
         }
     }
 
@@ -313,13 +314,13 @@ public class SearchActivity extends BaseActivity {
     }
 
     /**
-     * 添加分类button
+     * 添加分类
      * @param flowLayout
      * @param text
      * @param type
      * @param resId
      */
-    private void addChildButton(FlowLayout flowLayout, String text, String type, int resId) {
+    private void addChildButton(FlowLayout flowLayout, final String text, String type, int resId, final int position) {
 
         Button btnChild = new Button(mContext);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(mItemWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -333,15 +334,14 @@ public class SearchActivity extends BaseActivity {
         );
         btnChild.setText(text);
         btnChild.setBackgroundColor(Color.WHITE);
-        btnChild.setTag(type);
         btnChild.setLayoutParams(layoutParams);
         btnChild.setGravity(Gravity.CENTER);
 
         btnChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TextView textView = (TextView) view;
-                // TODO: 2016/9/16 0016 launch type activity
+                TypeActivity.launch(SearchActivity.this, position);
+
             }
         });
 

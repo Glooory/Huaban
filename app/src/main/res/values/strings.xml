@@ -239,4 +239,13 @@
 
     <string name="search_actv_hint">搜索采集、画板、用户</string>
     <string name="clear_search_history">清空搜索记录</string>
+
+    <string-array name="type_tabs_titles">
+        <item>@string/collection</item>
+        <item>@string/type_tab_title_board</item>
+        <item>@string/type_tab_title_user</item>
+    </string-array>
+
+    <string name="type_tab_title_board">推荐画板</string>
+    <string name="type_tab_title_user">推荐用户</string>
 </resources>

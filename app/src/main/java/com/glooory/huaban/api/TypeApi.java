@@ -20,7 +20,7 @@ public interface TypeApi {
 
     //请求该分类的采集
     //https://api.huaban.com/favourite/{type}/?limit=20
-    @GET("favourite/{type}")
+    @GET("favorite/{type}")
     Observable<PinsListBean> httpTypePinsService(@Header(Constant.AUTHORIZATION) String authorization,
                                                  @Path("type") String type,
                                                  @Query("limit") int limit);

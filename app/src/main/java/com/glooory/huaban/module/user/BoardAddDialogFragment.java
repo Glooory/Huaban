@@ -82,8 +82,8 @@ public class BoardAddDialogFragment extends AppCompatDialogFragment {
         mEditTextBoardName.setHint(R.string.text_is_default);
         mBoardName = mEditTextBoardName.getHint().toString();
 
-        titles = getResources().getStringArray(R.array.title_array_all);
-        final String[] types = getResources().getStringArray(R.array.type_array_all);
+        titles = getResources().getStringArray(R.array.type_names);
+        final String[] types = getResources().getStringArray(R.array.type_value);
         final int selection = 0;
 
         ArrayAdapter<String> adapter =

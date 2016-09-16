@@ -1,5 +1,7 @@
 package com.glooory.huaban.util;
 
+import com.glooory.huaban.R;
+
 /**
  * Created by Glooory on 2016/8/27 0027.
  */
@@ -78,5 +80,15 @@ public class Constant {
     public static final String PIN_ID = "pin_id";
     public static final String RATIO = "ratio";
 
+    public static int[] TYPE_ICON_RES_IDS = new int[]{
+            R.drawable.ic_ui_ux_24dp, R.drawable.ic_design_24dp, R.drawable.ic_illustration_24dp, R.drawable.ic_home_faliture_24dp,
+            R.drawable.ic_apparel_24dp, R.drawable.ic_men_24dp, R.drawable.ic_marriage_24dp, R.drawable.ic_industry_design_24dp,
+            R.drawable.ic_photography_24dp, R.drawable.ic_hair_model_24dp, R.drawable.ic_food_drinks_24dp, R.drawable.ic_travling_24dp,
+            R.drawable.ic_diy_crafts_24dp, R.drawable.ic_fitness_24dp, R.drawable.ic_kids_24dp, R.drawable.ic_pets_24dp,
+            R.drawable.ic_quatos_24dp, R.drawable.ic_famouis_people_24dp, R.drawable.ic_beauty_24dp, R.drawable.ic_gifs_24dp,
+            R.drawable.ic_geek_24dp, R.drawable.ic_anime_24dp, R.drawable.ic_archetature_24dp, R.drawable.ic_arts_24dp,
+            R.drawable.ic_data_figure_24dp, R.drawable.ic_game_24dp, R.drawable.ic_cars_24dp, R.drawable.ic_film_24dp,
+            R.drawable.ic_tips_24dp, R.drawable.ic_education_24dp, R.drawable.ic_sports_24dp, R.drawable.ic_funny_24dp
+    };
 
 }

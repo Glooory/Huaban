@@ -29,6 +29,7 @@ import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.login.LoginActivity;
 import com.glooory.huaban.module.login.UserInfoBean;
+import com.glooory.huaban.module.search.SearchActivity;
 import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.SPUtils;
@@ -132,8 +133,7 @@ public class MainActivity extends BaseActivity
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 float off = -verticalOffset;
-                Logger.d(off);
-                if (off > 70) {
+                if (off > appBarLayout.getTotalScrollRange() / 2) {
                     mToolbar.setAlpha(0.0f);
                 } else {
                     //当Collapsingtoolbar 滑动到最顶端时，隐藏从通明状态栏能看得见的View，
@@ -243,9 +243,10 @@ public class MainActivity extends BaseActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_search:
+                SearchActivity.launch(MainActivity.this);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -256,7 +257,6 @@ public class MainActivity extends BaseActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_homepage) {
             if (isLogin) {
                 mFragmentManager.beginTransaction()
@@ -265,6 +265,9 @@ public class MainActivity extends BaseActivity
                 getSupportActionBar().setTitle(R.string.nav_homepage);
             } else {
                 showLoginSnackbar(MainActivity.this, mCoordinator);
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+                return false;
             }
         } else if (id == R.id.nav_newest) {
             mFragmentManager.beginTransaction()
@@ -277,7 +280,7 @@ public class MainActivity extends BaseActivity
                     .commit();
             getSupportActionBar().setTitle(R.string.nav_popular);
         } else if (id == R.id.nav_discover) {
-
+            SearchActivity.launch(MainActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

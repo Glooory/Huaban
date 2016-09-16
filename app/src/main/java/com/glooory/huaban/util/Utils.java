@@ -1,7 +1,11 @@
 package com.glooory.huaban.util;
 
+import android.content.Context;
+import android.graphics.Point;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.view.Display;
+import android.view.WindowManager;
 
 /**
  * Created by Glooory on 2016/8/29 0029.
@@ -95,6 +99,38 @@ public final class Utils {
 
         return ".jpeg";
 
+    }
+
+    /**
+     * 将dp转换为dx
+     * @param context
+     * @param dpValue
+     * @return
+     */
+    public static int dpToPx(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    public static int pxToDp(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static Point getPoint(Context context) {
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        return point;
+    }
+
+    public static int getScreenWidth(Context context) {
+        return getPoint(context).x;
+    }
+
+    public static int getScreenHeight(Context context) {
+        return getPoint(context).y;
     }
 
 }

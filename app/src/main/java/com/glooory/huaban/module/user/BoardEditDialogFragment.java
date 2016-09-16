@@ -126,8 +126,8 @@ public class BoardEditDialogFragment extends AppCompatDialogFragment {
         mEditTextBoardDes.setText(mBoardDesIn);
 
         //画板类型
-        titles = getResources().getStringArray(R.array.title_array_all);
-        final String[] types = getResources().getStringArray(R.array.type_array_all);
+        titles = getResources().getStringArray(R.array.type_names);
+        final String[] types = getResources().getStringArray(R.array.type_value);
         int selection = 0;
 
         if (mBoardTypeIn != null) {

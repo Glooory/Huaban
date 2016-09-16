@@ -41,6 +41,10 @@
             android:name=".module.imagedetail.ImageDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".module.search.SearchActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <service android:name=".service.DownloadPinService" />
     </application>
 

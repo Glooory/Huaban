@@ -245,7 +245,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setRefreshing(true);
 
         if (!TextUtils.isEmpty(mUserId)) {
-            new RetrofitClient().createService(UserApi.class)
+            RetrofitClient.createService(UserApi.class)
                     .httpsUserInfoRx(mAuthorization, mUserId)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

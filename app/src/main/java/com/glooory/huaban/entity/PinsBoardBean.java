@@ -42,10 +42,19 @@ public class PinsBoardBean implements Parcelable {
     private int updated_at;
     private int deleting;
     private int is_private;
+    private Object extra;
     private List<PinsBean> pins;
 
     public int getBoard_id() {
         return board_id;
+    }
+
+    public Object getExtra() {
+        return extra;
+    }
+
+    public void setExtra(Object extra) {
+        this.extra = extra;
     }
 
     public void setBoard_id(int board_id) {

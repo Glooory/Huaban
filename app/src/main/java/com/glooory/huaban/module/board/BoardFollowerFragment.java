@@ -38,6 +38,8 @@ public class BoardFollowerFragment extends Fragment implements BaseQuickAdapter.
     private int mCurrentCount;
     //当前画板的总采集数量
     private int mFollowersTotal;
+    //本次网络请求得到的数据数量
+    private int mDataCountLastRequested = 0;
     private RecyclerView mRecyclerView;
     private FollowerAdapter mAdapter;
     //没有更多内容的view
@@ -127,6 +129,12 @@ public class BoardFollowerFragment extends Fragment implements BaseQuickAdapter.
                         return followerBean.getFollowers();
                     }
                 })
+                .filter(new Func1<List<FollowerBean.FollowersBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<FollowerBean.FollowersBean> followersBeen) {
+                        return followersBeen.size() > 0;
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<FollowerBean.FollowersBean>>() {
@@ -188,12 +196,13 @@ public class BoardFollowerFragment extends Fragment implements BaseQuickAdapter.
         if (beans != null) {
             if (beans.size() > 0) {
                 mMaxSeq = beans.get(beans.size() - 1).getSeq();
+                mDataCountLastRequested = beans.size();
             }
         }
     }
 
     public void checkIfAddFooter() {
-        if (mFollowersTotal < PAGE_SIZE) {
+        if (mFollowersTotal < PAGE_SIZE || mDataCountLastRequested < PAGE_SIZE) {
             if (mFooterView.getParent() != null) {
                 ((ViewGroup) mFooterView.getParent()).removeView(mFooterView);
             }
@@ -212,7 +221,7 @@ public class BoardFollowerFragment extends Fragment implements BaseQuickAdapter.
         mRecyclerView.post(new Runnable() {
             @Override
             public void run() {
-                if (mFollowersTotal < PAGE_SIZE) {
+                if (mFollowersTotal < PAGE_SIZE || mDataCountLastRequested < PAGE_SIZE) {
                     mAdapter.loadComplete();
                     mAdapter.addFooterView(mFooterView);
                 } else {

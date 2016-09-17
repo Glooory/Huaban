@@ -37,7 +37,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
     private String mGeneralImgUrl;
     private String mSmallImgUrl;
     private int mDesireWidth;
-
+    private ResizeOptions mResizeOptions;
 
     public UserBoardAdapter(Context context, boolean isMe) {
         super(R.layout.cardview_item_board_user, null);
@@ -56,6 +56,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         this.mDrawableFollowing = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_add_black_24dp, R.color.tint_list_grey);
         this.mDrawableFollowed = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_check_black_24dp, R.color.tint_list_grey);
         mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
+        mResizeOptions = new ResizeOptions(100, 100);
     }
 
     @Override
@@ -122,6 +123,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
             String firstImgUrl = String.format(mSmallImgUrl, bean.getPins().get(1).getFile().getKey());
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)), firstImgUrl)
                     .setIsRadius(true, 8)
+                    .setResizeOptions(mResizeOptions)
                     .build();
         }
 
@@ -131,6 +133,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
 
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_second)), firstImgUrl)
                     .setIsRadius(true, 8)
+                    .setResizeOptions(mResizeOptions)
                     .build();
         }
 
@@ -140,6 +143,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
 
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_third)), firstImgUrl)
                     .setIsRadius(true, 8)
+                    .setResizeOptions(mResizeOptions)
                     .build();
         }
 

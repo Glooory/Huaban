@@ -8,6 +8,7 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.module.user.UserFollowingBean;
@@ -20,12 +21,13 @@ import com.glooory.huaban.util.Utils;
 public class FollowingAdapter extends BaseQuickAdapter<UserFollowingBean.UsersBean> {
     private Context mContext;
     private String mSmallImgUrl;
-
+    private ResizeOptions mResizeOptions;
 
     public FollowingAdapter(Context context) {
         super(R.layout.card_follower, null);
         this.mContext = context;
         mSmallImgUrl = mContext.getString(R.string.format_url_image_small);
+        mResizeOptions = new ResizeOptions(100, 100);
     }
 
     @Override
@@ -36,6 +38,9 @@ public class FollowingAdapter extends BaseQuickAdapter<UserFollowingBean.UsersBe
                 .append(" 画板 ")
                 .append(Utils.checkIfNeedConvert(bean.getPin_count()))
                 .append("采集");
+
+        holder.getView(R.id.last_divider).setVisibility(View.GONE);
+        holder.getView(R.id.tv_card_user_follow_operate).setVisibility(View.GONE);
 
         holder.setText(R.id.tv_card_follower_name, bean.getUsername())
                 .setText(R.id.tv_card_follower_counts, stringBuilder.toString())
@@ -60,6 +65,7 @@ public class FollowingAdapter extends BaseQuickAdapter<UserFollowingBean.UsersBe
                 String tinyFUrl = String.format(mSmallImgUrl, keyF);
                 new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_first), tinyFUrl)
                         .setIsRadius(true, 8)
+                        .setResizeOptions(mResizeOptions)
                         .build();
             }
         }
@@ -71,6 +77,7 @@ public class FollowingAdapter extends BaseQuickAdapter<UserFollowingBean.UsersBe
                 String tinySUrl = String.format(mSmallImgUrl, keyS);
                 new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_second), tinySUrl)
                         .setIsRadius(true, 8)
+                        .setResizeOptions(mResizeOptions)
                         .build();
             }
         }
@@ -82,6 +89,7 @@ public class FollowingAdapter extends BaseQuickAdapter<UserFollowingBean.UsersBe
                 String tinyTUrl = String.format(mSmallImgUrl, keyT);
                 new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_third), tinyTUrl)
                         .setIsRadius(true, 8)
+                        .setResizeOptions(mResizeOptions)
                         .build();
             }
         }

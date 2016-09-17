@@ -39,7 +39,7 @@ public class FollowingAdapter extends BaseQuickAdapter<UserFollowingBean.UsersBe
 
         holder.setText(R.id.tv_card_follower_name, bean.getUsername())
                 .setText(R.id.tv_card_follower_counts, stringBuilder.toString())
-                .addOnClickListener(R.id.card_follower);
+                .addOnClickListener(R.id.card_follower_ripple);
 
         Drawable mProgressDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
         String avatarUrl = String.format(mSmallImgUrl, bean.getAvatar().getKey());

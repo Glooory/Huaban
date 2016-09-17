@@ -39,6 +39,7 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private int mTitleIndex;
     private TypePinFragment mPinFragment;
     private TypeBoardFragment mBoardFragment;
+    private TypeUserFragment mUserFragment;
 
     @BindView(R.id.toolbar_search)
     Toolbar mToolbar;
@@ -87,6 +88,7 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefresh.setRefreshing(true);
 
         mAdapter = new TypePagerAdapter(getSupportFragmentManager());
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mAdapter);
 
         mTablayout.setupWithViewPager(mViewPager);
@@ -145,8 +147,9 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 }
                 break;
             case 2:
-                break;
-            case 3:
+                if (mUserFragment != null) {
+                    mUserFragment.refreshData();
+                }
                 break;
         }
 
@@ -165,6 +168,8 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     return TypePinFragment.newInstance(mAuthorization, mType);
                 case 1:
                     return TypeBoardFragment.newInstance(mAuthorization, mType);
+                case 2:
+                    return TypeUserFragment.newInstance(mAuthorization, mType);
             }
             return null;
         }
@@ -180,8 +185,7 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     mBoardFragment = (TypeBoardFragment) createdFragment;
                     break;
                 case 2:
-                    break;
-                case 3:
+                    mUserFragment = (TypeUserFragment) createdFragment;
                     break;
             }
             return createdFragment;
@@ -189,7 +193,7 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override

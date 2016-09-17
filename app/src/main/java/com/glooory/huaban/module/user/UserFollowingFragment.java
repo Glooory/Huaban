@@ -60,7 +60,7 @@ public class UserFollowingFragment extends BaseUserFragment {
             @Override
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
-                    case R.id.card_follower:
+                    case R.id.card_follower_ripple:
                         UserActivity.launch(getActivity(),
                                 String.valueOf(mAdapter.getItem(i).getUser_id()),
                                 mAdapter.getItem(i).getUsername(),

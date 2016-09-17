@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ import com.glooory.huaban.R;
 import com.glooory.huaban.api.OperateApi;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.util.Constant;
+import com.glooory.huaban.widget.HighLightArrayAdapter;
 
 import butterknife.ButterKnife;
 import rx.Subscriber;
@@ -125,11 +125,12 @@ public class GatherDiologFragment extends AppCompatDialogFragment {
         } else {
             mEditTextDes.setHint(mDes);
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, R.layout.support_simple_spinner_dropdown_item, mBoardTitles);
+        final HighLightArrayAdapter adapter = new HighLightArrayAdapter(mContext, R.layout.support_simple_spinner_dropdown_item, mBoardTitles);
         mSpinner.setAdapter(adapter);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                adapter.setSelection(i);
                 mSelection = i;
             }
 

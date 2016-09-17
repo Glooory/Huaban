@@ -94,7 +94,6 @@ public class BoardAddDialogFragment extends AppCompatDialogFragment {
         mSpinnerBoardType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mSpinnerBoardType.setSelection(i);
                 adapter.setSelection(i);
                 String selected = types[i];
                 if (!selected.equals(mBoardType)) {

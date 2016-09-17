@@ -36,8 +36,8 @@ import com.facebook.imagepipeline.image.CloseableImage;
 import com.glooory.huaban.R;
 import com.glooory.huaban.api.OperateApi;
 import com.glooory.huaban.api.UserApi;
+import com.glooory.huaban.api.callback.FragmentRefreshListener;
 import com.glooory.huaban.base.BaseActivity;
-import com.glooory.huaban.base.BaseUserFragment;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.login.UserInfoBean;
@@ -60,7 +60,7 @@ import rx.schedulers.Schedulers;
  * Created by Glooory on 2016/9/3 0003 17:46.
  */
 public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener,
-        BaseUserFragment.FragmentRefreshListener {
+        FragmentRefreshListener {
     public boolean isMe;
     private String mUserId;
     @BindView(R.id.btn_follow_operation)
@@ -216,7 +216,8 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             }
         });
 
-        mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.red_g_i), getResources().getColor(R.color.yellow_g_i),
+                getResources().getColor(R.color.blue_g_i), getResources().getColor(R.color.green_g_i));
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mTablayout.setupWithViewPager(mViewpager);

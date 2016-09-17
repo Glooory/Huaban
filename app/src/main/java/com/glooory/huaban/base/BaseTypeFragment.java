@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.glooory.huaban.R;
+import com.glooory.huaban.api.callback.FragmentRefreshListener;
 import com.glooory.huaban.module.type.TypeActivity;
 import com.glooory.huaban.util.Constant;
 
@@ -41,16 +42,24 @@ public abstract class BaseTypeFragment extends Fragment implements BaseQuickAdap
      * 则判定加载完毕
      */
     protected boolean mIsLogin;
+    protected FragmentRefreshListener mRefreshListener;
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        mIsLogin = ((BaseActivity) context).isLogin;
+        if (context instanceof TypeActivity) {
+            mRefreshListener = (FragmentRefreshListener) context;
+            mIsLogin = ((TypeActivity) context).isLogin;
+        }
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (mRefreshListener != null) {
+            mRefreshListener.requestRefresh();
+        }
         super.onCreate(savedInstanceState);
         mAuthorization = getArguments().getString(Constant.AUTHORIZATION);
         mType = getArguments().getString(TypeActivity.KEY_FRAGMENT_TYPE);
@@ -133,6 +142,13 @@ public abstract class BaseTypeFragment extends Fragment implements BaseQuickAdap
             }
         });
 
+    }
+
+    /**
+     * 刷新当前子类的数据，提供给Activity调用
+     */
+    public void refreshData(){
+        httpForFirstTime();
     }
 
 }

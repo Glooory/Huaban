@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.glooory.huaban.R;
+import com.glooory.huaban.api.callback.FragmentRefreshListener;
 import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.util.Constant;
 
@@ -51,7 +52,7 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
             mAuthorization = ((UserActivity) context).mAuthorization;
             isMe = ((UserActivity) context).isMe;
             mIsLogin = ((UserActivity) context).isLogin;
-            mRefreshListener = ((UserActivity) context);
+            mRefreshListener = (FragmentRefreshListener) context;
         }
     }
 
@@ -108,16 +109,6 @@ public abstract class BaseUserFragment extends Fragment implements BaseQuickAdap
      */
     public void refreshData(){
         httpForFirstTime();
-    }
-
-    /**
-     * 子类刷新数据时，请求Activity对应操作的回调
-     */
-    public interface FragmentRefreshListener {
-
-        void requestRefresh();
-
-        void requestRefreshDone();
     }
 
     /**

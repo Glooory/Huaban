@@ -102,13 +102,19 @@ public class TypePinFragment extends BaseTypeFragment {
                 .subscribe(new Subscriber<List<PinsBean>>() {
                     @Override
                     public void onCompleted() {
-
+                        checkIfAddFooter();
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Logger.d(e.getMessage());
                         checkIfAddFooter();
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
                     }
 
                     @Override
@@ -116,6 +122,9 @@ public class TypePinFragment extends BaseTypeFragment {
                         saveMaxId(list);
                         mAdapter.setNewData(list);
                         checkIfAddFooter();
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
                     }
                 });
 
@@ -143,12 +152,18 @@ public class TypePinFragment extends BaseTypeFragment {
                 .subscribe(new Subscriber<List<PinsBean>>() {
                     @Override
                     public void onCompleted() {
-
+                        checkIfAddFooter();
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Logger.d(e.getMessage());
+                        Logger.d(e.getMessage());checkIfAddFooter();
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
                     }
 
                     @Override

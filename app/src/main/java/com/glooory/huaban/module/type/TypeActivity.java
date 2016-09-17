@@ -9,9 +9,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.ViewGroup;
 
 import com.glooory.huaban.R;
+import com.glooory.huaban.api.callback.FragmentRefreshListener;
 import com.glooory.huaban.base.BaseActivity;
 
 import butterknife.BindView;
@@ -20,13 +23,17 @@ import butterknife.ButterKnife;
 /**
  * Created by Glooory on 2016/9/16 0016 22:17.
  */
-public class TypeActivity extends BaseActivity {
+public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener,
+        FragmentRefreshListener {
     public static final String KEY_FRAGMENT_TYPE = "key_fragment_type";
     public static final String KEY_TITLE_INDEX = "key_title_index";
+    @BindView(R.id.swipe_refresh_widget)
+    SwipeRefreshLayout mSwipeRefresh;
     private String mType;
     private String[] mTabTitles = new String[]{};
     private TypePagerAdapter mAdapter;
     private int mTitleIndex;
+    private TypePinFragment mPinFragment;
 
     @BindView(R.id.toolbar_search)
     Toolbar mToolbar;
@@ -69,6 +76,11 @@ public class TypeActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(title);
 
+        mSwipeRefresh.setColorSchemeColors(getResources().getColor(R.color.red_g_i), getResources().getColor(R.color.yellow_g_i),
+                getResources().getColor(R.color.blue_g_i), getResources().getColor(R.color.green_g_i));
+        mSwipeRefresh.setOnRefreshListener(this);
+        mSwipeRefresh.setRefreshing(true);
+
         mAdapter = new TypePagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
 
@@ -105,6 +117,33 @@ public class TypeActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void onRefresh() {
+        requestFragmentRefresh();
+    }
+
+    /**
+     * 刷新 viewpager 的 currentItem
+     */
+    private void requestFragmentRefresh() {
+
+        int currentIndex = mViewPager.getCurrentItem();
+        switch (currentIndex) {
+            case 0:
+                if (mPinFragment != null) {
+                    mPinFragment.refreshData();
+                }
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+        }
+
+    }
+
     public class TypePagerAdapter extends FragmentPagerAdapter {
 
         public TypePagerAdapter(FragmentManager fm) {
@@ -122,6 +161,23 @@ public class TypeActivity extends BaseActivity {
         }
 
         @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
+            switch (position) {
+                case 0:
+                    mPinFragment = (TypePinFragment) createdFragment;
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+            }
+            return createdFragment;
+        }
+
+        @Override
         public int getCount() {
             return 1;
         }
@@ -130,6 +186,16 @@ public class TypeActivity extends BaseActivity {
         public CharSequence getPageTitle(int position) {
             return mTabTitles[position];
         }
+    }
+
+    @Override
+    public void requestRefresh() {
+        mSwipeRefresh.setRefreshing(true);
+    }
+
+    @Override
+    public void requestRefreshDone() {
+        mSwipeRefresh.setRefreshing(false);
     }
 
 }

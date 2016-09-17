@@ -10,11 +10,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.glooory.huaban.R;
+import com.glooory.huaban.widget.HighLightArrayAdapter;
 
 import butterknife.ButterKnife;
 
@@ -86,13 +86,16 @@ public class BoardAddDialogFragment extends AppCompatDialogFragment {
         final String[] types = getResources().getStringArray(R.array.type_value);
         final int selection = 0;
 
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(mContext, R.layout.support_simple_spinner_dropdown_item, titles);
+        final HighLightArrayAdapter adapter =
+                new HighLightArrayAdapter(mContext, R.layout.support_simple_spinner_dropdown_item, titles);
         mSpinnerBoardType.setAdapter(adapter);
         mSpinnerBoardType.setSelection(selection);
+        adapter.setSelection(selection);
         mSpinnerBoardType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSpinnerBoardType.setSelection(i);
+                adapter.setSelection(i);
                 String selected = types[i];
                 if (!selected.equals(mBoardType)) {
                     mBoardType = types[i];

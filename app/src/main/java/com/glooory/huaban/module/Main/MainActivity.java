@@ -1,6 +1,7 @@
 package com.glooory.huaban.module.main;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -259,6 +261,7 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
         if (id == R.id.nav_homepage) {
             if (isLogin) {
+                Logger.d(mAuthorization);
                 mFragmentManager.beginTransaction()
                         .replace(R.id.container_main, PinsFragment.newInstance(mAuthorization, PinsFragment.HOME_FRAGMENT_INDEX))
                         .commit();
@@ -280,7 +283,28 @@ public class MainActivity extends BaseActivity
                     .commit();
             getSupportActionBar().setTitle(R.string.nav_popular);
         } else if (id == R.id.nav_discover) {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
             SearchActivity.launch(MainActivity.this);
+            return false;
+        } else if (id == R.id.nav_exit) {
+            if (isLogin) {
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
+                        .setTitle(R.string.dialog_delete_attention_title)
+                        .setMessage(R.string.dialog_exit_account_attention)
+                        .setPositiveButton(R.string.dialog_edit_positive, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                SPUtils.clear(getApplicationContext());
+                                LoginActivity.launch(MainActivity.this);
+                                MainActivity.this.finish();
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_negative, null);
+                builder.create().show();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

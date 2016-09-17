@@ -122,9 +122,6 @@ public class TypePinFragment extends BaseTypeFragment {
                         saveMaxId(list);
                         mAdapter.setNewData(list);
                         checkIfAddFooter();
-                        if (mRefreshListener != null) {
-                            mRefreshListener.requestRefreshDone();
-                        }
                     }
                 });
 

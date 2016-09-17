@@ -145,17 +145,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         isLogin = (boolean) SPUtils.get(getApplicationContext(), Constant.ISLOGIN, Boolean.FALSE);
+        mAuthorization = getAuthorizations(isLogin);
     }
 
     //fresco shared element transition 已经解决的bug 调用以下方法
     private void setUpTransition() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            TransitionSet transitionSet = new TransitionSet();
-//            transitionSet.addTransition(new ChangeBounds());
-//            transitionSet.addTransition(new DraweeTransition(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
-//            transitionSet.addTransition(new DraweeTransition((ScalingUtils.ScaleType.CENTER_CROP), ScalingUtils.ScaleType.CENTER_CROP));
-//            transitionSet.addTransition(new DraweeTransition(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
-//            getWindow().setSharedElementEnterTransition(transitionSet);
 
             getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(
                     ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));

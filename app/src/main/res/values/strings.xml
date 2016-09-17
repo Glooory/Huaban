@@ -118,6 +118,7 @@
     <string name="dialog_delete_positive">删除画板</string>
     <string name="dialog_delete_attention_title">提示</string>
     <string name="dialog_delete_attention_content">确定要删除这个画板吗？删除后这个画板内的所有采集都会被删除。</string>
+    <string name="dialog_exit_account_attention">是否确认退出登录？</string>
 
     <string name="dialog_delete_message">will delete all image in this %s board</string>
 

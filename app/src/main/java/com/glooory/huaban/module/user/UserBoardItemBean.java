@@ -49,6 +49,16 @@ public class UserBoardItemBean implements Parcelable {
     private List<PinsBean> pins;
     private ExtraBean extra;
 
+    public UserBean getUser() {
+        return user;
+    }
+
+    public void setUser(UserBean user) {
+        this.user = user;
+    }
+
+    private UserBean user;
+
     public void setPins(List<PinsBean> pins) {
         this.pins = pins;
     }

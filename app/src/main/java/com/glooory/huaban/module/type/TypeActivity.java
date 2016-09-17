@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,13 +28,17 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         FragmentRefreshListener {
     public static final String KEY_FRAGMENT_TYPE = "key_fragment_type";
     public static final String KEY_TITLE_INDEX = "key_title_index";
+
     @BindView(R.id.swipe_refresh_widget)
     SwipeRefreshLayout mSwipeRefresh;
+    @BindView(R.id.coordinator_type)
+    CoordinatorLayout mCoordinator;
     private String mType;
     private String[] mTabTitles = new String[]{};
     private TypePagerAdapter mAdapter;
     private int mTitleIndex;
     private TypePinFragment mPinFragment;
+    private TypeBoardFragment mBoardFragment;
 
     @BindView(R.id.toolbar_search)
     Toolbar mToolbar;
@@ -135,6 +140,9 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 }
                 break;
             case 1:
+                if (mBoardFragment != null) {
+                    mBoardFragment.refreshData();
+                }
                 break;
             case 2:
                 break;
@@ -156,6 +164,7 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 case 0:
                     return TypePinFragment.newInstance(mAuthorization, mType);
                 case 1:
+                    return TypeBoardFragment.newInstance(mAuthorization, mType);
             }
             return null;
         }
@@ -168,6 +177,7 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     mPinFragment = (TypePinFragment) createdFragment;
                     break;
                 case 1:
+                    mBoardFragment = (TypeBoardFragment) createdFragment;
                     break;
                 case 2:
                     break;
@@ -179,7 +189,7 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
 
         @Override
@@ -196,6 +206,10 @@ public class TypeActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Override
     public void requestRefreshDone() {
         mSwipeRefresh.setRefreshing(false);
+    }
+
+    public void showLoginMessage() {
+        showLoginSnackbar(TypeActivity.this, mCoordinator);
     }
 
 }

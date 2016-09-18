@@ -3,6 +3,7 @@ package com.glooory.huaban.api;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.module.search.SearchHintBean;
 import com.glooory.huaban.module.searchresult.ResultCountInfoBean;
+import com.glooory.huaban.module.searchresult.ResultUserListBean;
 import com.glooory.huaban.module.user.UserBoardListBean;
 import com.glooory.huaban.util.Constant;
 
@@ -44,5 +45,12 @@ public interface SearchApi {
                                                           @Query("page") int page,
                                                           @Query("per_page") int perPage);
 
+    //搜索用户
+    //https://api.huaban.com/search/users/?q=text&page=1&per_page=20
+    @GET("search/people")
+    Observable<ResultUserListBean> httpSearchUsersService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                           @Query("q") String keyword,
+                                                           @Query("page") int page,
+                                                           @Query("per_page") int perPage);
 
 }

@@ -48,6 +48,7 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
     private ResultPagerAdapter mAdapter;
     private ResultPinFragment mPinFragment;
     private ResultBoardFragment mBoardFragment;
+    private ResultUserFragment mUserFragment;
 
     @BindView(R.id.swipe_refresh_widget)
     SwipeRefreshLayout mSwipeRefresh;
@@ -204,6 +205,12 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
                 if (mBoardFragment != null) {
                     mBoardFragment.refreshData();
                 }
+                break;
+            case 2:
+                if (mUserFragment != null) {
+                    mUserFragment.refreshData();
+                }
+                break;
         }
     }
 
@@ -236,7 +243,7 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
                 case 1:
                     return ResultBoardFragment.newInstance(mAuthorization, mKeyWord);
                 case 2:
-                    return new Fragment();
+                    return ResultUserFragment.newInstance(mAuthorization, mKeyWord);
             }
             return null;
         }
@@ -252,6 +259,7 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
                     mBoardFragment = (ResultBoardFragment) createdFragment;
                     break;
                 case 2:
+                    mUserFragment = (ResultUserFragment) createdFragment;
                     break;
             }
             return createdFragment;

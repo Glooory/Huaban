@@ -93,7 +93,7 @@
     <string name="format_user_number">%d 用户</string>
     <string name="format_board_follower_number">被 %d 人关注</string>
     <string name="text_by_username">由 %s</string>
-    <string name="format_fans_number">粉丝 %d</string>
+    <string name="format_fans_number">%d 粉丝</string>
     <string name="format_fans_follow">%1$d 粉丝 %2$d 关注</string>
     <string name="text_edit">编辑</string>
     <string name="text_following">关注</string>

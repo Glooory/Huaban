@@ -40,7 +40,7 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
     private ResizeOptions mResizeOptions;
 
     public UserBoardAdapter(Context context, boolean isMe) {
-        super(R.layout.cardview_item_board_user, null);
+        super(R.layout.card_item_board_user, null);
         mContext = context;
         this.isMe = isMe;
         Resources resources = mContext.getResources();

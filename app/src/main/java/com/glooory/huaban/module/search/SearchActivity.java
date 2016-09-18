@@ -285,7 +285,7 @@ public class SearchActivity extends BaseActivity {
         TextView tvChild = new TextView(mContext);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.CENTER;
-        layoutParams.setMargins(mItemMargin, mItemMargin, mItemMargin, mItemMargin);
+        layoutParams.setMargins(mItemMargin * 16, mItemMargin, mItemMargin, mItemMargin);
         tvChild.setText(text);
         tvChild.setLayoutParams(layoutParams);
         tvChild.setGravity(Gravity.LEFT);

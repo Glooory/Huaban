@@ -32,7 +32,7 @@ public class TypeBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
     private ResizeOptions mResizeOptions;
 
     public TypeBoardAdapter(Context context) {
-        super(R.layout.cardview_type_board, null);
+        super(R.layout.card_type_board, null);
         mContext = context;
         Resources resources = mContext.getResources();
         mGeneralImgUrl = resources.getString(R.string.format_url_image_general);

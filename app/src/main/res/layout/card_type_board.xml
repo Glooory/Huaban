@@ -5,10 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="4dp"
-    android:layout_marginLeft="@dimen/card_spacing_default_half"
-    android:layout_marginRight="@dimen/card_spacing_default_half"
-    android:layout_marginTop="4dp"
+    style="@style/cardview_custom"
     app:cardCornerRadius="@dimen/card_radius_default"
     app:cardElevation="@dimen/card_elevation_static">
 

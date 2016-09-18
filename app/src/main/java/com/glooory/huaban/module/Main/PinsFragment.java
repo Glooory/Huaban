@@ -26,7 +26,6 @@ import com.glooory.huaban.module.imagedetail.ImageDetailActivity;
 import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.NetworkUtils;
-import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -447,11 +446,5 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     protected void checkException(Throwable throwable) {
         NetworkUtils.checkHttpException(getContext(), throwable, mRecyclerView);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Logger.d(mTypeIndex + "Destroyed");
     }
 }

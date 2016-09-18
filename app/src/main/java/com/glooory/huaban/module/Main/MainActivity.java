@@ -66,9 +66,6 @@ public class MainActivity extends BaseActivity
     AppBarLayout mAppbar;
 
     private LinearLayout mDrawerAvatarLL;
-    private LinearLayout mDrawerCollection;
-    private LinearLayout mDrawerBoard;
-    private LinearLayout mDrawerFans;
     private long exitTime;
     //侧滑菜单头像
     private SimpleDraweeView mAvatarImg;
@@ -78,6 +75,8 @@ public class MainActivity extends BaseActivity
     private TextView mCollectionTv;
     //侧滑菜单画板数量
     private TextView mBoardCountTv;
+    //侧滑菜单关注数量
+    private TextView mFollowingTv;
     //侧滑菜单粉丝数
     private TextView mFansCountTv;
     private FragmentManager mFragmentManager;
@@ -151,19 +150,14 @@ public class MainActivity extends BaseActivity
 
         View headerView = mNavView.inflateHeaderView(R.layout.nav_header_main);
         mDrawerAvatarLL = (LinearLayout) headerView.findViewById(R.id.drawer_avatar_ll);
-        mDrawerCollection = (LinearLayout) headerView.findViewById(R.id.drawer_collecion);
-        mDrawerBoard = (LinearLayout) headerView.findViewById(R.id.drawer_board);
-        mDrawerFans = (LinearLayout) headerView.findViewById(R.id.drawer_fans);
         mDrawerAvatarLL.setOnClickListener(this);
-        mDrawerCollection.setOnClickListener(this);
-        mDrawerBoard.setOnClickListener(this);
-        mDrawerFans.setOnClickListener(this);
 
         mAvatarImg = (SimpleDraweeView) headerView.findViewById(R.id.drawer_avatar_img);
         mAvatarImg.setImageResource(R.drawable.ic_avatar_def);
         mUserNameTv = (TextView) headerView.findViewById(R.id.tv_drawer_username);
         mCollectionTv = (TextView) headerView.findViewById(R.id.tv_drawer_collection);
         mBoardCountTv = (TextView) headerView.findViewById(R.id.tv_drawer_board);
+        mFollowingTv = (TextView) headerView.findViewById(R.id.tv_drawer_following);
         mFansCountTv = (TextView) headerView.findViewById(R.id.tv_drawer_fans);
 
     }
@@ -197,6 +191,7 @@ public class MainActivity extends BaseActivity
                         public void onNext(UserInfoBean userBean) {
                             mCollectionTv.setText(String.valueOf(userBean.getPin_count()));
                             mBoardCountTv.setText(String.valueOf(userBean.getBoard_count()));
+                            mFollowingTv.setText(String.valueOf(userBean.getFollowing_count()));
                             mFansCountTv.setText(String.valueOf(userBean.getFollower_count()));
                         }
                     });
@@ -326,24 +321,7 @@ public class MainActivity extends BaseActivity
                     LoginActivity.launch(this);
                 }
                 break;
-            case R.id.drawer_collecion:
-                // TODO: 2016/8/31 0031 Launch UserActvity
-                Toast.makeText(this, "Launch UserActvity", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.drawer_board:
-                // TODO: 2016/8/31 0031 Launch BoardActvity
-                Toast.makeText(this, "Launch BoardActvity", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.drawer_fans:
-                // TODO: 2016/8/31 0031 lanuch UserActivity
-                Toast.makeText(this, "Launch Activity", Toast.LENGTH_SHORT).show();
-                break;
         }
-    }
-
-    public void headerClick(View view) {
-        // TODO: 2016/8/31 0031 Launch UserActivity
-        Toast.makeText(this, "Launch UserActivity", Toast.LENGTH_SHORT).show();
     }
 
     public static void launch(Activity activity) {

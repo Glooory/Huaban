@@ -5,7 +5,7 @@
     android:id="@+id/card_result_user"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    style="@style/cardview_custom"
     app:cardElevation="2dp">
 
 

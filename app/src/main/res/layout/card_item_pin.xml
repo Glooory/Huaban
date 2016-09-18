@@ -5,9 +5,7 @@
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/card_spacing_default_half"
-    android:layout_marginRight="@dimen/card_spacing_default_half"
-    android:layout_marginTop="@dimen/card_spacing_top"
+    style="@style/cardview_custom"
     app:cardElevation="@dimen/card_elevation_static">
 
     <LinearLayout

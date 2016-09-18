@@ -6,10 +6,7 @@
     android:id="@+id/card_user_pin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="4dp"
-    android:layout_marginLeft="4dp"
-    android:layout_marginRight="4dp"
-    android:layout_marginTop="4dp"
+    style="@style/cardview_custom"
     app:cardElevation="2dp">
 
     <LinearLayout

@@ -113,7 +113,6 @@ public class WelcomeActivity extends BaseActivity {
                     public Observable<TokenBean> call(Void aVoid) {
                         String account = (String) SPUtils.get(getApplicationContext(), Constant.USERACCOUNT, "");
                         String password = (String) SPUtils.get(getApplicationContext(), Constant.USERPASSWORD, "");
-                        Logger.d(account + " ----- " + password);
                         return getUserToken(account, password);
                     }
                 })
@@ -122,7 +121,6 @@ public class WelcomeActivity extends BaseActivity {
                 .subscribe(new Subscriber<TokenBean>() {
                     @Override
                     public void onCompleted() {
-                        Logger.d("onCompleted() ");
                         if (isLogin) {
                             if (needRefreshToken) {
                                 LoginActivity.launch(WelcomeActivity.this);

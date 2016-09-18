@@ -87,6 +87,8 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         } else {
             text = "";
             drawable = mDrawableBlock;
+            holder.getView(R.id.relativelayout_board_operate).setEnabled(false);
+            holder.getView(R.id.tv_board_operate).setEnabled(false);
         }
 
         holder.setText(R.id.tv_board_operate, text);
@@ -100,8 +102,10 @@ public class UserBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         holder.setText(R.id.tv_board_gather, String.format(mGatherFormat, bean.getPin_count()));
         holder.setText(R.id.tv_board_attention, String.format(mAttentionFormat, bean.getFollow_count()));
 
-        holder.addOnClickListener(R.id.linearlayout_image)
-                .addOnClickListener(R.id.relativelayout_board_operate);
+        holder.addOnClickListener(R.id.linearlayout_image);
+        if (isOpreat) {
+            holder.addOnClickListener(R.id.relativelayout_board_operate);
+        }
 
         ((SimpleDraweeView) holder.getView(R.id.img_card_image)).setAspectRatio(1.0f);
 

@@ -70,6 +70,7 @@ public class BoardActivity extends BaseActivity {
     private String mUserName;
     private boolean mIsFollowing;
     private boolean mIsMe;
+    private boolean mCanOperate;
 
     @BindView(R.id.tv_board_board_des)
     TextView mTvBoardDes;
@@ -124,6 +125,11 @@ public class BoardActivity extends BaseActivity {
         mBoardBean = getIntent().getParcelableExtra(Constant.BOARD_ITEM_BEAN);
         mUserName = getIntent().getExtras().getString(Constant.USERNAME);
         mIsFollowing = mBoardBean.isFollowing();
+        if (mBoardBean.getDeleting() != 0) {
+            mCanOperate = true;
+        } else {
+            mCanOperate = false;
+        }
         checkIsMe();
         initView();
         setUpViews();
@@ -149,6 +155,10 @@ public class BoardActivity extends BaseActivity {
         } else {
             mBtnTopOperation.setIdleText(mIsFollowing ? getString(R.string.follow_action_unfollow) : getString(R.string.follow_action_follow));
             mBtnTopOperation.setIndeterminateProgressMode(true);
+        }
+
+        if (!mCanOperate) {
+            mBtnTopOperation.setVisibility(View.INVISIBLE);
         }
 
         mTablayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimary));

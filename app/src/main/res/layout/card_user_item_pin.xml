@@ -4,9 +4,9 @@
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_user_pin"
+    style="@style/cardview_custom"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    style="@style/cardview_custom"
     app:cardElevation="2dp">
 
     <LinearLayout
@@ -41,11 +41,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|top"
-                    android:layout_marginTop="8dp"
                     android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
                     android:background="@color/grey_a900"
                     android:src="@drawable/ic_delete_grey_300_36dp"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <ImageButton
                     android:id="@+id/imgbtn_gif"

@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,7 +67,7 @@ public class MainActivity extends BaseActivity
     AppBarLayout mAppbar;
 
     private LinearLayout mDrawerAvatarLL;
-    private long exitTime;
+    private long exitTime = 0;
     //侧滑菜单头像
     private SimpleDraweeView mAvatarImg;
     //侧滑菜单用户名
@@ -218,26 +219,13 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         switch (id) {
@@ -263,8 +251,7 @@ public class MainActivity extends BaseActivity
                 getSupportActionBar().setTitle(R.string.nav_homepage);
             } else {
                 showLoginSnackbar(MainActivity.this, mCoordinator);
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 return false;
             }
         } else if (id == R.id.nav_newest) {
@@ -278,14 +265,12 @@ public class MainActivity extends BaseActivity
                     .commit();
             getSupportActionBar().setTitle(R.string.nav_popular);
         } else if (id == R.id.nav_discover) {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
             SearchActivity.launch(MainActivity.this);
             return false;
         } else if (id == R.id.nav_exit) {
             if (isLogin) {
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
                         .setTitle(R.string.dialog_delete_attention_title)
                         .setMessage(R.string.dialog_exit_account_attention)
@@ -302,8 +287,7 @@ public class MainActivity extends BaseActivity
             }
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -329,5 +313,21 @@ public class MainActivity extends BaseActivity
         activity.startActivity(intent);
     }
 
-
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                if (System.currentTimeMillis() - exitTime > 2000) {
+                    Toast.makeText(MainActivity.this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
+                    exitTime = System.currentTimeMillis();
+                } else {
+                    finishSelf();
+                }
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

@@ -169,4 +169,13 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }).show();
     }
+
+    public void finishSelf() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            finishAfterTransition();
+        } else {
+            finish();
+        }
+    }
+
 }

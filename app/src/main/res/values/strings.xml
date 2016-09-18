@@ -250,4 +250,6 @@
 
     <string name="type_tab_title_board">推荐画板</string>
     <string name="type_tab_title_user">推荐用户</string>
+    
+    <string name="exit_hint">再按一次退出</string>
 </resources>

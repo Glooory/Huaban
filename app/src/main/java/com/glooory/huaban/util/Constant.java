@@ -80,6 +80,8 @@ public class Constant {
     public static final String PIN_ID = "pin_id";
     public static final String RATIO = "ratio";
 
+    public static final String SEARCH_KEY_WORD = "search_key_word";
+
     public static int[] TYPE_ICON_RES_IDS = new int[]{
             R.drawable.ic_ui_ux_24dp, R.drawable.ic_design_24dp, R.drawable.ic_illustration_24dp, R.drawable.ic_home_faliture_24dp,
             R.drawable.ic_apparel_24dp, R.drawable.ic_men_24dp, R.drawable.ic_marriage_24dp, R.drawable.ic_industry_design_24dp,

@@ -46,6 +46,7 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
     private int mUserCount;
     private int mPageCount = 1;
     private ResultPagerAdapter mAdapter;
+    private ResultPinFragment mPinFragment;
 
     @BindView(R.id.swipe_refresh_widget)
     SwipeRefreshLayout mSwipeRefresh;
@@ -191,17 +192,25 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
 
     @Override
     public void requestRefresh() {
-
+        int position = mViewPager.getCurrentItem();
+        switch (position) {
+            case 0:
+                if (mPinFragment != null) {
+                    mPinFragment.refreshData();
+                }
+                break;
+        }
     }
 
     @Override
     public void requestRefreshDone() {
-
+        mSwipeRefresh.setRefreshing(false);
     }
 
     @Override
     public void onRefresh() {
-
+        httpForCountsInfo();
+        requestRefresh();
     }
 
     public class ResultPagerAdapter extends FragmentPagerAdapter {
@@ -214,7 +223,7 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new Fragment();
+                    return ResultPinFragment.newInstance(mAuthorization, mKeyWord);
                 case 1:
                     return new Fragment();
                 case 2:
@@ -228,6 +237,7 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
             Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
             switch (position) {
                 case 0:
+                    mPinFragment = (ResultPinFragment) createdFragment;
                     break;
                 case 1:
                     break;

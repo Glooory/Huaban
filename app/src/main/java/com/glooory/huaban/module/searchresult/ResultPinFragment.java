@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.type;
+package com.glooory.huaban.module.searchresult;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,8 +9,8 @@ import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.PinQuickAdapter;
-import com.glooory.huaban.api.TypeApi;
-import com.glooory.huaban.base.BaseTypeFragment;
+import com.glooory.huaban.api.SearchApi;
+import com.glooory.huaban.base.BaseResultFragment;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
@@ -27,22 +27,24 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Glooory on 2016/9/16 0016 22:34.
+ * Created by Glooory on 2016/9/18 0018 13:30.
  */
-public class TypePinFragment extends BaseTypeFragment {
+public class ResultPinFragment extends BaseResultFragment {
     private PinQuickAdapter mAdapter;
 
-    public static TypePinFragment newInstance(String authorization, String type) {
+    public static ResultPinFragment newInstance(String authorization, String keyWord) {
         Bundle args = new Bundle();
         args.putString(Constant.AUTHORIZATION, authorization);
-        args.putString(TypeActivity.KEY_FRAGMENT_TYPE, type);
-        TypePinFragment fragment = new TypePinFragment();
+        args.putString(Constant.SEARCH_KEY_WORD, keyWord);
+        ResultPinFragment fragment = new ResultPinFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
+
     @Override
     public void initAdapter() {
+
         mAdapter = new PinQuickAdapter(mContext);
         //设置上滑自动建在的正在加载更多的自定义View
         View loadMoreView = LayoutInflater.from(mContext).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);
@@ -73,6 +75,7 @@ public class TypePinFragment extends BaseTypeFragment {
                 }
             }
         });
+
     }
 
     @Override
@@ -83,8 +86,56 @@ public class TypePinFragment extends BaseTypeFragment {
     @Override
     public void httpForFirstTime() {
 
-        RetrofitClient.createService(TypeApi.class)
-                .httpTypePinsService(mAuthorization, mType, Constant.LIMIT)
+        RetrofitClient.createService(SearchApi.class)
+                .httpSearchPinsService(mAuthorization, mKeyWord, mPageCount, Constant.LIMIT)
+                .map(new Func1<PinsListBean, List<PinsBean>>() {
+                    @Override
+                    public List<PinsBean> call(PinsListBean pinsListBean) {
+                        Logger.d(pinsListBean.getPins() == null);
+                        return pinsListBean.getPins();
+                    }
+                })
+                .filter(new Func1<List<PinsBean>, Boolean>() {
+                    @Override
+                    public Boolean call(List<PinsBean> list) {
+                        Logger.d(list == null);
+                        return list.size() > 0;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<PinsBean>>() {
+                    @Override
+                    public void onCompleted() {
+                        checkIfAddFooter();
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Logger.d(e.getMessage());
+                        if (mRefreshListener != null) {
+                            mRefreshListener.requestRefreshDone();
+                        }
+                    }
+
+                    @Override
+                    public void onNext(List<PinsBean> list) {
+                        mPageCount = ++mPageCount;
+                        mDataCountLastRequested = list.size();
+                        mAdapter.setNewData(list);
+                    }
+                });
+
+    }
+
+    @Override
+    public void httpForMoreData() {
+
+        RetrofitClient.createService(SearchApi.class)
+                .httpSearchPinsService(mAuthorization, mKeyWord, mPageCount, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
                     public List<PinsBean> call(PinsListBean pinsListBean) {
@@ -119,66 +170,11 @@ public class TypePinFragment extends BaseTypeFragment {
 
                     @Override
                     public void onNext(List<PinsBean> list) {
-                        saveMaxId(list);
-                        mAdapter.setNewData(list);
-                        checkIfAddFooter();
-                    }
-                });
-
-    }
-
-    @Override
-    public void httpForMoreData() {
-
-        RetrofitClient.createService(TypeApi.class)
-                .httpTypePinsMaxService(mAuthorization, mType, mMaxId, Constant.LIMIT)
-                .map(new Func1<PinsListBean, List<PinsBean>>() {
-                    @Override
-                    public List<PinsBean> call(PinsListBean pinsListBean) {
-                        return pinsListBean.getPins();
-                    }
-                })
-                .filter(new Func1<List<PinsBean>, Boolean>() {
-                    @Override
-                    public Boolean call(List<PinsBean> list) {
-                        return list.size() > 0;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<PinsBean>>() {
-                    @Override
-                    public void onCompleted() {
-                        checkIfAddFooter();
-                        if (mRefreshListener != null) {
-                            mRefreshListener.requestRefreshDone();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        checkIfAddFooter();
-                        if (mRefreshListener != null) {
-                            mRefreshListener.requestRefreshDone();
-                        }
-                    }
-
-                    @Override
-                    public void onNext(List<PinsBean> list) {
-                        saveMaxId(list);
+                        mPageCount = ++mPageCount;
+                        mDataCountLastRequested = list.size();
                         mAdapter.addData(list);
-                        checkIfAddFooter();
                     }
                 });
 
-    }
-
-    private void saveMaxId(List<PinsBean> list) {
-        if (list != null) {
-            if (list.size() > 0) {
-                mMaxId = list.get(list.size() - 1).getPin_id();
-                mDataCountLastRequested = list.size();
-            }
-        }
     }
 }

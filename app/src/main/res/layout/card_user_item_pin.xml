@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_user_pin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="4dp"
@@ -37,6 +38,17 @@
                     android:maxWidth="2000dp"
                     android:transitionName="card_image"
                     fresco:progressBarAutoRotateInterval="1000" />
+
+                <ImageButton
+                    android:id="@+id/imgbtn_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|top"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/grey_a900"
+                    android:src="@drawable/ic_delete_grey_300_36dp"
+                    android:visibility="gone"/>
 
                 <ImageButton
                     android:id="@+id/imgbtn_gif"

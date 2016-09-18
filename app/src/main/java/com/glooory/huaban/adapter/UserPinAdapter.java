@@ -21,16 +21,18 @@ import com.glooory.huaban.util.Utils;
 /**
  * Created by Glooory on 2016/9/5 0005 23:06.
  */
-public class UserPinAdapter extends BaseQuickAdapter<PinsBean>{
+public class UserPinAdapter extends BaseQuickAdapter<PinsBean> {
     private Context mContext;
     private String mGeneralImgUrl;
     private int mDesireWidth;
+    private boolean mIsMe;
 
-    public UserPinAdapter(Context context) {
+    public UserPinAdapter(Context context, boolean isMe) {
         super(R.layout.card_user_item_pin, null);
         this.mContext = context;
-        mGeneralImgUrl = context.getString(R.string.format_url_image_general);
-        mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
+        this.mGeneralImgUrl = context.getString(R.string.format_url_image_general);
+        this.mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
+        this.mIsMe = isMe;
     }
 
     @Override
@@ -62,6 +64,13 @@ public class UserPinAdapter extends BaseQuickAdapter<PinsBean>{
         holder.setText(R.id.tv_user_item_collection, Utils.checkIfNeedConvert(bean.getRepin_count()))
                 .setText(R.id.tv_user_item_like, Utils.checkIfNeedConvert(bean.getLike_count()))
                 .addOnClickListener(R.id.linearlayout_user_pin);
+
+//        //如果当前采集是自己的采集设置longclicklistener
+//        if (mIsMe) {
+//            holder.addOnLongClickListener(R.id.card_user_pin)
+//                    .addOnClickListener(R.id.imgbtn_delete);
+//        }
+
         //加载图片
         Drawable progressDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
         Drawable retryDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_retry_36dp, R.color.tint_list_grey);

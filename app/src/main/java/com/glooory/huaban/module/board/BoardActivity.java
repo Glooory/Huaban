@@ -322,7 +322,8 @@ public class BoardActivity extends BaseActivity {
                 case 0:
                     return BoardPinsFragment.newInstance(mAuthorization,
                             mBoardBean.getBoard_id(),
-                            mBoardBean.getPin_count());
+                            mBoardBean.getPin_count(),
+                            mIsMe);
                 case 1:
                     return BoardFollowerFragment.newInstance(mAuthorization,
                             mBoardBean.getBoard_id(),

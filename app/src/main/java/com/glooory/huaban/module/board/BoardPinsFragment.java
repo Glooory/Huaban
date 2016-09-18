@@ -9,6 +9,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
@@ -48,12 +49,14 @@ public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.Requ
     private Context mContext;
     private int mBoardId;
     private String mAuthorization;
+    private boolean mIsMe;
 
-    public static BoardPinsFragment newInstance(String authorization, int boardId, int pinCount) {
+    public static BoardPinsFragment newInstance(String authorization, int boardId, int pinCount, boolean isMe) {
         Bundle args = new Bundle();
         args.putInt(Constant.BOARD_ID, boardId);
         args.putInt(Constant.PIN_COUNT, pinCount);
         args.putString(Constant.AUTHORIZATION, authorization);
+        args.putBoolean(Constant.ISME, isMe);
         BoardPinsFragment fragment = new BoardPinsFragment();
         fragment.setArguments(args);
         return fragment;
@@ -71,6 +74,7 @@ public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.Requ
         mBoardId = (int) getArguments().get(Constant.BOARD_ID);
         mPinsTotal = (int) getArguments().get(Constant.PIN_COUNT);
         mAuthorization = (String) getArguments().get(Constant.AUTHORIZATION);
+        mIsMe = getArguments().getBoolean(Constant.ISME);
     }
 
     @Nullable
@@ -86,7 +90,7 @@ public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.Requ
     }
 
     private void initAdapter() {
-        mAdapter = new UserPinAdapter(mContext);
+        mAdapter = new UserPinAdapter(mContext, mIsMe);
 
         //设置上滑自动建在的正在加载更多的自定义View
         View loadMoreView = LayoutInflater.from(mContext).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);
@@ -110,9 +114,26 @@ public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.Requ
                                 ratioTemp,
                                 (SimpleDraweeView) view.findViewById(R.id.img_user_item_pin));
                         break;
+                    case R.id.imgbtn_delete:
+                        Toast.makeText(mContext, "delete successfully", Toast.LENGTH_LONG).show();
+                        break;
                 }
             }
         });
+
+//        //如果当前采集是自己的采集设置longclicklistener
+//        if (mIsMe) {
+//            mRecyclerView.addOnItemTouchListener(new OnItemChildLongClickListener() {
+//                @Override
+//                public void SimpleOnItemChildLongClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+//                    if (view.getId() == R.id.card_user_pin) {
+//                        Logger.d("longclicklistener");
+//                        view.findViewById(R.id.imgbtn_delete).setVisibility(View.VISIBLE);
+//                        view.setEnabled(false);
+//                    }
+//                }
+//            });
+//        }
     }
 
     private void httpForFirst() {

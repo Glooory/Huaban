@@ -47,7 +47,7 @@ public class UserPinFragment extends BaseUserFragment {
 
     @Override
     public void initAdapter() {
-        mAdapter = new UserPinAdapter(mContext);
+        mAdapter = new UserPinAdapter(mContext, isMe);
 
         //设置上滑自动建在的正在加载更多的自定义View
         View loadMoreView = LayoutInflater.from(mContext).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);

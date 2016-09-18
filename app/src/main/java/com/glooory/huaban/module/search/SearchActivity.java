@@ -25,6 +25,7 @@ import com.glooory.huaban.R;
 import com.glooory.huaban.api.SearchApi;
 import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.searchresult.SearchResultActivity;
 import com.glooory.huaban.module.type.TypeActivity;
 import com.glooory.huaban.util.CompatUtils;
 import com.glooory.huaban.util.Constant;
@@ -114,8 +115,7 @@ public class SearchActivity extends BaseActivity {
         mActvSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // TODO: 2016/9/16 0016 launch result activity
-
+                SearchResultActivity.launch(SearchActivity.this, mAdapter.getItem(i));
 
             }
         });
@@ -163,7 +163,6 @@ public class SearchActivity extends BaseActivity {
                 .switchMap(new Func1<CharSequence, Observable<SearchHintBean>>() {
                     @Override
                     public Observable<SearchHintBean> call(CharSequence charSequence) {
-                        Logger.d(charSequence.toString());
                         return RetrofitClient.createService(SearchApi.class)
                                 .httpSearchHintSewrvice(mAuthorization, charSequence.toString());
                     }
@@ -214,7 +213,7 @@ public class SearchActivity extends BaseActivity {
      */
     private void initActionSearch() {
         if (mActvSearch.getText().length() > 0) {
-            // TODO: 2016/9/16 0016 launch search result activity
+            SearchResultActivity.launch(SearchActivity.this, mActvSearch.getText().toString());
         }
     }
 
@@ -300,13 +299,14 @@ public class SearchActivity extends BaseActivity {
      * @param text
      */
     private void addChildText(FlowLayout flowLayout, String text) {
-        TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.view_textview_history, flowLayout, false);
+        final TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.view_textview_history, flowLayout, false);
         textView.setText(text);
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // TODO: 2016/9/16 0016 launch search result activity
+                SearchResultActivity.launch(SearchActivity.this, textView.getText().toString());
             }
         });
 

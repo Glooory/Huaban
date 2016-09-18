@@ -311,7 +311,6 @@ public class ImageDetailActivity extends BaseActivity
                 .subscribe(new Subscriber<PinDetailBean>() {
                     @Override
                     public void onCompleted() {
-                        Logger.d("onCompleted");
                     }
 
                     @Override

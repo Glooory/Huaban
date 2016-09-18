@@ -90,6 +90,7 @@
     <string name="format_gather_number">%d 采集</string>
     <string name="format_attention_number">%d 关注</string>
     <string name="format_board_number">%d 画板</string>
+    <string name="format_user_number">%d 用户</string>
     <string name="format_board_follower_number">被 %d 人关注</string>
     <string name="text_by_username">由 %s</string>
     <string name="format_fans_number">粉丝 %d</string>

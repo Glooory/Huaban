@@ -1,6 +1,8 @@
 package com.glooory.huaban.api;
 
+import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.module.search.SearchHintBean;
+import com.glooory.huaban.module.searchresult.ResultCountInfoBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.GET;
@@ -18,6 +20,20 @@ public interface SearchApi {
     @GET("search/hint/")
     Observable<SearchHintBean> httpSearchHintSewrvice(@Header(Constant.AUTHORIZATION) String authorization,
                                                       @Query("q") String key);
+
+    //请求要搜索的关键字的采集，画板，用户数量
+    //https://api.huaban.com/search/?q=keyword
+    @GET("search")
+    Observable<ResultCountInfoBean> httpResultCountInfoService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                               @Query("q") String keyWord);
+
+    //搜索采集
+    //https://api.huaban.com/search/?q=text&page=1&per_page=20
+    @GET("search")
+    Observable<PinsListBean> httpSearchPinsService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                   @Query("q") String keyword,
+                                                   @Query("page") int page,
+                                                   @Query("per_page") int perPage);
 
 
 }

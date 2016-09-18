@@ -3,6 +3,7 @@ package com.glooory.huaban.api;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.module.search.SearchHintBean;
 import com.glooory.huaban.module.searchresult.ResultCountInfoBean;
+import com.glooory.huaban.module.user.UserBoardListBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.GET;
@@ -34,6 +35,14 @@ public interface SearchApi {
                                                    @Query("q") String keyword,
                                                    @Query("page") int page,
                                                    @Query("per_page") int perPage);
+
+    //搜索画板
+    //https://api.huaban.com/search/boards/?q=text&page=1&per_page=20
+    @GET("search/boards")
+    Observable<UserBoardListBean> httpSearchBoardsService(@Header(Constant.AUTHORIZATION) String authorization,
+                                                          @Query("q") String keyword,
+                                                          @Query("page") int page,
+                                                          @Query("per_page") int perPage);
 
 
 }

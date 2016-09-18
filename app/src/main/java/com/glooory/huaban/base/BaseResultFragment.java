@@ -152,6 +152,7 @@ public abstract class BaseResultFragment extends Fragment implements BaseQuickAd
      * 刷新当前子类的数据，提供给Activity调用
      */
     public void refreshData() {
+        mPageCount = 1;
         httpForFirstTime();
     }
 }

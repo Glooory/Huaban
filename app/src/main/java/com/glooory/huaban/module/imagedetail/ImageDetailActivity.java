@@ -133,7 +133,8 @@ public class ImageDetailActivity extends BaseActivity
         intent.putExtra(Constant.PIN_ID, pinId);
         intent.putExtra(Constant.RATIO, ratio);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        //太长的图使用Shared Elenment transition 时会crush
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && ratio > 0.2) {
             image.setTransitionName(activity.getString(R.string.image_tran));
             activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(
                     activity, image, activity.getString(R.string.image_tran)
@@ -176,8 +177,12 @@ public class ImageDetailActivity extends BaseActivity
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
-        if (mRatio > 0) {
-            mImageDetail.setAspectRatio(mRatio);
+        if (mRatio > 0 ) {
+            if (mRatio > 0.2) {
+                mImageDetail.setAspectRatio(mRatio);
+            } else {
+                mImageDetail.setAspectRatio(0.3f);
+            }
         }
 
         mFooterView = LayoutInflater.from(mContext).inflate(R.layout.view_no_more_data_footer, null);

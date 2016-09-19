@@ -20,6 +20,7 @@ import com.glooory.huaban.util.Constant;
 import java.util.List;
 
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -83,7 +84,7 @@ public class UserLikeFragment extends BaseUserFragment {
     @Override
     public void httpForFirstTime() {
 
-        new RetrofitClient().createService(UserApi.class)
+        Subscription s = RetrofitClient.createService(UserApi.class)
                 .httpUserLikesService(mAuthorization, mUserId, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
@@ -124,14 +125,13 @@ public class UserLikeFragment extends BaseUserFragment {
                         checkIfAddFooter();
                     }
                 });
-
-
+        addSubscription(s);
     }
 
     @Override
     public void httpForMoreData() {
 
-        new RetrofitClient().createService(UserApi.class)
+        Subscription s = RetrofitClient.createService(UserApi.class)
                 .httpUserLikesMaxService(mAuthorization, mUserId, mMaxId, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
@@ -169,7 +169,7 @@ public class UserLikeFragment extends BaseUserFragment {
                         mCurrentCount = mAdapter.getData().size();
                     }
                 });
-
+        addSubscription(s);
     }
 
     /**

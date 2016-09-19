@@ -46,36 +46,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     //https联网字段
     public String mAuthorization;
 
+    private CompositeSubscription mCompositeSubscription;
+
     protected static final int[] colorInts = new int[]{R.color.pink_300, R.color.pink_500,
             R.color.pink_700, R.color.pink_900};
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
-    }
-
-    //CompositeSubscription:
-    //Subscription that represents a group of Subscriptions that are unsubscribed together.
-    private CompositeSubscription mCompositeSubscription;
-
-    public CompositeSubscription getCompositeSubscription() {
-        if (this.mCompositeSubscription == null) {
-            this.mCompositeSubscription = new CompositeSubscription();
-        }
-        return mCompositeSubscription;
-    }
-
-
-    public void addSubscription(Subscription subscription) {
-        if (subscription == null) {
-            return;
-        }
-
-        if (this.mCompositeSubscription == null) {
-            this.mCompositeSubscription = new CompositeSubscription();
-        }
-
-        this.mCompositeSubscription.add(subscription);
     }
 
     @Override
@@ -97,6 +75,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         mScreenWidthPixels = this.getResources().getDisplayMetrics().widthPixels;
         getNecessaryData();
         initResAndListener();
+    }
+
+    public CompositeSubscription getCompositeSubscription() {
+        if (this.mCompositeSubscription != null) {
+            this.mCompositeSubscription = new CompositeSubscription();
+        }
+        return this.mCompositeSubscription;
+    }
+
+    public void addSubscription(Subscription subscription) {
+        if (subscription == null) {
+            return;
+        }
+
+        if (this.mCompositeSubscription == null) {
+            this.mCompositeSubscription = new CompositeSubscription();
+        }
+
+        this.mCompositeSubscription.add(subscription);
     }
 
     //由子类继承，初始化监听器和定义显示资源

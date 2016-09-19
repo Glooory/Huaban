@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -288,7 +289,7 @@ public class BoardActivity extends BaseActivity {
         mBtnTopOperation.setProgress(1);
         String operateString = mIsFollowing ? Constant.OPERATEUNFOLLOW : Constant.OPERATEFOLLOW;
 
-        new RetrofitClient().createService(OperateApi.class)
+        Subscription s = RetrofitClient.createService(OperateApi.class)
                 .httpFollowBoardService(mAuthorization, mBoardBean.getBoard_id(), operateString)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -317,6 +318,7 @@ public class BoardActivity extends BaseActivity {
                     }
                 });
 
+        addSubscription(s);
     }
 
     private class BoardSectionAdapter extends FragmentPagerAdapter {

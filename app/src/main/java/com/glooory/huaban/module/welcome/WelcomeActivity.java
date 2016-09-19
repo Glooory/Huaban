@@ -39,7 +39,7 @@ public class WelcomeActivity extends BaseActivity {
 
     //登录需要的报文
     private static final String PASSWORD = "password";
-    private static final int mTimeDifference = TimeUtils.HOUR;
+    private static final int mTimeDifference = TimeUtils.DAY;
 
     private boolean isAnimatorEnd = false;
     private boolean needRefreshToken;
@@ -95,16 +95,18 @@ public class WelcomeActivity extends BaseActivity {
                     @Override
                     public Boolean call(Void aVoid) {
                         skipLogin = (boolean) SPUtils.get(getApplicationContext(), Constant.ISSKIPLOGIN, Boolean.FALSE);
+                        Logger.d("skipLogin:" + skipLogin);
                         return isLogin;
                     }
                 })
                 .filter(new Func1<Void, Boolean>() {
                     @Override
                     public Boolean call(Void aVoid) {
-                        Long oTime = (Long) SPUtils.get(getApplicationContext(), Constant.LOGINTIME, 0L);
-                        Long dTime = System.currentTimeMillis() - oTime;
-                        Logger.d("oTime is:  " + oTime + "-----" + "dTime : " + dTime);
-                        needRefreshToken =  dTime > mTimeDifference;
+                        Long lastLoginTime = (Long) SPUtils.get(getApplicationContext(), Constant.LOGINTIME, 0L);
+                        Long differenceTime = System.currentTimeMillis() - lastLoginTime;
+                        Logger.d("lastLoginTime is:  " + lastLoginTime + "-----" + "differenceTime : " + differenceTime);
+                        needRefreshToken =  differenceTime > mTimeDifference;
+                        Logger.d("needRefredToken" + needRefreshToken);
                         return needRefreshToken;
                     }
                 })
@@ -139,6 +141,7 @@ public class WelcomeActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         Logger.d("onError    " + e.getMessage());
                         LoginActivity.launch(WelcomeActivity.this, mMessageFail);
                         finish();
@@ -147,6 +150,7 @@ public class WelcomeActivity extends BaseActivity {
                     @Override
                     public void onNext(TokenBean tokenBean) {
                         Logger.d("onNext()   " + tokenBean.toString());
+                        Logger.d("expire_in:" + tokenBean.getExpires_in());
                         saveToken(tokenBean);
                     }
                 });

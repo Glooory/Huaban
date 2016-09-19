@@ -43,6 +43,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -234,7 +235,7 @@ public class LoginActivity extends BaseActivity {
     private void httpLogin(final String username, final String password) {
         mBtnLogin.setProgress(1);
 
-        RetrofitClient.createService(LoginApi.class)
+        Subscription s = RetrofitClient.createService(LoginApi.class)
                 .httpsTokenRx(mAuthorization, PASSWORD, username, password)
                 //得到token成功， 用内部字段保存， 在最后得到用户信息是一起保存
                 //得到Observable<> 将它转换为另一个Observable<>
@@ -288,6 +289,7 @@ public class LoginActivity extends BaseActivity {
                         });
                     }
                 });
+        addSubscription(s);
     }
 
     private void saveUserInfo(UserInfoBean result,

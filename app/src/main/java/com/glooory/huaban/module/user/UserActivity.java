@@ -53,6 +53,7 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -246,7 +247,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setRefreshing(true);
 
         if (!TextUtils.isEmpty(mUserId)) {
-            RetrofitClient.createService(UserApi.class)
+            Subscription s = RetrofitClient.createService(UserApi.class)
                     .httpsUserInfoRx(mAuthorization, mUserId)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -268,6 +269,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                             setUserIsFollowing(userBean);
                         }
                     });
+            addSubscription(s);
         }
 
     }
@@ -525,7 +527,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mBtnFollowOperation.setProgress(1);
         String operateString = isFollowing ? Constant.OPERATEUNFOLLOW : Constant.OPERATEFOLLOW;
 
-        new RetrofitClient().createService(OperateApi.class)
+        Subscription s = RetrofitClient.createService(OperateApi.class)
                 .httpFollowUserService(mAuthorization, mUserId, operateString)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -551,6 +553,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         onRefresh();
                     }
                 });
+        addSubscription(s);
     }
 
     private void showAddBoardDiolog() {
@@ -560,7 +563,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             @Override
             public void onEditDone(String name, String des, String type) {
                 mBtnFollowOperation.setProgress(1);
-                new RetrofitClient().createService(OperateApi.class)
+                Subscription s = RetrofitClient.createService(OperateApi.class)
                         .httpAddBoard(mAuthorization, name, des, type)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -587,6 +590,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                                 }
                             }
                         });
+                addSubscription(s);
             }
         });
 

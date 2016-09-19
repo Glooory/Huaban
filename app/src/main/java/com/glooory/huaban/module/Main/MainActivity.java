@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -175,7 +176,7 @@ public class MainActivity extends BaseActivity
             setNavUserInfo();
             final String userId = (String) SPUtils.get(getApplication(), Constant.USERID, "");
             Logger.d(userId);
-            RetrofitClient.createService(UserApi.class)
+            Subscription s = RetrofitClient.createService(UserApi.class)
                     .httpsUserInfoRx(mAuthorization, userId)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -196,7 +197,7 @@ public class MainActivity extends BaseActivity
                             mFansCountTv.setText(String.valueOf(userBean.getFollower_count()));
                         }
                     });
-
+            addSubscription(s);
         }
     }
 
@@ -295,7 +296,6 @@ public class MainActivity extends BaseActivity
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.drawer_avatar_ll:
-                // TODO: 2016/8/31 0031 lanuch UserActivity
                 if (isLogin) {
                     UserActivity.launch(MainActivity.this,
                             (String) SPUtils.get(getApplicationContext(), Constant.USERID, ""),

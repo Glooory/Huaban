@@ -20,6 +20,7 @@ import com.orhanobut.logger.Logger;
 import java.util.List;
 
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -74,7 +75,7 @@ public class ResultUserFragment extends BaseResultFragment {
 
     @Override
     public void httpForFirstTime() {
-        RetrofitClient.createService(SearchApi.class)
+        Subscription s = RetrofitClient.createService(SearchApi.class)
                 .httpSearchUsersService(mAuthorization, mKeyWord, mPageCount, Constant.LIMIT)
                 .map(new Func1<ResultUserListBean, List<PinsUserBean>>() {
                     @Override
@@ -114,12 +115,13 @@ public class ResultUserFragment extends BaseResultFragment {
                         mAdapter.setNewData(pinsUserBeen);
                     }
                 });
+        addSubscription(s);
     }
 
     @Override
     public void httpForMoreData() {
 
-        RetrofitClient.createService(SearchApi.class)
+        Subscription s = RetrofitClient.createService(SearchApi.class)
                 .httpSearchUsersService(mAuthorization, mKeyWord, mPageCount, Constant.LIMIT)
                 .map(new Func1<ResultUserListBean, List<PinsUserBean>>() {
                     @Override
@@ -159,6 +161,6 @@ public class ResultUserFragment extends BaseResultFragment {
                         mAdapter.addData(pinsUserBeen);
                     }
                 });
-
+        addSubscription(s);
     }
 }

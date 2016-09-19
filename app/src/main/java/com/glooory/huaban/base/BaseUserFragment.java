@@ -3,7 +3,6 @@ package com.glooory.huaban.base;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -19,7 +18,7 @@ import com.glooory.huaban.util.Constant;
 /**
  * Created by Glooory on 2016/9/4 0004 11:23.
  */
-public abstract class BaseUserFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
+public abstract class BaseUserFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
     protected boolean isMe;
     protected String mAuthorization;
     /**

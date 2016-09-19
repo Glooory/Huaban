@@ -25,6 +25,7 @@ import com.orhanobut.logger.Logger;
 import java.util.List;
 
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -76,11 +77,11 @@ public class TypeBoardFragment extends BaseTypeFragment {
 //                                    mAdapter.getItem(i).getDescription(),
 //                                    mAdapter.getItem(i).getCategory_id());
 //                        } else {
-                            if (mIsLogin) {
-                                actionBoardFollow(mAdapter.getItem(i).getBoard_id(), mAdapter.getItem(i).isFollowing(), i);
-                            } else {
-                                ((TypeActivity) getActivity()).showLoginMessage();
-                            }
+                        if (mIsLogin) {
+                            actionBoardFollow(mAdapter.getItem(i).getBoard_id(), mAdapter.getItem(i).isFollowing(), i);
+                        } else {
+                            ((TypeActivity) getActivity()).showLoginMessage();
+                        }
 //                        }
                         break;
                     case R.id.rl_card_type_board_user:
@@ -101,7 +102,7 @@ public class TypeBoardFragment extends BaseTypeFragment {
     @Override
     public void httpForFirstTime() {
 
-        RetrofitClient.createService(TypeApi.class)
+        Subscription s = RetrofitClient.createService(TypeApi.class)
                 .httpTypeBoardsService(mAuthorization, mType, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
@@ -142,13 +143,13 @@ public class TypeBoardFragment extends BaseTypeFragment {
                         checkIfAddFooter();
                     }
                 });
-
+        addSubscription(s);
     }
 
     @Override
     public void httpForMoreData() {
 
-        RetrofitClient.createService(TypeApi.class)
+        Subscription s = RetrofitClient.createService(TypeApi.class)
                 .httpTypeBoardsMaxService(mAuthorization, mType, mMaxId, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
@@ -175,7 +176,8 @@ public class TypeBoardFragment extends BaseTypeFragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Logger.d(e.getMessage());checkIfAddFooter();
+                        Logger.d(e.getMessage());
+                        checkIfAddFooter();
                         if (mRefreshListener != null) {
                             mRefreshListener.requestRefreshDone();
                         }
@@ -188,7 +190,7 @@ public class TypeBoardFragment extends BaseTypeFragment {
                         checkIfAddFooter();
                     }
                 });
-
+        addSubscription(s);
     }
 
     private void saveMaxId(List<UserBoardItemBean> list) {

@@ -25,6 +25,7 @@ import com.orhanobut.logger.Logger;
 import java.util.List;
 
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -97,7 +98,7 @@ public class ResultBoardFragment extends BaseResultFragment {
     @Override
     public void httpForFirstTime() {
 
-        RetrofitClient.createService(SearchApi.class)
+        Subscription s = RetrofitClient.createService(SearchApi.class)
                 .httpSearchBoardsService(mAuthorization, mKeyWord, mPageCount, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
@@ -137,13 +138,13 @@ public class ResultBoardFragment extends BaseResultFragment {
                         mAdapter.setNewData(userBoardItemBeen);
                     }
                 });
-
+        addSubscription(s);
     }
 
     @Override
     public void httpForMoreData() {
 
-        RetrofitClient.createService(SearchApi.class)
+        Subscription s = RetrofitClient.createService(SearchApi.class)
                 .httpSearchBoardsService(mAuthorization, mKeyWord, mPageCount, Constant.LIMIT)
                 .map(new Func1<UserBoardListBean, List<UserBoardItemBean>>() {
                     @Override
@@ -183,7 +184,7 @@ public class ResultBoardFragment extends BaseResultFragment {
                         mAdapter.addData(userBoardItemBeen);
                     }
                 });
-
+        addSubscription(s);
     }
 
     /**
@@ -194,7 +195,7 @@ public class ResultBoardFragment extends BaseResultFragment {
     private void actionBoardFollow(int boardId, final boolean isFollowing, final int position) {
         String operateString = isFollowing ? Constant.OPERATEUNFOLLOW : Constant.OPERATEFOLLOW;
 
-        new RetrofitClient().createService(OperateApi.class)
+        Subscription s = RetrofitClient.createService(OperateApi.class)
                 .httpFollowBoardService(mAuthorization, boardId, operateString)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -219,6 +220,7 @@ public class ResultBoardFragment extends BaseResultFragment {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-
+        addSubscription(s);
     }
+
 }

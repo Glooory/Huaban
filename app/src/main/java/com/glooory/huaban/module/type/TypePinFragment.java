@@ -22,6 +22,7 @@ import com.orhanobut.logger.Logger;
 import java.util.List;
 
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -83,7 +84,7 @@ public class TypePinFragment extends BaseTypeFragment {
     @Override
     public void httpForFirstTime() {
 
-        RetrofitClient.createService(TypeApi.class)
+        Subscription s = RetrofitClient.createService(TypeApi.class)
                 .httpTypePinsService(mAuthorization, mType, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
@@ -124,13 +125,13 @@ public class TypePinFragment extends BaseTypeFragment {
                         checkIfAddFooter();
                     }
                 });
-
+        addSubscription(s);
     }
 
     @Override
     public void httpForMoreData() {
 
-        RetrofitClient.createService(TypeApi.class)
+        Subscription s = RetrofitClient.createService(TypeApi.class)
                 .httpTypePinsMaxService(mAuthorization, mType, mMaxId, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
@@ -170,7 +171,7 @@ public class TypePinFragment extends BaseTypeFragment {
                         checkIfAddFooter();
                     }
                 });
-
+        addSubscription(s);
     }
 
     private void saveMaxId(List<PinsBean> list) {

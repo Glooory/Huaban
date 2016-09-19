@@ -3,7 +3,6 @@ package com.glooory.huaban.module.board;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -17,6 +16,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.UserPinAdapter;
 import com.glooory.huaban.api.BoardApi;
+import com.glooory.huaban.base.BaseFragment;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.httputils.RetrofitClient;
@@ -26,6 +26,7 @@ import com.glooory.huaban.util.Constant;
 import java.util.List;
 
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -33,7 +34,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Glooory on 2016/9/7 0007 17:24.
  */
-public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
+public class BoardPinsFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
     //触发自动加载的基数
     private int PAGE_SIZE = 20;
     //当前已经加载的数据的数量
@@ -138,7 +139,7 @@ public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.Requ
 
     private void httpForFirst() {
 
-        new RetrofitClient().createService(BoardApi.class)
+        Subscription s = RetrofitClient.createService(BoardApi.class)
                 .httpForBoardPinService(mAuthorization, mBoardId, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
@@ -167,12 +168,12 @@ public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.Requ
                         checkIfAddFooter();
                     }
                 });
-
+        addSubscription(s);
     }
 
     private void httpForMore() {
 
-        new RetrofitClient().createService(BoardApi.class)
+        Subscription s = RetrofitClient.createService(BoardApi.class)
                 .httpForBoardPinsMaxService(mAuthorization, mBoardId, mMaxId, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
                     @Override
@@ -200,7 +201,7 @@ public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.Requ
                         mCurrentCount = mAdapter.getData().size();
                     }
                 });
-
+        addSubscription(s);
     }
 
     private void saveMaxId(List<PinsBean> list) {
@@ -244,4 +245,5 @@ public class BoardPinsFragment extends Fragment implements BaseQuickAdapter.Requ
         });
 
     }
+
 }

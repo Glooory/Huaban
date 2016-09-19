@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,19 +16,21 @@ import android.widget.TextView;
 
 import com.glooory.huaban.R;
 import com.glooory.huaban.api.OperateApi;
+import com.glooory.huaban.base.BaseDialogFragmemt;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.widget.HighLightArrayAdapter;
 
 import butterknife.ButterKnife;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by Glooory on 2016/9/12 0012 18:51.
  */
-public class GatherDiologFragment extends AppCompatDialogFragment {
+public class GatherDiologFragment extends BaseDialogFragmemt {
     private static final String KEY_AUTHORIZATION = "key_authorization";
     private static final String KEY_VIAID = "key_viaid";
     private static final String KEY_DES = "key_des";
@@ -145,7 +146,7 @@ public class GatherDiologFragment extends AppCompatDialogFragment {
     //检查图片是否已经采集过
     private void httpForIsGathered() {
 
-        new RetrofitClient().createService(OperateApi.class)
+        Subscription s = RetrofitClient.createService(OperateApi.class)
                 .httpGatheredInfoService(mAuthorization, mViaId, Constant.OPERATECHECK)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -169,7 +170,7 @@ public class GatherDiologFragment extends AppCompatDialogFragment {
                         }
                     }
                 });
-
+        addSubscription(s);
     }
 
     public static interface GatherInfoListener {

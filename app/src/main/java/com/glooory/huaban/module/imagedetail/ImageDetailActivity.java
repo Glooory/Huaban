@@ -62,6 +62,7 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -177,7 +178,7 @@ public class ImageDetailActivity extends BaseActivity
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
-        if (mRatio > 0 ) {
+        if (mRatio > 0) {
             if (mRatio > 0.2) {
                 mImageDetail.setAspectRatio(mRatio);
             } else {
@@ -309,7 +310,7 @@ public class ImageDetailActivity extends BaseActivity
      */
     private void httpForImg() {
 
-        new RetrofitClient().createService(ImageDetailApi.class)
+        Subscription s = RetrofitClient.createService(ImageDetailApi.class)
                 .httpPinDetailService(mAuthorization, mPinId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -328,7 +329,7 @@ public class ImageDetailActivity extends BaseActivity
                         setUpViews(pinDetailBean);
                     }
                 });
-
+        addSubscription(s);
     }
 
     private void setUpViews(PinDetailBean pinDetailBean) {
@@ -411,7 +412,7 @@ public class ImageDetailActivity extends BaseActivity
      */
     private void httpForFirst() {
 
-        new RetrofitClient().createService(ImageDetailApi.class)
+        Subscription s = RetrofitClient.createService(ImageDetailApi.class)
                 .httpRecommendService(mAuthorization, mPinId, mPage, PAGE_SIZE)
                 .filter(new Func1<List<PinsBean>, Boolean>() {
                     @Override
@@ -439,7 +440,7 @@ public class ImageDetailActivity extends BaseActivity
                         checkIfAddFooter(list.size());
                     }
                 });
-
+        addSubscription(s);
     }
 
     /**
@@ -447,7 +448,7 @@ public class ImageDetailActivity extends BaseActivity
      */
     private void httpForMore() {
 
-        new RetrofitClient().createService(ImageDetailApi.class)
+        Subscription s = RetrofitClient.createService(ImageDetailApi.class)
                 .httpRecommendService(mAuthorization, mPinId, mPage, PAGE_SIZE)
                 .filter(new Func1<List<PinsBean>, Boolean>() {
                     @Override
@@ -475,7 +476,7 @@ public class ImageDetailActivity extends BaseActivity
                         checkIfAddFooter(list.size());
                     }
                 });
-
+        addSubscription(s);
     }
 
     /**
@@ -484,7 +485,7 @@ public class ImageDetailActivity extends BaseActivity
     private void actionLike() {
         if (isLogin) {
             String operate = mIsLiked ? Constant.OPERATEUNLIKE : Constant.OPERATELIKE;
-            new RetrofitClient().createService(OperateApi.class)
+            Subscription s = RetrofitClient.createService(OperateApi.class)
                     .httpLikePinService(mAuthorization, mPinId, operate)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -507,7 +508,7 @@ public class ImageDetailActivity extends BaseActivity
                             setUpLikeSbtn();
                         }
                     });
-
+            addSubscription(s);
         } else {
             mSbtnlLike.setChecked(false);
             showLoginSnackbar(ImageDetailActivity.this, mCoordinator);
@@ -587,7 +588,7 @@ public class ImageDetailActivity extends BaseActivity
     //检查图片是否已经采集过
     private void httpForIsGathered() {
 
-        new RetrofitClient().createService(OperateApi.class)
+        Subscription s = RetrofitClient.createService(OperateApi.class)
                 .httpGatheredInfoService(mAuthorization, mPinId, Constant.OPERATECHECK)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -611,7 +612,7 @@ public class ImageDetailActivity extends BaseActivity
                         }
                     }
                 });
-
+        addSubscription(s);
     }
 
     /**
@@ -677,7 +678,7 @@ public class ImageDetailActivity extends BaseActivity
     public void onGatherInfoDone(String gatherDes, int selection) {
         String toBoardId = mBoardIds[selection];
 
-        new RetrofitClient().createService(OperateApi.class)
+        Subscription s = RetrofitClient.createService(OperateApi.class)
                 .httpGatherPinService(mAuthorization, toBoardId, gatherDes, String.valueOf(mPinId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -700,7 +701,7 @@ public class ImageDetailActivity extends BaseActivity
                         setUpPinSbtn();
                     }
                 });
-
+        addSubscription(s);
     }
 
     @Override

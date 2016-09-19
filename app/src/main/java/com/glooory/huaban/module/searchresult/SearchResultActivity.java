@@ -30,6 +30,7 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -144,7 +145,7 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
      */
     private void httpForCountsInfo() {
 
-        RetrofitClient.createService(SearchApi.class)
+        Subscription s = RetrofitClient.createService(SearchApi.class)
                 .httpResultCountInfoService(mAuthorization, mKeyWord)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -168,7 +169,7 @@ public class SearchResultActivity extends BaseActivity implements SwipeRefreshLa
                         mUserCount = resultCountInfoBean.getPeople_count();
                     }
                 });
-
+        addSubscription(s);
     }
 
     private void setUpTabTitles() {

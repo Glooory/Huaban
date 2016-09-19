@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -18,6 +17,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.PinQuickAdapter;
 import com.glooory.huaban.api.AllApi;
+import com.glooory.huaban.base.BaseFragment;
 import com.glooory.huaban.entity.ListPinsBean;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
@@ -32,6 +32,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -39,7 +40,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Glooory on 2016/8/28 0028.
  */
-public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+public class PinsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
         BaseQuickAdapter.RequestLoadMoreListener {
     public static final int HOME_FRAGMENT_INDEX = 0;
     public static final int NEWEST_FRAGMENT_INDEX = 1;
@@ -118,16 +119,16 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.item_card_pin_img_ll:
-                        float ratio = mAdapter.getItem(i).getFile().getWidth()
+                        float ratio = ((PinQuickAdapter) baseQuickAdapter).getItem(i).getFile().getWidth()
                                 / ((float) mAdapter.getItem(i).getFile().getHeight());
                         ImageDetailActivity.launch(getActivity(),
-                                mAdapter.getItem(i).getPin_id(),
+                                ((PinQuickAdapter) baseQuickAdapter).getItem(i).getPin_id(),
                                 ratio,
                                 (SimpleDraweeView) view.findViewById(R.id.item_card_pin_img));
                         break;
                     case R.id.item_card_via_ll:
-                        UserActivity.launch(getActivity(), String.valueOf(mAdapter.getItem(i).getUser_id()),
-                                mAdapter.getItem(i).getUser().getUsername(),
+                        UserActivity.launch(getActivity(), String.valueOf(((PinQuickAdapter) baseQuickAdapter).getItem(i).getUser_id()),
+                                ((PinQuickAdapter) baseQuickAdapter).getItem(i).getUser().getUsername(),
                                 (SimpleDraweeView) view.findViewById(R.id.item_card_pin_avaterimg));
                         break;
                 }
@@ -184,7 +185,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      */
     private void httpHomeFirst() {
 
-        new RetrofitClient().createService(AllApi.class)
+        Subscription s = RetrofitClient.createService(AllApi.class)
                 .httpHomePinsService(mAuthorization, Constant.LIMIT)
                 .map(new Func1<ListPinsBean, List<PinsBean>>() {
                     @Override
@@ -219,14 +220,15 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
-
+        addSubscription(s);
     }
 
     /**
      * 首次加载最新模块的数据
      */
     private void httpNewestFirst() {
-        RetrofitClient.createService(AllApi.class)
+
+        Subscription s = RetrofitClient.createService(AllApi.class)
                 .httpAllService(mAuthorization, Constant.LIMIT)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
@@ -261,6 +263,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
+        addSubscription(s);
     }
 
     /**
@@ -268,7 +271,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      */
     private void httpPopularFirst() {
 
-        new RetrofitClient().createService(AllApi.class)
+        Subscription s = RetrofitClient.createService(AllApi.class)
                 .httpPopularPinsService(mAuthorization, Constant.LIMIT)
                 .map(new Func1<ListPinsBean, List<PinsBean>>() {
                     @Override
@@ -303,7 +306,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
-
+        addSubscription(s);
     }
 
     /**
@@ -311,7 +314,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      */
     private void httpHomeMore() {
 
-        new RetrofitClient().createService(AllApi.class)
+        Subscription s = RetrofitClient.createService(AllApi.class)
                 .httpHomePinsMaxService(mAuthorization, mMaxId, Constant.LIMIT)
                 .map(new Func1<ListPinsBean, List<PinsBean>>() {
                     @Override
@@ -345,7 +348,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         mAdapter.addData(list);
                     }
                 });
-
+        addSubscription(s);
     }
 
     /**
@@ -353,7 +356,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      */
     private void httpNewestMore() {
 
-        RetrofitClient.createService(AllApi.class)
+        Subscription s = RetrofitClient.createService(AllApi.class)
                 .httpAllMaxService(mAuthorization, Constant.LIMIT, mMaxId)
                 .map(new Func1<PinsListBean, List<PinsBean>>() {
 
@@ -381,7 +384,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         mAdapter.addData(list);
                     }
                 });
-
+        addSubscription(s);
     }
 
     /**
@@ -389,7 +392,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      */
     private void httpPopularMore() {
 
-        new RetrofitClient().createService(AllApi.class)
+        Subscription s = RetrofitClient.createService(AllApi.class)
                 .httpPopularPinsMaxService(mAuthorization, mMaxId, Constant.LIMIT)
                 .map(new Func1<ListPinsBean, List<PinsBean>>() {
                     @Override
@@ -423,7 +426,7 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         mAdapter.addData(list);
                     }
                 });
-
+        addSubscription(s);
     }
 
     @Override
@@ -447,4 +450,5 @@ public class PinsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     protected void checkException(Throwable throwable) {
         NetworkUtils.checkHttpException(getContext(), throwable, mRecyclerView);
     }
+
 }

@@ -125,7 +125,7 @@ public class WelcomeActivity extends BaseActivity {
                     public void onCompleted() {
                         if (isLogin) {
                             if (needRefreshToken) {
-                                LoginActivity.launch(WelcomeActivity.this);
+                                LoginActivity.launch(WelcomeActivity.this, true);
                             } else {
                                 MainActivity.launch(WelcomeActivity.this);
                             }
@@ -133,7 +133,7 @@ public class WelcomeActivity extends BaseActivity {
                             if (skipLogin) {
                                 MainActivity.launch(WelcomeActivity.this);
                             } else {
-                                LoginActivity.launch(WelcomeActivity.this);
+                                LoginActivity.launch(WelcomeActivity.this, true);
                             }
                         }
                         finish();
@@ -143,7 +143,7 @@ public class WelcomeActivity extends BaseActivity {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         Logger.d("onError    " + e.getMessage());
-                        LoginActivity.launch(WelcomeActivity.this, mMessageFail);
+                        LoginActivity.launch(WelcomeActivity.this, mMessageFail, true);
                         finish();
                     }
 

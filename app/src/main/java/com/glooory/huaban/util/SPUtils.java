@@ -3,6 +3,7 @@ package com.glooory.huaban.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +20,9 @@ public class SPUtils {
      * 保存在手机里面的文件名和读写模式
      */
     public static final String SP_FILE_NAME = "shared_data";
+    public static final String SP_HISTORY_ACCOUNT = "history_account";
     public static final int SP_RW_MODE = Context.MODE_PRIVATE;
+    private static final String HISTORY_ACCONTS = "history_acconts";
 
     /**
      * 异步提交方法
@@ -150,5 +153,26 @@ public class SPUtils {
     public static Map<String, ?> getAll(Context context) {
         SharedPreferences sp = context.getSharedPreferences(SP_FILE_NAME, SP_RW_MODE);
         return sp.getAll();
+    }
+
+    /**
+     * 获取历史登录的用户的账号
+     * @param context
+     * @return
+     */
+    public static Set<String> getHistoryAccounts(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_HISTORY_ACCOUNT, SP_RW_MODE);
+        return sp.getStringSet(HISTORY_ACCONTS, new HashSet<String>());
+    }
+
+    /**
+     * 将历史登录过的用户账号保存起来
+     * @param context
+     * @param accouts
+     */
+    public static void putHistoryAccount(Context context, Set<String> accouts) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(SP_HISTORY_ACCOUNT, SP_RW_MODE).edit();
+        editor.putStringSet(HISTORY_ACCONTS, accouts);
+        editor.apply();
     }
 }

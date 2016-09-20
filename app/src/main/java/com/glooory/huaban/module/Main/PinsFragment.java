@@ -119,16 +119,16 @@ public class PinsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             public void SimpleOnItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()) {
                     case R.id.item_card_pin_img_ll:
-                        float ratio = ((PinQuickAdapter) baseQuickAdapter).getItem(i).getFile().getWidth()
+                        float ratio = mAdapter.getItem(i).getFile().getWidth()
                                 / ((float) mAdapter.getItem(i).getFile().getHeight());
                         ImageDetailActivity.launch(getActivity(),
-                                ((PinQuickAdapter) baseQuickAdapter).getItem(i).getPin_id(),
+                                mAdapter.getItem(i).getPin_id(),
                                 ratio,
                                 (SimpleDraweeView) view.findViewById(R.id.item_card_pin_img));
                         break;
                     case R.id.item_card_via_ll:
-                        UserActivity.launch(getActivity(), String.valueOf(((PinQuickAdapter) baseQuickAdapter).getItem(i).getUser_id()),
-                                ((PinQuickAdapter) baseQuickAdapter).getItem(i).getUser().getUsername(),
+                        UserActivity.launch(getActivity(), String.valueOf(mAdapter.getItem(i).getUser_id()),
+                                mAdapter.getItem(i).getUser().getUsername(),
                                 (SimpleDraweeView) view.findViewById(R.id.item_card_pin_avaterimg));
                         break;
                 }

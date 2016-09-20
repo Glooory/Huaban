@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +23,7 @@ import com.glooory.huaban.entity.BoardItemInfoBean;
 import com.glooory.huaban.entity.BoardListInfoBean;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.main.MainActivity;
+import com.glooory.huaban.module.search.SearchHintAdapter;
 import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.IntentUtils;
@@ -35,7 +35,9 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindString;
@@ -53,6 +55,7 @@ import rx.schedulers.Schedulers;
  * Created by Glooory on 2016/9/1 0001.
  */
 public class LoginActivity extends BaseActivity {
+    private static final String IS_FROM_WELCOME = "is_from_welcome";
 
     //登录时需要的报文
     private static final String PASSWORD = "password";
@@ -77,6 +80,8 @@ public class LoginActivity extends BaseActivity {
 
     private TokenBean mTokenBean;
     private UserInfoBean mUserBean;
+    //是否从WelcomeActivity跳转过来，true的话登录成功跳转到MainActivity，不是就跳转到之前的界面
+    private boolean mIsFromWelcome = false;
 
     //需要的资源
     @BindString(R.string.snack_message_login_success)
@@ -100,9 +105,16 @@ public class LoginActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
-    public static void launch(Activity activity, String message) {
+    public static void launch(Activity activity, boolean isFromWelcome) {
+        Intent intent = new Intent(activity, LoginActivity.class);
+        intent.putExtra(IS_FROM_WELCOME, isFromWelcome);
+        activity.startActivity(intent);
+    }
+
+    public static void launch(Activity activity, String message, boolean isFromWelcome) {
         Intent intent = new Intent(activity, LoginActivity.class);
         intent.putExtra(TYPE_KEY, message);
+        intent.putExtra(IS_FROM_WELCOME, isFromWelcome);
         activity.startActivity(intent);
     }
 
@@ -110,6 +122,7 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        mIsFromWelcome = getIntent().getBooleanExtra(IS_FROM_WELCOME, false);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String message = getIntent().getStringExtra(TYPE_KEY);
@@ -185,11 +198,19 @@ public class LoginActivity extends BaseActivity {
 
     private void addUsernameAutoComplete() {
         //系统读入内容帮助用户输入用户名
-        ArrayList<String> arraylist = new ArrayList<>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext,
+        Set<String> accounts = SPUtils.getHistoryAccounts(getApplicationContext());
+        Logger.d(accounts.size());
+        ArrayList<String> arraylist = new ArrayList<>(accounts);
+        SearchHintAdapter adapter = new SearchHintAdapter(mContext,
                 android.R.layout.simple_spinner_dropdown_item, arraylist);
 
         mACTVUsername.setAdapter(adapter);
+        mACTVUsername.post(new Runnable() {
+            @Override
+            public void run() {
+                mACTVUsername.showDropDown();
+            }
+        });
     }
 
     private void attemptLogin() {
@@ -215,10 +236,6 @@ public class LoginActivity extends BaseActivity {
         //检查用户名是否合法
         if (TextUtils.isEmpty(username)) {
             mACTVUsername.setError(getString(R.string.error_field_required));
-            focusView = mACTVUsername;
-            cancel = true;
-        } else if (!isEmailValid(username)) {
-            mACTVUsername.setError(getString(R.string.error_invalid_username));
             focusView = mACTVUsername;
             cancel = true;
         }
@@ -283,7 +300,10 @@ public class LoginActivity extends BaseActivity {
                             @Override
                             public void onDismissed(Snackbar snackbar, int event) {
                                 super.onDismissed(snackbar, event);
-                                // TODO: 2016/9/1 0001 Launch UserActivity
+                                Logger.d(mIsFromWelcome);
+                                if (mIsFromWelcome) {
+                                    MainActivity.launch(LoginActivity.this);
+                                }
                                 finish();
                             }
                         });
@@ -330,10 +350,11 @@ public class LoginActivity extends BaseActivity {
                 .addData(Constant.BOARDTITLEARRAY, boardTitle.toString())
                 .addData(Constant.BOARDIDARRAY, boardId.toString())
                 .build();
-    }
 
-    private boolean isEmailValid(String email) {
-        return email.contains("@");
+        Set<String> historyAccount = SPUtils.getHistoryAccounts(getApplicationContext());
+        Set<String> newData = new HashSet<>(historyAccount);
+        newData.add(result.getEmail());
+        SPUtils.putHistoryAccount(getApplicationContext(), newData);
     }
 
     private boolean isPasswordValid(String password) {

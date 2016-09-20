@@ -26,6 +26,7 @@ import com.glooory.huaban.module.main.MainActivity;
 import com.glooory.huaban.module.search.SearchHintAdapter;
 import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.Constant;
+import com.glooory.huaban.util.EncrypAES;
 import com.glooory.huaban.util.IntentUtils;
 import com.glooory.huaban.util.NetworkUtils;
 import com.glooory.huaban.util.SPBuild;
@@ -82,6 +83,7 @@ public class LoginActivity extends BaseActivity {
     private UserInfoBean mUserBean;
     //是否从WelcomeActivity跳转过来，true的话登录成功跳转到MainActivity，不是就跳转到之前的界面
     private boolean mIsFromWelcome = false;
+    private EncrypAES mAES;
 
     //需要的资源
     @BindString(R.string.snack_message_login_success)
@@ -129,6 +131,7 @@ public class LoginActivity extends BaseActivity {
         if (!TextUtils.isEmpty(message)) {
             NetworkUtils.showSnackbar(mScrollLoginForm, message);
         }
+        mAES = new EncrypAES();
 
         addUsernameAutoComplete();
     }
@@ -295,7 +298,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void onNext(BoardListInfoBean boardListInfoBean) {
                         mBtnLogin.setProgress(100);
-                        saveUserInfo(mUserBean, mTokenBean, username, password, boardListInfoBean.getBoards());
+                        saveUserInfo(mUserBean, mTokenBean, username, mAES.EncryptorString(password), boardListInfoBean.getBoards());
                         NetworkUtils.showSnackbar(mScrollLoginForm, snackLoginSuccess).setCallback(new Snackbar.Callback() {
                             @Override
                             public void onDismissed(Snackbar snackbar, int event) {

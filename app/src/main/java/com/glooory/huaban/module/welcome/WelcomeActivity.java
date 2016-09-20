@@ -19,6 +19,7 @@ import com.glooory.huaban.module.main.MainActivity;
 import com.glooory.huaban.rx.AnimOnSubscribe;
 import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.Constant;
+import com.glooory.huaban.util.EncrypAES;
 import com.glooory.huaban.util.SPBuild;
 import com.glooory.huaban.util.SPUtils;
 import com.glooory.huaban.util.TimeUtils;
@@ -44,6 +45,7 @@ public class WelcomeActivity extends BaseActivity {
     private boolean isAnimatorEnd = false;
     private boolean needRefreshToken;
     private boolean skipLogin;
+    private EncrypAES mAES;
 
     @BindString(R.string.text_auto_login_fail)
     String mMessageFail;
@@ -72,6 +74,7 @@ public class WelcomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         isLogin = (Boolean) SPUtils.get(getApplicationContext(),
                 Constant.ISLOGIN, Boolean.FALSE);
+        mAES = new EncrypAES();
     }
 
     @Override
@@ -114,7 +117,9 @@ public class WelcomeActivity extends BaseActivity {
                     @Override
                     public Observable<TokenBean> call(Void aVoid) {
                         String account = (String) SPUtils.get(getApplicationContext(), Constant.USERACCOUNT, "");
-                        String password = (String) SPUtils.get(getApplicationContext(), Constant.USERPASSWORD, "");
+                        String passwordAES = (String) SPUtils.get(getApplicationContext(), Constant.USERPASSWORD, "");
+                        String password = mAES.DecryptorString(passwordAES);
+                        Logger.d(password);
                         return getUserToken(account, password);
                     }
                 })

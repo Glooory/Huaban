@@ -18,6 +18,8 @@ import rx.Observable;
  */
 public interface UserApi {
 
+    //这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
+
     //https://api.huaban.com/users/15246080
     //获取个人信息
     @GET("users/{userId}")

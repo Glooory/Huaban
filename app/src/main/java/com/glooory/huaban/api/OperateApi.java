@@ -21,6 +21,8 @@ import rx.Observable;
  */
 public interface OperateApi {
 
+    //这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
+
     //对某个采集的喜欢或者取消喜欢的操作
     //https:api.huaban.com/pins/12345664/like
     //https:api.huaban.com/pins/12345664/unlike

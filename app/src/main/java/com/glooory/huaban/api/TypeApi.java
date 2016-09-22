@@ -16,6 +16,8 @@ import rx.Observable;
  */
 public interface TypeApi {
 
+    //这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
+
     //分类浏览的网络请求
 
     //请求该分类的采集

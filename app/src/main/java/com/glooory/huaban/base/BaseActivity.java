@@ -49,9 +49,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private CompositeSubscription mCompositeSubscription;
 
-    protected static final int[] colorInts = new int[]{R.color.pink_300, R.color.pink_500,
-            R.color.pink_700, R.color.pink_900};
-
     @Override
     public String toString() {
         return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());

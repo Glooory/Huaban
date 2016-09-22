@@ -17,6 +17,8 @@ import rx.Observable;
  */
 public interface SearchApi {
 
+    //这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
+
     //搜索关键字
     //https:api.huaban.com/search/hint?q=%df&cdfd
     @GET("search/hint/")

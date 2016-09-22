@@ -14,6 +14,8 @@ import rx.Observable;
  */
 public interface AllApi {
 
+    //这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
+
     //获取最新的采集数据，展示在最新Fragment中
     //https:api.huaban.com/all?limit=20
     @GET("all")

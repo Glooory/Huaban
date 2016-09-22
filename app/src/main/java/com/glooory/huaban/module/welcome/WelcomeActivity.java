@@ -40,9 +40,8 @@ public class WelcomeActivity extends BaseActivity {
 
     //登录需要的报文
     private static final String PASSWORD = "password";
-    private static final int mTimeDifference = TimeUtils.DAY;
+    private static final int mTimeDifference = TimeUtils.DAY - TimeUtils.HOUR * 2;
 
-    private boolean isAnimatorEnd = false;
     private boolean needRefreshToken;
     private boolean skipLogin;
     private EncrypAES mAES;

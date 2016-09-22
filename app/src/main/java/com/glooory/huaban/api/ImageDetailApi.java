@@ -17,6 +17,8 @@ import rx.Observable;
  */
 public interface ImageDetailApi {
 
+    //这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
+
     //获取某个采集的详细信息
     //https://api.huaban.com/pins/pinId
     @GET("pins/{pinId}")

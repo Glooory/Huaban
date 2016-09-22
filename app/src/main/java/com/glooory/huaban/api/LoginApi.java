@@ -16,6 +16,8 @@ import rx.Observable;
  */
 public interface LoginApi {
 
+    //这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
+
     //https 用户登录  的第一步
     // Authorization 报头一个固定的值 内容 grant_type=password&password=密码&username=账号
     @FormUrlEncoded

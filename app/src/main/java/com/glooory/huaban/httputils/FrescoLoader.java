@@ -256,6 +256,11 @@ public class FrescoLoader {
             this.mControllerListener = listenrr;
             return this;
         }
+
+        public Builder setScaleType(ScalingUtils.ScaleType scaleType) {
+            this.mSacleType = scaleType;
+            return this;
+        }
     }
 
 }

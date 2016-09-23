@@ -652,12 +652,15 @@ public class ImageDetailActivity extends BaseActivity
                 if (TextUtils.isEmpty(mPinKey)) {
                     Snackbar.make(mCoordinator, "数据还未加载完毕，请稍后再试", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    AndPermission.with(this)
-                            .requestCode(201)
-                            .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            .rationale(mRationaleListener)
-                            .send();
-
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        AndPermission.with(this)
+                                .requestCode(201)
+                                .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                .rationale(mRationaleListener)
+                                .send();
+                    } else {
+                        DownloadPinService.launch(ImageDetailActivity.this, mPinKey, mPinType);
+                    }
                 }
                 return true;
         }

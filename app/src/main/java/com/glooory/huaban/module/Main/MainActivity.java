@@ -30,6 +30,7 @@ import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.module.gather.GatherActivity;
 import com.glooory.huaban.module.login.LoginActivity;
 import com.glooory.huaban.module.login.UserInfoBean;
 import com.glooory.huaban.module.search.SearchActivity;
@@ -121,7 +122,11 @@ public class MainActivity extends BaseActivity
                 .subscribe(new Action1<Void>() {
                     @Override
                     public void call(Void aVoid) {
-                        Toast.makeText(mContext, "replace your own action with this", Toast.LENGTH_SHORT).show();
+                        if (isLogin) {
+                            GatherActivity.launch(MainActivity.this);
+                        } else {
+                            showLoginSnackbar(MainActivity.this, mCoordinator);
+                        }
                     }
                 });
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

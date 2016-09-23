@@ -1,5 +1,7 @@
 package com.glooory.huaban.httputils;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -10,13 +12,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class RetrofitClient {
 
-    public static final String mBaseUrl = "https://api.huaban.com/";
+    private static final String mBaseUrl = "https://api.huaban.com/";
 
     public static Retrofit.Builder builder = new Retrofit.Builder()
             .baseUrl(mBaseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .client(new OkHttpClient());
+            .client(new OkHttpClient.Builder()
+                    .retryOnConnectionFailure(true)
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .build());
 
     public static <T> T createService(Class<T> serviceClass) {
         Retrofit retrofit = builder.build();

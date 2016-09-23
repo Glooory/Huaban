@@ -7,7 +7,7 @@ public class Base64 {
 
     private static final String mBasic = "Basic ";
 
-    private static final String mClientInfo = "MWQ5MTJjYWU0NzE0NGZhMDlkODg6Zjk0ZmNjMDliNTliNDM0OWExNDhhMjAzYWIyZjIwYzc=";
+    private static final String mClientInfo = "OTkzNzQzZDIwOGFlNDkyODg4Mzc6MTFjYmU4NDFlMGJmNDJmOWJlMGM4ZjZkM2VlMzI3ZWM=";
 
     public static final String CLIENTINFO = mBasic + mClientInfo;
 

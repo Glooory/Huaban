@@ -217,6 +217,12 @@
     <string name="add_board_operate_success">创建成功</string>
     <string name="edit_board_operate_success">修改成功</string>
     <string name="delete_board_operate_success">已删除</string>
+    <string name="gather_new_one">添加采集</string>
+    <string name="upload_pin">上传图片</string>
+    <string name="upload_failed">上传失败，请稍后重试</string>
+    <string name="gather_failed">采集失败， 请稍后重试</string>
+    <string name="gather_success_toast">成功采集到 %s </string>
+    <string name="checkout_board">查看采集</string>
 
 
     <string-array name="user_appbar_title_array">
@@ -231,6 +237,7 @@
     <string name="image_tran">image_tran</string>
 
     <string name="collect_to">采集到</string>
+    <string name="gather_des">采集描述</string>
     <string name="related_recommend">相关推荐</string>
     <string name="board">画板</string>
     <string name="collection">采集</string>

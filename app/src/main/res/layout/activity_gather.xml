@@ -57,8 +57,8 @@
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/img_gather"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
                 android:layout_gravity="center"
                 fresco:actualImageScaleType="fitCenter"/>
 

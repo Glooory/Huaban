@@ -71,7 +71,7 @@ public class DownloadPinService extends IntentService {
                 .client(initOkHttpClient())
                 .build()
                 .create(PinDownloadService.class)
-                .httpForDownload((mPinUrlKey + getString(R.string.image_suffix_big)))
+                .httpForDownload(mPinUrlKey)
                 .enqueue(new PinDownloadCallback(mPinDirPath, mPinName) {
                     @Override
                     public void onSuccess(File file) {

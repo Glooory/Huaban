@@ -2,6 +2,7 @@ package com.glooory.huaban.module.gather;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -12,10 +13,12 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.dd.CircularProgressButton;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
 import com.glooory.huaban.api.UploadApi;
 import com.glooory.huaban.api.UserApi;
@@ -239,13 +242,28 @@ public class GatherActivity extends BaseActivity {
             @Override
             public void run() {
                 mBtnUpload.setProgress(1);
+                mBtnGather.setEnabled(false);
             }
         });
+
+        //获取图片的长和宽，适当压缩图片
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(resultEvent.getResult().getOriginalPath(), options);
+        float ratio = options.outWidth / (float) options.outHeight;
+        int desireWidth = mScreenWidthPixels / 2;
+        int desireHeight = options.outHeight;
+        if (options.outWidth > desireWidth) {
+            desireHeight = (int) (desireWidth / ratio);
+        } else {
+            desireWidth = options.outWidth;
+        }
+        Toast.makeText(mContext, "" + desireWidth + "----" + desireHeight, Toast.LENGTH_LONG).show();
 
         new FrescoLoader.Builder(mContext,
                 mImgPreview,
                 "file://" + resultEvent.getResult().getOriginalPath())
-//                                                .setResizeOptions(new ResizeOptions(mScreenWidthPixels / 2, desireHeight))
+                .setResizeOptions(new ResizeOptions(desireWidth, desireHeight))
                 .setScaleType(ScalingUtils.ScaleType.FIT_CENTER)
                 .build();
 
@@ -266,7 +284,6 @@ public class GatherActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
                         checkException(e, mCoordinator);
-                        mBtnGather.setEnabled(false);
                         mBtnUpload.setProgress(0);
                     }
 
@@ -278,7 +295,6 @@ public class GatherActivity extends BaseActivity {
                             mBtnGather.setEnabled(true);
                         } else {
                             showSnackbarMsg(upload_failed, false);
-                            mBtnGather.setEnabled(false);
                         }
                     }
                 });

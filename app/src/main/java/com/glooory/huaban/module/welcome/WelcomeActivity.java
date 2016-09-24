@@ -22,7 +22,6 @@ import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.EncrypAES;
 import com.glooory.huaban.util.SPBuild;
 import com.glooory.huaban.util.SPUtils;
-import com.glooory.huaban.util.TimeUtils;
 import com.orhanobut.logger.Logger;
 
 import butterknife.BindString;
@@ -40,7 +39,7 @@ public class WelcomeActivity extends BaseActivity {
 
     //登录需要的报文
     private static final String PASSWORD = "password";
-    private static final int mTimeDifference = TimeUtils.DAY - TimeUtils.HOUR * 2;
+    private static int mTimeDifference;
 
     private boolean needRefreshToken;
     private boolean skipLogin;
@@ -104,8 +103,11 @@ public class WelcomeActivity extends BaseActivity {
                 .filter(new Func1<Void, Boolean>() {
                     @Override
                     public Boolean call(Void aVoid) {
+                        mTimeDifference = (int) SPUtils.get(getApplicationContext(),
+                               Constant.TOKENEXPIRESIN, 0);
+                        Logger.d(mTimeDifference);
                         Long lastLoginTime = (Long) SPUtils.get(getApplicationContext(), Constant.LOGINTIME, 0L);
-                        Long differenceTime = System.currentTimeMillis() - lastLoginTime;
+                        Long differenceTime = (System.currentTimeMillis() - lastLoginTime) / 1000;
                         Logger.d("lastLoginTime is:  " + lastLoginTime + "-----" + "differenceTime : " + differenceTime);
                         needRefreshToken =  differenceTime > mTimeDifference;
                         Logger.d("needRefredToken" + needRefreshToken);

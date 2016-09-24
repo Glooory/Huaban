@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.dd.CircularProgressButton;
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -43,6 +42,7 @@ import cn.finalteam.rxgalleryfinal.RxGalleryFinal;
 import cn.finalteam.rxgalleryfinal.imageloader.ImageLoaderType;
 import cn.finalteam.rxgalleryfinal.rxbus.RxBusResultSubscriber;
 import cn.finalteam.rxgalleryfinal.rxbus.event.ImageRadioResultEvent;
+import cn.finalteam.rxgalleryfinal.utils.Logger;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -66,6 +66,7 @@ public class GatherActivity extends BaseActivity {
     private int mSelection = 0;
     private String mFileId;
     private String mBoardId;
+    private RxBusResultSubscriber<ImageRadioResultEvent> mResultSubscriber;
 
 
     @BindView(R.id.btn_upload)
@@ -121,6 +122,13 @@ public class GatherActivity extends BaseActivity {
         mBtnUpload.setIndeterminateProgressMode(true);
         mBtnGather.setIndeterminateProgressMode(true);
 
+        mResultSubscriber = new RxBusResultSubscriber<ImageRadioResultEvent>() {
+            @Override
+            protected void onEvent(ImageRadioResultEvent resultEvent) throws Exception {
+                actionUpload(resultEvent);
+            }
+        };
+
         RxView.clicks(mBtnUpload)
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribe(new Action1<Void>() {
@@ -132,14 +140,7 @@ public class GatherActivity extends BaseActivity {
                                 .radio()
                                 .crop()
                                 .imageLoader(ImageLoaderType.FRESCO)
-                                .subscribe(new RxBusResultSubscriber<ImageRadioResultEvent>() {
-                                    @Override
-                                    protected void onEvent(ImageRadioResultEvent imageRadioResultEvent) throws Exception {
-                                        //图片选择结果
-                                        actionUpload(imageRadioResultEvent);
-                                        mLiGather.setVisibility(View.VISIBLE);
-                                    }
-                                })
+                                .subscribe(mResultSubscriber)
                                 .openGallery();
                     }
                 });
@@ -241,6 +242,7 @@ public class GatherActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mLiGather.setVisibility(View.VISIBLE);
                 mBtnUpload.setProgress(1);
                 mBtnGather.setEnabled(false);
             }
@@ -258,7 +260,6 @@ public class GatherActivity extends BaseActivity {
         } else {
             desireWidth = options.outWidth;
         }
-        Toast.makeText(mContext, "" + desireWidth + "----" + desireHeight, Toast.LENGTH_LONG).show();
 
         new FrescoLoader.Builder(mContext,
                 mImgPreview,
@@ -364,5 +365,14 @@ public class GatherActivity extends BaseActivity {
         Snackbar.make(mCoordinator,
                 msgId,
                 shortDuration ? Snackbar.LENGTH_SHORT : Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mResultSubscriber.isUnsubscribed()) {
+            Logger.d(String.valueOf(mResultSubscriber.isUnsubscribed()));
+            mResultSubscriber.unsubscribe();
+        }
     }
 }

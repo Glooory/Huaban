@@ -6,7 +6,7 @@
         android:interpolator="@android:interpolator/decelerate_quint"
         android:propertyName="scaleX"
         android:valueFrom="1.0f"
-        android:valueTo="1.2f"
+        android:valueTo="1.1f"
         android:valueType="floatType" />
 
     <objectAnimator
@@ -14,6 +14,6 @@
         android:interpolator="@android:interpolator/decelerate_quint"
         android:propertyName="scaleY"
         android:valueFrom="1.0f"
-        android:valueTo="1.2f"
+        android:valueTo="1.1f"
         android:valueType="floatType" />
 </set>

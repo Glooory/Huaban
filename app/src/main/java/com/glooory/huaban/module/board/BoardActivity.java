@@ -257,8 +257,7 @@ public class BoardActivity extends BaseActivity {
                         @Override
                         protected void onNewResultImpl(Bitmap bitmap) {
                             if (bitmap != null) {
-                                Bitmap low = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
-                                final Drawable blured = new BitmapDrawable(getResources(), FastBlurUtil.doBlur(low, 10, false));
+                                final Drawable blured = new BitmapDrawable(getResources(), FastBlurUtil.doBlur(bitmap, 10, false));
                                 if (Utils.checkUIThreadBoolean()) {
                                     mAppBar.setBackground(blured);
                                 } else {

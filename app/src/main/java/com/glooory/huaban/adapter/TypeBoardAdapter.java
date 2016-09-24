@@ -8,9 +8,7 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
-import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.module.user.UserBoardItemBean;
 import com.glooory.huaban.util.CompatUtils;
@@ -28,8 +26,6 @@ public class TypeBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
     private Context mContext;
     private String mGeneralImgUrl;
     private String mSmallImgUrl;
-    private int mDesireWidth;
-    private ResizeOptions mResizeOptions;
 
     public TypeBoardAdapter(Context context) {
         super(R.layout.card_type_board, null);
@@ -41,8 +37,6 @@ public class TypeBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         this.mAttentionFormat = resources.getString(R.string.format_attention_number);
         this.mOperateFollowing = resources.getString(R.string.text_following);
         this.mOperateFollowed = resources.getString(R.string.text_followed);
-        mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
-        mResizeOptions = new ResizeOptions(100, 100);
     }
 
     @Override
@@ -76,7 +70,6 @@ public class TypeBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
                 .setProgressbarImage(dProgressImg)
                 .setRetryImage(retryDrawable)
                 .setFailureIamge(failDrawable)
-                .setResizeOptions(new ResizeOptions(mDesireWidth, mDesireWidth))
                 .build();
         ((SimpleDraweeView) holder.getView(R.id.img_card_image)).setVisibility(View.VISIBLE);
 
@@ -85,7 +78,6 @@ public class TypeBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
             String firstImgUrl = String.format(mSmallImgUrl, bean.getPins().get(1).getFile().getKey());
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_first)), firstImgUrl)
                     .setIsRadius(true, 8)
-                    .setResizeOptions(mResizeOptions)
                     .build();
         }
 
@@ -95,7 +87,6 @@ public class TypeBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
 
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_second)), firstImgUrl)
                     .setIsRadius(true, 8)
-                    .setResizeOptions(mResizeOptions)
                     .build();
         }
 
@@ -105,7 +96,6 @@ public class TypeBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
 
             new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_user_board_list_third)), firstImgUrl)
                     .setIsRadius(true, 8)
-                    .setResizeOptions(mResizeOptions)
                     .build();
         }
 
@@ -113,7 +103,6 @@ public class TypeBoardAdapter extends BaseQuickAdapter<UserBoardItemBean> {
         new FrescoLoader.Builder(mContext, ((SimpleDraweeView) holder.getView(R.id.img_card_type_board_avatar)),
                 String.format(mSmallImgUrl, bean.getUser().getAvatarBean().getKey()))
                 .setIsRadius(true, 4)
-                .setResizeOptions(mResizeOptions)
                 .build();
     }
 

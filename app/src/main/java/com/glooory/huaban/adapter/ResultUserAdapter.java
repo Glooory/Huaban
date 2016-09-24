@@ -6,7 +6,6 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
 import com.glooory.huaban.entity.PinsUserBean;
 import com.glooory.huaban.httputils.FrescoLoader;
@@ -18,14 +17,12 @@ public class ResultUserAdapter extends BaseQuickAdapter<PinsUserBean> {
     private Context mContext;
     private String mSmallFormat;
     private String mFollowerFormat;
-    private ResizeOptions mResizeOptions;
 
     public ResultUserAdapter(Context context) {
         super(R.layout.card_result_user, null);
         mContext = context;
         mSmallFormat = context.getResources().getString(R.string.format_url_image_small);
         mFollowerFormat = context.getResources().getString(R.string.format_fans_number);
-        mResizeOptions = new ResizeOptions(100, 100);
     }
 
     @Override
@@ -40,7 +37,6 @@ public class ResultUserAdapter extends BaseQuickAdapter<PinsUserBean> {
                 (SimpleDraweeView) holder.getView(R.id.img_card_result_user_avatar),
                 String.format(mSmallFormat, bean.getAvatar().getKey()))
                 .setIsCircle(true)
-                .setResizeOptions(mResizeOptions)
                 .build();
 
     }

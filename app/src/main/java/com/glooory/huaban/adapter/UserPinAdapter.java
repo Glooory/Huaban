@@ -10,9 +10,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
-import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.util.CompatUtils;
@@ -24,14 +22,12 @@ import com.glooory.huaban.util.Utils;
 public class UserPinAdapter extends BaseQuickAdapter<PinsBean> {
     private Context mContext;
     private String mGeneralImgUrl;
-    private int mDesireWidth;
     private boolean mIsMe;
 
     public UserPinAdapter(Context context, boolean isMe) {
         super(R.layout.card_user_item_pin, null);
         this.mContext = context;
         this.mGeneralImgUrl = context.getString(R.string.format_url_image_general);
-        this.mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
         this.mIsMe = isMe;
     }
 
@@ -76,13 +72,11 @@ public class UserPinAdapter extends BaseQuickAdapter<PinsBean> {
         Drawable retryDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_retry_36dp, R.color.tint_list_grey);
         Drawable failDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_load_failed_36dp, R.color.tint_list_grey);
 
-        int disireHeight = (int) (mDesireWidth / ratio);
         new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_user_item_pin),
                 String.format(mGeneralImgUrl, bean.getFile().getKey()))
                 .setProgressbarImage(progressDrawable)
                 .setRetryImage(retryDrawable)
                 .setFailureIamge(failDrawable)
-                .setResizeOptions(new ResizeOptions(mDesireWidth, disireHeight))
                 .build();
         ((SimpleDraweeView) holder.getView(R.id.img_user_item_pin)).setVisibility(View.VISIBLE);
 

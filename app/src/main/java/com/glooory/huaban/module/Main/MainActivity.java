@@ -211,7 +211,7 @@ public class MainActivity extends BaseActivity
         String userAvatarKey = (String) SPUtils.get(getApplicationContext(), Constant.USERHEADKEY, "");
 
         if (!TextUtils.isEmpty(userAvatarKey)) {
-            String userAvatarUrl = getString(R.string.urlImageRoot) + userAvatarKey;
+            String userAvatarUrl = String.format(getString(R.string.format_url_image_small), userAvatarKey);
             new FrescoLoader.Builder(this, mAvatarImg, userAvatarUrl)
                     .setIsCircle(false)
                     .build();

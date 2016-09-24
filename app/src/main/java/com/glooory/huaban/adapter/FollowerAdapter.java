@@ -8,7 +8,6 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
 import com.glooory.huaban.entity.FollowerBean;
 import com.glooory.huaban.httputils.FrescoLoader;
@@ -21,16 +20,11 @@ import com.glooory.huaban.util.Utils;
 public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean> {
     private Context mContext;
     private String mSmallImgUrl;
-    /**
-     * 画板封面的resizeoption
-     */
-    private ResizeOptions mResizeOptions;
 
     public FollowerAdapter(Context context) {
         super(R.layout.card_follower, null);
         this.mContext = context;
         mSmallImgUrl = mContext.getString(R.string.format_url_image_small);
-        mResizeOptions = new ResizeOptions(100, 100);
     }
 
     @Override
@@ -67,7 +61,6 @@ public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean
             if (!TextUtils.isEmpty(keyF)) {
                 String tinyFUrl = String.format(mSmallImgUrl, keyF);
                 new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_first), tinyFUrl)
-                        .setResizeOptions(mResizeOptions)
                         .setIsRadius(true, 8)
                         .build();
             }
@@ -79,7 +72,6 @@ public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean
             if (!TextUtils.isEmpty(keyS)) {
                 String tinySUrl = String.format(mSmallImgUrl, keyS);
                 new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_second), tinySUrl)
-                        .setResizeOptions(mResizeOptions)
                         .setIsRadius(true, 8)
                         .build();
             }
@@ -91,7 +83,6 @@ public class FollowerAdapter extends BaseQuickAdapter<FollowerBean.FollowersBean
             if (!TextUtils.isEmpty(keyT)) {
                 String tinyTUrl = String.format(mSmallImgUrl, keyT);
                 new FrescoLoader.Builder(mContext, (SimpleDraweeView) holder.getView(R.id.img_card_follower_tiny_third), tinyTUrl)
-                        .setResizeOptions(mResizeOptions)
                         .setIsRadius(true, 8)
                         .build();
             }

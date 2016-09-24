@@ -12,9 +12,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
 import com.glooory.huaban.R;
-import com.glooory.huaban.base.BaseActivity;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.util.CompatUtils;
@@ -27,14 +25,12 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
     private Context mContext;
     private final String mGeneralImgUrl;
     private final String mSmallImgUrl;
-    private final int mDesireWidth;
 
     public PinQuickAdapter(Context context) {
         super(R.layout.card_item_pin, null);
         this.mContext = context;
         mGeneralImgUrl = context.getString(R.string.format_url_image_general);
         mSmallImgUrl = context.getString(R.string.format_url_image_small);
-        mDesireWidth = ((BaseActivity) context).mScreenWidthPixels / 2;
     }
     
     @Override
@@ -73,7 +69,6 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
                 .addOnClickListener(R.id.item_card_via_ll);
 
         float ratio = Utils.getAspectRatio(pinsBean.getFile().getWidth(), pinsBean.getFile().getHeight());
-        int disireHeight = (int) (mDesireWidth / ratio);
         ((SimpleDraweeView) holder.getView(R.id.item_card_pin_img)).setAspectRatio(ratio);
 
         Drawable mProgressImage = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);
@@ -85,7 +80,6 @@ public class PinQuickAdapter extends BaseQuickAdapter<PinsBean> {
                 .setProgressbarImage(mProgressImage)
                 .setRetryImage(retryDrawable)
                 .setFailureIamge(failDrawable)
-                .setResizeOptions(new ResizeOptions(mDesireWidth, disireHeight))
                 .build();
         ((SimpleDraweeView) holder.getView(R.id.item_card_pin_img)).setVisibility(View.VISIBLE);
 

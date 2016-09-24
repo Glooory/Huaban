@@ -353,8 +353,7 @@ public class UserActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         @Override
                         protected void onNewResultImpl(Bitmap bitmap) {
                             if (bitmap != null) {
-                                final Bitmap low = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
-                                final Drawable blurDrawable = new BitmapDrawable(getResources(), FastBlurUtil.doBlur(low, 10, false));
+                                final Drawable blurDrawable = new BitmapDrawable(getResources(), FastBlurUtil.doBlur(bitmap, 10, false));
                                 if (Utils.checkUIThreadBoolean()) {
                                     mAppBar.setBackground(blurDrawable);
                                 } else {

@@ -5,15 +5,4 @@
         android:id="@+id/memu_action_download"
         android:title="@string/download"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/memu_action_pin"
-        android:title="@string/collection"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/memu_action_like"
-        android:title="@string/like"
-        app:showAsAction="never" />
-
 </menu>

@@ -1,6 +1,6 @@
 package com.glooory.huaban.api;
 
-import com.glooory.huaban.entity.BoardListInfoBean;
+import com.glooory.huaban.entity.LastBoardsBean;
 import com.glooory.huaban.entity.PinsListBean;
 import com.glooory.huaban.module.login.UserInfoBean;
 import com.glooory.huaban.module.user.UserBoardListBean;
@@ -30,8 +30,8 @@ public interface UserApi {
     //获取我的画板集合信息
     // https://api.huaban.com/last_board/?extra=recommend_tags
     @GET("last_boards/")
-    Observable<BoardListInfoBean> httpsBoardListInfo(@Header(Constant.AUTHORIZATION) String authorization,
-                                                     @Query("extra") String extra);
+    Observable<LastBoardsBean> httpsBoardListInfo(@Header(Constant.AUTHORIZATION) String authorization,
+                                                  @Query("extra") String extra);
 
 
     // 用户的画板信息

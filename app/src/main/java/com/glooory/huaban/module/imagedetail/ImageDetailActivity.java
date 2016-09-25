@@ -39,6 +39,7 @@ import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.board.BoardActivity;
+import com.glooory.huaban.module.user.PinEditDialogFragment;
 import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.module.user.UserBoardItemBean;
 import com.glooory.huaban.service.DownloadPinService;
@@ -107,12 +108,13 @@ public class ImageDetailActivity extends BaseActivity
     String mGatherFormat;
     @BindString(R.string.format_like_number)
     String mLikeFormat;
+    @BindString(R.string.dialog_title_edit)
+    String mStringEdit;
 
-    private static final int PERMISION_REQUEST_CODE = 409;
+    private boolean mIsMinePin = false;
     private int mPinId;
     private String mUserName;
     private int mUserId;
-    private String mBoard;
     private boolean mIsLiked;
     private boolean mIsGathered = false;
     private float mRatio;
@@ -123,6 +125,7 @@ public class ImageDetailActivity extends BaseActivity
     private int mLikeCount;
     private int mGatherCount;
     private String[] mBoardIds;
+    private String mCurrentBoardId;
     private String mRawText;
     private String mGatherBelong;
     private String mPinKey;
@@ -272,7 +275,6 @@ public class ImageDetailActivity extends BaseActivity
         mImgBoard = ButterKnife.findById(headerView, R.id.img_image_detail_board);
         mTvBoardname = ButterKnife.findById(headerView, R.id.tv_image_detail_boardname);
         mAdapter.addHeaderView(headerView);
-
         //设置上滑自动建在的正在加载更多的自定义View
         View loadMoreView = LayoutInflater.from(mContext).inflate(R.layout.custom_loadmore_view, mRecyclerView, false);
         mAdapter.setLoadingView(loadMoreView);
@@ -340,9 +342,12 @@ public class ImageDetailActivity extends BaseActivity
         mBoardBean = pinDetailBean.getPin().getBoard();
         mGatherCount = pinDetailBean.getPin().getRepin_count();
         mLikeCount = pinDetailBean.getPin().getLike_count();
+        mCurrentBoardId = String.valueOf(pinDetailBean.getPin().getBoard_id());
         mRawText = pinDetailBean.getPin().getRaw_text();
         mPinKey = pinDetailBean.getPin().getFile().getKey();
         mPinType = pinDetailBean.getPin().getFile().getType();
+
+        mIsMinePin = mUserName.equals(SPUtils.get(getApplicationContext(), Constant.USERNAME, ""));
 
         //加载图片
         if (mRatio <= 0) {
@@ -376,7 +381,8 @@ public class ImageDetailActivity extends BaseActivity
         mIsLiked = pinDetailBean.getPin().isLiked();
         setUpLikeSbtn();
         mTvGathercount.setText(String.format(mGatherFormat, mGatherCount));
-        mTvLikecount.setText(String.format(mLikeFormat, mLikeCount));
+        setUpBtnApperence();
+//        mTvLikecount.setText(String.format(mLikeFormat, mLikeCount));
 
         //设置图片的描述信息
         if (!TextUtils.isEmpty(pinDetailBean.getPin().getRaw_text())) {
@@ -484,34 +490,54 @@ public class ImageDetailActivity extends BaseActivity
      */
     private void actionLike() {
         if (isLogin) {
-            String operate = mIsLiked ? Constant.OPERATEUNLIKE : Constant.OPERATELIKE;
-            Subscription s = RetrofitClient.createService(OperateApi.class)
-                    .httpLikePinService(mAuthorization, mPinId, operate)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<LikePinOperateBean>() {
-                        @Override
-                        public void onCompleted() {
 
-                        }
+            if (mIsMinePin) {
+                mSbtnlLike.setChecked(false);
+                showPinEditDialog();
+            } else {
+                String operate = mIsLiked ? Constant.OPERATEUNLIKE : Constant.OPERATELIKE;
+                Subscription s = RetrofitClient.createService(OperateApi.class)
+                        .httpLikePinService(mAuthorization, mPinId, operate)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<LikePinOperateBean>() {
+                            @Override
+                            public void onCompleted() {
 
-                        @Override
-                        public void onError(Throwable e) {
-                            mSbtnlLike.setChecked(false);
-                            checkException(e, mCoordinator);
-                        }
+                            }
 
-                        @Override
-                        public void onNext(LikePinOperateBean likePinOperateBean) {
-                            setUpWithLikeTv();
-                            mIsLiked = !mIsLiked;
-                            setUpLikeSbtn();
-                        }
-                    });
-            addSubscription(s);
+                            @Override
+                            public void onError(Throwable e) {
+                                mSbtnlLike.setChecked(false);
+                                checkException(e, mCoordinator);
+                            }
+
+                            @Override
+                            public void onNext(LikePinOperateBean likePinOperateBean) {
+                                setUpWithLikeTv();
+                                mIsLiked = !mIsLiked;
+                                setUpLikeSbtn();
+                            }
+                        });
+                addSubscription(s);
+            }
+
         } else {
             mSbtnlLike.setChecked(false);
             showLoginSnackbar(ImageDetailActivity.this, mCoordinator);
+        }
+    }
+
+    /**
+     * 判断是显示喜欢还是编辑按钮
+     */
+    private void setUpBtnApperence() {
+        if (mIsMinePin) {
+            mSbtnlLike.setShapeResource(R.raw.edit);
+            mTvLikecount.setText(mStringEdit);
+        } else {
+            mSbtnlLike.setShapeResource(R.raw.heart);
+            mTvLikecount.setText(String.format(mLikeFormat, mLikeCount));
         }
     }
 
@@ -642,12 +668,6 @@ public class ImageDetailActivity extends BaseActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.memu_action_pin:
-                mSbtnlPin.performClick();
-                return true;
-            case R.id.memu_action_like:
-                mSbtnlLike.performClick();
-                return true;
             case R.id.memu_action_download:
                 if (TextUtils.isEmpty(mPinKey)) {
                     Snackbar.make(mCoordinator, "数据还未加载完毕，请稍后再试", Snackbar.LENGTH_SHORT).show();
@@ -710,6 +730,104 @@ public class ImageDetailActivity extends BaseActivity
     @Override
     public void onGatherCancel() {
         mSbtnlPin.setChecked(mIsGathered);
+    }
+
+    /**
+     * 显示编辑对话框
+     */
+    private void showPinEditDialog() {
+
+        PinEditDialogFragment fragment = PinEditDialogFragment.create(mAuthorization, String.valueOf(mPinId), mRawText, mCurrentBoardId);
+        fragment.setListener(new PinEditDialogFragment.PinEditListener() {
+            @Override
+            public void onEditDone(String pinId, String des, String boardId) {
+                httpForCommitEdit(pinId, des, boardId);
+            }
+
+            @Override
+            public void onNeutralClicked(final String pinId) {
+                //删除画板， 提示用户是否确定删除
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
+                        .setTitle(R.string.dialog_delete_attention_title)
+                        .setMessage(R.string.dialog_pin_edit_delete_warning)
+                        .setPositiveButton(R.string.dialog_title_delete, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                httpForCommitDelete(pinId);
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_negative, null);
+                builder.create().show();
+            }
+        });
+        fragment.show(getSupportFragmentManager(), null);
+
+    }
+
+    /**
+     * 联网提交修改
+     * @param pinId
+     * @param des
+     * @param boardId
+     */
+    private void httpForCommitEdit(String pinId, String des, String boardId) {
+
+        Subscription s = RetrofitClient.createService(OperateApi.class)
+                .httpEditPinService(mAuthorization, pinId, boardId, des)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<PinsBean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Snackbar.make(mCoordinator, R.string.operate_request_failed, Snackbar.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(PinsBean pinsBean) {
+                        String tempBoardId = String.valueOf(pinsBean.getBoard_id());
+                        if (!TextUtils.isEmpty(tempBoardId)) {
+                            Snackbar.make(mCoordinator, R.string.edit_board_operate_success, Snackbar.LENGTH_SHORT).show();
+                            ImageDetailActivity.launch(ImageDetailActivity.this, mPinId, mRatio, mImageDetail);
+                            finishSelf();
+                        }
+                    }
+                });
+        addSubscription(s);
+    }
+
+    /**
+     * 联网删除采集
+     * @param pinId
+     */
+    private void httpForCommitDelete(String pinId) {
+
+        Subscription s = RetrofitClient.createService(OperateApi.class)
+                .httpDeletePinService(mAuthorization, pinId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Snackbar.make(mCoordinator, R.string.operate_request_failed, Snackbar.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+                        Snackbar.make(mCoordinator, R.string.edit_board_operate_success, Snackbar.LENGTH_SHORT).show();
+                        finishSelf();
+                    }
+                });
+        addSubscription(s);
     }
 
     @Override

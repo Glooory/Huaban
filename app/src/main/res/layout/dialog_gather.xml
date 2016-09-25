@@ -16,7 +16,8 @@
     <EditText
         android:id="@+id/edit_gather_dialog_des"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
+        android:maxLines="4"
         android:gravity="left"
         tools:hint="提示"/>
 

@@ -22,8 +22,7 @@ import com.glooory.huaban.R;
 import com.glooory.huaban.api.UploadApi;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseActivity;
-import com.glooory.huaban.entity.BoardItemInfoBean;
-import com.glooory.huaban.entity.BoardListInfoBean;
+import com.glooory.huaban.entity.LastBoardsBean;
 import com.glooory.huaban.httputils.FrescoLoader;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.imagedetail.ImageDetailActivity;
@@ -31,6 +30,7 @@ import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.SPUtils;
 import com.glooory.huaban.widget.HighLightArrayAdapter;
 import com.jakewharton.rxbinding.view.RxView;
+import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.util.List;
@@ -42,7 +42,6 @@ import cn.finalteam.rxgalleryfinal.RxGalleryFinal;
 import cn.finalteam.rxgalleryfinal.imageloader.ImageLoaderType;
 import cn.finalteam.rxgalleryfinal.rxbus.RxBusResultSubscriber;
 import cn.finalteam.rxgalleryfinal.rxbus.event.ImageRadioResultEvent;
-import cn.finalteam.rxgalleryfinal.utils.Logger;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -171,21 +170,21 @@ public class GatherActivity extends BaseActivity {
 
         Subscription s = RetrofitClient.createService(UserApi.class)
                 .httpsBoardListInfo(mAuthorization, Constant.OPERATEBOARDEXTRA)
-                .map(new Func1<BoardListInfoBean, List<BoardItemInfoBean>>() {
+                .map(new Func1<LastBoardsBean, List<LastBoardsBean.BoardsBean>>() {
                     @Override
-                    public List<BoardItemInfoBean> call(BoardListInfoBean boardListInfoBean) {
-                        return boardListInfoBean.getBoards();
+                    public List<LastBoardsBean.BoardsBean> call(LastBoardsBean lastBoardsBean) {
+                        return lastBoardsBean.getBoards();
                     }
                 })
-                .filter(new Func1<List<BoardItemInfoBean>, Boolean>() {
+                .filter(new Func1<List<LastBoardsBean.BoardsBean>, Boolean>() {
                     @Override
-                    public Boolean call(List<BoardItemInfoBean> boardItemInfoBeen) {
-                        return boardItemInfoBeen.size() > 0;
+                    public Boolean call(List<LastBoardsBean.BoardsBean> boardsBeen) {
+                        return boardsBeen.size() > 0;
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<BoardItemInfoBean>>() {
+                .subscribe(new Subscriber<List<LastBoardsBean.BoardsBean>>() {
                     @Override
                     public void onCompleted() {
                         initAdapter();
@@ -193,6 +192,8 @@ public class GatherActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Logger.d(e.getMessage());
                         String boardTitleArray = (String) SPUtils.get(getApplicationContext(), Constant.BOARDTITLEARRAY, "");
                         String mBoardId = (String) SPUtils.get(getApplicationContext(), Constant.BOARDIDARRAY, "");
 
@@ -202,11 +203,13 @@ public class GatherActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(List<BoardItemInfoBean> boardItemInfoBeen) {
-                        if (boardItemInfoBeen != null) {
-                            for (int i = 0; i < boardItemInfoBeen.size(); i++) {
-                                mBoardTitles[i] = boardItemInfoBeen.get(i).getTitle();
-                                mBoardIds[i] = String.valueOf(boardItemInfoBeen.get(i).getBoard_id());
+                    public void onNext(List<LastBoardsBean.BoardsBean> bean) {
+                        if (bean != null) {
+                            mBoardTitles = new String[bean.size()];
+                            mBoardIds = new String[bean.size()];
+                            for (int i = 0; i < bean.size(); i++) {
+                                mBoardTitles[i] = bean.get(i).getTitle();
+                                mBoardIds[i] = String.valueOf(bean.get(i).getBoard_id());
                             }
                         }
                     }
@@ -216,7 +219,7 @@ public class GatherActivity extends BaseActivity {
 
     private void initAdapter() {
         final HighLightArrayAdapter adapter = new HighLightArrayAdapter(
-                mContext, android.R.layout.simple_dropdown_item_1line, mBoardTitles);
+                mContext, R.layout.support_simple_spinner_dropdown_item, mBoardTitles);
         mSpinner.setAdapter(adapter);
         adapter.setSelection(mSelection);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

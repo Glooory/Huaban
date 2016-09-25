@@ -1,14 +1,20 @@
 package com.glooory.huaban.module.user;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.chad.library.adapter.base.listener.OnItemChildLongClickListener;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.UserPinAdapter;
+import com.glooory.huaban.api.OperateApi;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseUserFragment;
 import com.glooory.huaban.entity.PinsBean;
@@ -75,6 +81,17 @@ public class UserPinFragment extends BaseUserFragment {
                 }
             }
         });
+
+        if (isMe) {
+            mRecyclerView.addOnItemTouchListener(new OnItemChildLongClickListener() {
+                @Override
+                public void SimpleOnItemChildLongClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+                    showPinEditDialog(String.valueOf(mAdapter.getItem(i).getPin_id()),
+                            mAdapter.getItem(i).getRaw_text(),
+                            String.valueOf(mAdapter.getItem(i).getBoard_id()));
+                }
+            });
+        }
     }
 
     @Override
@@ -169,6 +186,107 @@ public class UserPinFragment extends BaseUserFragment {
                 mDataCountLastRequested = list.size();
             }
         }
+    }
+
+    /**
+     * 显示编辑对话框
+     * @param pinId
+     * @param des
+     * @param boardId
+     */
+    private void showPinEditDialog(String pinId, String des, String boardId) {
+
+        PinEditDialogFragment fragment = PinEditDialogFragment.create(mAuthorization, pinId, des, boardId);
+        fragment.setListener(new PinEditDialogFragment.PinEditListener() {
+            @Override
+            public void onEditDone(String pinId, String des, String boardId) {
+                httpForCommitEdit(pinId, des, boardId);
+            }
+
+            @Override
+            public void onNeutralClicked(final String pinId) {
+                //删除画板， 提示用户是否确定删除
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
+                        .setTitle(R.string.dialog_delete_attention_title)
+                        .setMessage(R.string.dialog_pin_edit_delete_warning)
+                        .setPositiveButton(R.string.dialog_title_delete, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                httpForCommitDelete(pinId);
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_negative, null);
+                builder.create().show();
+            }
+        });
+        fragment.show(getActivity().getSupportFragmentManager(), null);
+
+    }
+
+    /**
+     * 联网提交修改
+     * @param pinId
+     * @param des
+     * @param boardId
+     */
+    private void httpForCommitEdit(String pinId, String des, String boardId) {
+
+        Subscription s = RetrofitClient.createService(OperateApi.class)
+                .httpEditPinService(mAuthorization, pinId, boardId, des)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<PinsBean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(mContext, R.string.operate_request_failed, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(PinsBean pinsBean) {
+                        String tempBoardId = String.valueOf(pinsBean.getBoard_id());
+                        if (!TextUtils.isEmpty(tempBoardId)) {
+                            ((UserActivity) getActivity()).requestRefresh();
+                            Toast.makeText(mContext, R.string.edit_board_operate_success, Toast.LENGTH_SHORT).show();
+                            httpForFirstTime();
+                        }
+                    }
+                });
+        addSubscription(s);
+    }
+
+    /**
+     * 联网删除采集
+     * @param pinId
+     */
+    private void httpForCommitDelete(String pinId) {
+
+        Subscription s = RetrofitClient.createService(OperateApi.class)
+                .httpDeletePinService(mAuthorization, pinId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(mContext, R.string.operate_request_failed, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+                        ((UserActivity) getActivity()).onRefresh();
+                        Toast.makeText(mContext, R.string.delete_board_operate_success, Toast.LENGTH_SHORT).show();
+                    }
+                });
+        addSubscription(s);
     }
 
 }

@@ -61,11 +61,10 @@ public class UserPinAdapter extends BaseQuickAdapter<PinsBean> {
                 .setText(R.id.tv_user_item_like, Utils.checkIfNeedConvert(bean.getLike_count()))
                 .addOnClickListener(R.id.linearlayout_user_pin);
 
-//        //如果当前采集是自己的采集设置longclicklistener
-//        if (mIsMe) {
-//            holder.addOnLongClickListener(R.id.card_user_pin)
-//                    .addOnClickListener(R.id.imgbtn_delete);
-//        }
+        //如果当前采集是自己的采集设置longclicklistener
+        if (mIsMe) {
+            holder.addOnLongClickListener(R.id.card_user_pin);
+        }
 
         //加载图片
         Drawable progressDrawable = CompatUtils.getTintListDrawable(mContext, R.drawable.ic_petal, R.color.tint_list_pink);

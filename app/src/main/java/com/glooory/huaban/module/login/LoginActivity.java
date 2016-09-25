@@ -19,8 +19,7 @@ import com.glooory.huaban.R;
 import com.glooory.huaban.api.LoginApi;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseActivity;
-import com.glooory.huaban.entity.BoardItemInfoBean;
-import com.glooory.huaban.entity.BoardListInfoBean;
+import com.glooory.huaban.entity.LastBoardsBean;
 import com.glooory.huaban.httputils.RetrofitClient;
 import com.glooory.huaban.module.main.MainActivity;
 import com.glooory.huaban.module.search.SearchHintAdapter;
@@ -270,9 +269,9 @@ public class LoginActivity extends BaseActivity {
                                 .httpsUserRx(mAuthorization);
                     }
                 })
-                .flatMap(new Func1<UserInfoBean, Observable<BoardListInfoBean>>() {
+                .flatMap(new Func1<UserInfoBean, Observable<LastBoardsBean>>() {
                     @Override
-                    public Observable<BoardListInfoBean> call(UserInfoBean userInfoBean) {
+                    public Observable<LastBoardsBean> call(UserInfoBean userInfoBean) {
                         Logger.d("获取 UserInfoBean 成功    " + userInfoBean.getUsername());
                         mUserBean = userInfoBean;
                         return RetrofitClient.createService(UserApi.class)
@@ -281,7 +280,7 @@ public class LoginActivity extends BaseActivity {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<BoardListInfoBean>() {
+                .subscribe(new Subscriber<LastBoardsBean>() {
 
                     @Override
                     public void onCompleted() {
@@ -296,9 +295,9 @@ public class LoginActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(BoardListInfoBean boardListInfoBean) {
+                    public void onNext(LastBoardsBean bean) {
                         mBtnLogin.setProgress(100);
-                        saveUserInfo(mUserBean, mTokenBean, username, mAES.EncryptorString(password), boardListInfoBean.getBoards());
+                        saveUserInfo(mUserBean, mTokenBean, username, mAES.EncryptorString(password), bean.getBoards());
                         NetworkUtils.showSnackbar(mScrollLoginForm, snackLoginSuccess).setCallback(new Snackbar.Callback() {
                             @Override
                             public void onDismissed(Snackbar snackbar, int event) {
@@ -319,7 +318,7 @@ public class LoginActivity extends BaseActivity {
                               TokenBean tokenBean,
                               String userAccount,
                               String userpassword,
-                              List<BoardItemInfoBean> list) {
+                              List<LastBoardsBean.BoardsBean> list) {
         //保存前先清空内容
         SPUtils.clear(getApplicationContext());
 

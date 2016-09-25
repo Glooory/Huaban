@@ -333,9 +333,8 @@ public class UserBoardFragment extends BaseUserFragment {
 
                     @Override
                     public void onNext(UserBoardSingleBean userBoardSingleBean) {
-                        ((UserActivity) getActivity()).requestRefresh();
+                        ((UserActivity) getActivity()).onRefresh();
                         Toast.makeText(mContext, R.string.delete_board_operate_success, Toast.LENGTH_SHORT).show();
-                        httpForFirstTime();
                     }
                 });
         addSubscription(s);

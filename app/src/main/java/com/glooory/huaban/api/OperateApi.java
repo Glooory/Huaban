@@ -1,5 +1,6 @@
 package com.glooory.huaban.api;
 
+import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.module.board.FollowBoardOperateBean;
 import com.glooory.huaban.module.imagedetail.GatherInfoBean;
 import com.glooory.huaban.module.imagedetail.GatherResultBean;
@@ -7,6 +8,7 @@ import com.glooory.huaban.module.imagedetail.LikePinOperateBean;
 import com.glooory.huaban.module.user.UserBoardSingleBean;
 import com.glooory.huaban.util.Constant;
 
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -88,4 +90,18 @@ public interface OperateApi {
                                                            @Path("boardId") String boardId,
                                                            @Field("_method") String operate);
 
+    //编辑修改某个采集的信息
+    //https://api.huaban.com/pins/865002387?board_id=32026507&text=%E6%9D%A5%E8%87%AA%E7%9B%B8%E5%86%8C
+    @FormUrlEncoded
+    @POST("pins/{pinId}")
+    Observable<PinsBean> httpEditPinService(@Header(Constant.AUTHORIZATION) String authorization,
+                                            @Path("pinId") String pinId,
+                                            @Field("board_id") String boardId,
+                                            @Field("text") String des);
+
+    //删除某个采集
+    //https://api.huaban.com/pins/864657103
+    @DELETE("pins/{pin_id}")
+    Observable<Void> httpDeletePinService(@Header(Constant.AUTHORIZATION) String authorization,
+                                    @Path("pin_id") String pinId);
 }

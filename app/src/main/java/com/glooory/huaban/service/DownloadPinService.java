@@ -111,7 +111,7 @@ public class DownloadPinService extends IntentService {
     private OkHttpClient initOkHttpClient() {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(10000, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(15000, TimeUnit.MILLISECONDS);
         builder.networkInterceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -149,6 +149,15 @@ public class DownloadPinService extends IntentService {
     public interface PinDownloadService {
 
         //http://img.hb.aicdn.com/key
+//        @Streaming
+//        The @Streaming declaration doesn't mean you're watching a Netflix file.
+//        It means that instead of moving the entire file into memory,
+//        it'll pass along the bytes right away.
+//        But be careful, if you're adding the @Streaming declaration and continue to use the code above,
+//        Android will trigger a android.os.NetworkOnMainThreadException.
+//
+//        Thus, the final step is to wrap the call into a separate thread, for example with a lovely ASyncTask
+
         @GET("/{key}")
         Call<ResponseBody> httpForDownload(@Path("key") String key);
 

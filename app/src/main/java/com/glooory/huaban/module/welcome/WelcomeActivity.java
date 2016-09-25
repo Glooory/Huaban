@@ -89,10 +89,11 @@ public class WelcomeActivity extends BaseActivity {
         alphaAnimator.start();
 
 
-        Observable.create(new AnimOnSubscribe(scaleAnimator))
-                .observeOn(AndroidSchedulers.mainThread())
+        Observable.create(new AnimOnSubscribe(scaleAnimator)) // 主线程， 由下一行subscribeOn()指定
                 .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .filter(new Func1<Void, Boolean>() {
+                    // IO线程， 由observeOn() 指定
                     @Override
                     public Boolean call(Void aVoid) {
                         skipLogin = (boolean) SPUtils.get(getApplicationContext(), Constant.ISSKIPLOGIN, Boolean.FALSE);
@@ -105,36 +106,32 @@ public class WelcomeActivity extends BaseActivity {
                     public Boolean call(Void aVoid) {
                         mTimeDifference = (int) SPUtils.get(getApplicationContext(),
                                Constant.TOKENEXPIRESIN, 0);
-                        Logger.d(mTimeDifference);
+//                        Logger.d(mTimeDifference);
                         Long lastLoginTime = (Long) SPUtils.get(getApplicationContext(), Constant.LOGINTIME, 0L);
                         Long differenceTime = (System.currentTimeMillis() - lastLoginTime) / 1000;
-                        Logger.d("lastLoginTime is:  " + lastLoginTime + "-----" + "differenceTime : " + differenceTime);
+//                        Logger.d("lastLoginTime is:  " + lastLoginTime + "-----" + "differenceTime : " + differenceTime);
                         needRefreshToken =  differenceTime > mTimeDifference;
                         Logger.d("needRefredToken" + needRefreshToken);
                         return needRefreshToken;
                     }
                 })
+                .observeOn(Schedulers.io())
                 .flatMap(new Func1<Void, Observable<TokenBean>>() {
+                    //IO线程， 由observeOn() 指定
                     @Override
                     public Observable<TokenBean> call(Void aVoid) {
                         String account = (String) SPUtils.get(getApplicationContext(), Constant.USERACCOUNT, "");
                         String passwordAES = (String) SPUtils.get(getApplicationContext(), Constant.USERPASSWORD, "");
                         String password = mAES.DecryptorString(passwordAES);
-                        Logger.d(password);
                         return getUserToken(account, password);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<TokenBean>() {
                     @Override
                     public void onCompleted() {
                         if (isLogin) {
-                            if (needRefreshToken) {
-                                LoginActivity.launch(WelcomeActivity.this, true);
-                            } else {
                                 MainActivity.launch(WelcomeActivity.this);
-                            }
                         } else {
                             if (skipLogin) {
                                 MainActivity.launch(WelcomeActivity.this);
@@ -169,6 +166,7 @@ public class WelcomeActivity extends BaseActivity {
                 .addData(Constant.LOGINTIME, System.currentTimeMillis())
                 .addData(Constant.TOKENACCESS, tokenBean.getAccess_token())
                 .addData(Constant.TOKENTYPE, tokenBean.getToken_type())
+                .addData(Constant.TOKENEXPIRESIN, tokenBean.getExpires_in())
                 .build();
     }
 

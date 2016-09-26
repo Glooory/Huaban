@@ -31,7 +31,8 @@
             android:background="?attr/colorPrimary"
             app:layout_collapseMode="pin"
             app:layout_scrollFlags="scroll"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:elevation="2dp"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

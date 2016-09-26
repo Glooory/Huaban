@@ -16,7 +16,7 @@
             android:adjustViewBounds="true"
             android:fitsSystemWindows="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/welcome_bulb" />
+            android:src="@drawable/welcome_screen_bulb" />
 
         <ImageView
             android:id="@+id/img_welcome_logo"

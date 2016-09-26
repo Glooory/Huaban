@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -274,6 +275,8 @@ public class MainActivity extends BaseActivity
             mDrawerLayout.closeDrawer(GravityCompat.START);
             SearchActivity.launch(MainActivity.this);
             return false;
+        } else if (id == R.id.nav_about) {
+            showDisclaimer();
         } else if (id == R.id.nav_exit) {
             if (isLogin) {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -295,6 +298,22 @@ public class MainActivity extends BaseActivity
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showDisclaimer() {
+
+        View view = getLayoutInflater().inflate(R.layout.view_disclaimer_content, null);
+        TextView textView = (TextView) view.findViewById(R.id.tv_disclaimer_des);
+        textView.setText(R.string.disclaimer_content);
+        textView.setMovementMethod(LinkMovementMethod.getInstance()); // this is important to make the links clickable
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
+                .setTitle(R.string.disclaimer_title)
+                .setView(view)
+                .setCancelable(false)
+                .setPositiveButton("知道了", null);
+        builder.show();
+
     }
 
     @Override

@@ -85,7 +85,7 @@ public class LoginActivity extends BaseActivity {
     private EncrypAES mAES;
 
     //需要的资源
-    @BindString(R.string.snack_message_login_success)
+    @BindString(R.string.login_success)
     String snackLoginSuccess;
 
     //联网的授权字段

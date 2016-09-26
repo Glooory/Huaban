@@ -2,34 +2,9 @@
     <string name="app_name">花瓣</string>
     <string name="action_settings">设置</string>
 
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="title_activity_scrolling">Scrolling</string>
-    <string name="title_activity_Image">Image</string>
-    <string name="title_activity_Login">Login</string>
-    <string name="title_activity_image_detail">ImageDetail</string>
-    <string name="title_activity_search">Search</string>
-    <string name="title_activity_search_result">Search%s</string>
-    <string name="title_activity_module">Module</string>
-    <string name="title_activity_board_detail">BoardDetail</string>
-    <string name="title_activity_my_following">Following</string>
-    <string name="title_activity_user">User Information</string>
-
-    <string name="title_fragment_gather">Gather</string>
-    <string name="title_fragment_board">Boards</string>
-    <string name="title_fragment_user">User</string>
-    <string name="title_fragment_like">Like</string>
-
-
-    <string name="title_fragment_attention_pins">Attention Gather</string>
-    <string name="title_fragment_attention_board">Attention Board</string>
-
-
-    <string name="snack_message_main_gather">start to gather</string>
-    <string name="snack_message_not_notify">not new data</string>
-    <string name="snack_message_login_success">login success</string>
     <string name="snack_message_net_error">网络错误，请检查网络设置</string>
     <string name="snack_message_timeout_error">请求超时，请重试</string>
     <string name="snack_message_password_error">密码错误</string>
@@ -37,34 +12,9 @@
     <string name="snack_message_data_error">数据出错</string>
     <string name="snack_action_to_setting">设置</string>
 
-
-    <string name="nav_user_name">username</string>
-    <string name="nav_user_email">user@email.com</string>
-    <string name="nav_attention">attention</string>
-    <string name="nav_gather">gather</string>
-    <string name="nav_message">message</string>
-    <string name="nav_friends">friend</string>
-    <string name="nav_used_scan">scan</string>
-
-
-    <string name="action_bar_search">Search</string>
-    <string name="action_bar_add">Add</string>
-    <string name="action_bar_edit">Edit</string>
-    <string name="action_bar_like">Like</string>
-    <string name="action_bar_download">Download</string>
-    <string name="action_bar_gather">Gather</string>
-    <string name="action_bar_follow">Follow</string>
-    <string name="action_bar_user_setting">User Setting</string>
-
-    <string name="hint_search">key</string>
     <string name="hint_null_history">没有搜索历史</string>
-
     <string name="text_search_history">搜索历史</string>
     <string name="text_reference">分类浏览</string>
-
-    <string name="net_error">net error</string>
-    <string name="net_error_data">net error on data</string>
-
 
     <!-- Strings related to login -->
     <string name="prompt_username">用户名</string>
@@ -75,16 +25,7 @@
     <string name="error_invalid_username">非法的用户名</string>
     <string name="error_invalid_password">密码至少6位</string>
     <string name="error_incorrect_password">密码错误</string>
-    <string name="error_field_required">This field is required</string>
-
-
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."</string>
-
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="text_foot_loading">loading</string>
-    <string name="text_foot_error">error</string>
-    <string name="text_foot_end">end</string>
+    <string name="error_field_required">此栏不能为空</string>
 
     <string name="format_like_number">%d 喜欢</string>
     <string name="format_gather_number">%d 采集</string>
@@ -102,9 +43,6 @@
 
     <string name="text_image_describe_null">采集描述</string>
     <string name="text_is_default">默认</string>
-    <string name="text_board_describe_null">noting describe</string>
-    <string name="text_recommend">recommend</string>
-    <string name="text_to">To</string>
     <string name="title_activity_settings">设置</string>
 
     <string name="dialog_title_gather">采集</string>
@@ -124,68 +62,7 @@
     <string name="dialog_pin_edit_board">画板：</string>
     <string name="dialog_pin_edit_delete">删除采集</string>
     <string name="dialog_pin_edit_delete_warning">确定要删除此采集吗？</string>
-
-
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
     <string name="text_gather_warning">这张图片已经在你的 %s 画板里了</string>
-    <string name="title_activity_main">MainActivity</string>
-
     <string name="header_user_collection">采集</string>
     <string name="header_user_board">画板</string>
     <string name="header_user_fans">粉丝</string>
@@ -196,10 +73,10 @@
     <string name="nav_discover">发现</string>
     <string name="nav_settings">设置</string>
     <string name="nav_about">关于</string>
-    <string name="nav_exit">退出账号</string>
+    <string name="nav_exit">退出登录</string>
     <string name="menu_action_search">搜索</string>
 
-    <string name="login_skip">随便看看</string>
+    <string name="login_skip">先跳过</string>
     <string name="logining_in">正在登录...</string>
     <string name="login_success">登陆成功</string>
     <string name="login_error">登录失败</string>
@@ -258,6 +135,10 @@
 
     <string name="type_tab_title_board">推荐画板</string>
     <string name="type_tab_title_user">推荐用户</string>
+
+    <string name="disclaimer_title">声明</string>
+    <string name="disclaimer_content">"        "花瓣是杭州纬聚网络有限公司旗下网站，是一个基于图片社交应用，花瓣上汇集了全球最热门，你想要的花瓣上都有。
+    \n"        "本软件与其代码由非花瓣创作和维护，本软件中的所有信息与内容均违反版权，其中所有的内容均可以在<a href="http://www.huaban.com">花瓣</a>获取。</string>
     
     <string name="exit_hint">再按一次退出</string>
 </resources>

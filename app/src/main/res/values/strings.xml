@@ -76,7 +76,7 @@
     <string name="nav_exit">退出登录</string>
     <string name="menu_action_search">搜索</string>
 
-    <string name="login_skip">先跳过</string>
+    <string name="login_skip">跳过登录</string>
     <string name="logining_in">正在登录...</string>
     <string name="login_success">登陆成功</string>
     <string name="login_error">登录失败</string>

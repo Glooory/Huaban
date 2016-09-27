@@ -302,7 +302,6 @@ public class LoginActivity extends BaseActivity {
                             @Override
                             public void onDismissed(Snackbar snackbar, int event) {
                                 super.onDismissed(snackbar, event);
-                                Logger.d(mIsFromWelcome);
                                 if (mIsFromWelcome) {
                                     MainActivity.launch(LoginActivity.this);
                                 }

@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="292dp"
         android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_behavior="com.glooory.huaban.widget.FlingBehavior">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingtoolbar_user"
@@ -21,7 +22,7 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/transparent"
-            app:layout_scrollFlags="scroll"
+            app:layout_scrollFlags="scroll|snap"
             app:statusBarScrim="@color/transparent">
 
             <include

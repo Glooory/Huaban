@@ -23,26 +23,26 @@ Petal 是花瓣网 [huaban.com](http://huaban.com) 的第三方客户端，其�
 ---
 
 <figure class="third">
-​    <img src="/screenshots/home.png" width = "270" hspace="16" vspace="16">
-​    <img src="/screenshots/user.png" width = "270" hspace="16" vspace="16">
-​    <img src="/screenshots/drawer.png" width = "270" hspace="16" vspace="16">
+​    <img src="/screenshots/home.png" width = "240" hspace="16" vspace="16">
+​    <img src="/screenshots/user.png" width = "240" hspace="16" vspace="16">
+​    <img src="/screenshots/drawer.png" width = "240" hspace="16" vspace="16">
 </figure>
 
 <figure class="third">
-​    <img src="/screenshots/home_a.gif" width = "270" hspace="16" vspace="16">
-​    <img src="/screenshots/user_a.gif" width = "270" hspace="16" vspace="16">
-​    <img src="/screenshots/discover.gif" width = "270" hspace="16" vspace="16">
+​    <img src="/screenshots/home_a.gif" width = "240" hspace="16" vspace="16">
+​    <img src="/screenshots/board_a.gif" width = "240" hspace="16" vspace="16">
+​    <img src="/screenshots/discover.gif" width = "240" hspace="16" vspace="16">
 </figure>
 
 <figure class="third">
-​    <img src="/screenshots/detail_a.gif" width = "270" hspace="16" vspace="16">
-​    <img src="/screenshots/edit.gif" width = "270" hspace="16" vspace="16">
-​    <img src="/screenshots/gather.gif" width = "270" hspace="16" vspace="16">
+​    <img src="/screenshots/detail_a.gif" width = "240" hspace="16" vspace="16">
+​    <img src="/screenshots/edit.gif" width = "240" hspace="16" vspace="16">
+​    <img src="/screenshots/gather.gif" width = "240" hspace="16" vspace="16">
 </figure>
 
 #### 体验
 
-还在完善中
+正在在完善中
 
 #### License
 

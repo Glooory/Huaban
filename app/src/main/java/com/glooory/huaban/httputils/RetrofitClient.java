@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class RetrofitClient {
 
-    private static final String mBaseUrl = "https://api.huaban.com/";
+    private static final String mBaseUrl = "http://api.huaban.com/";
 
     public static Retrofit.Builder builder = new Retrofit.Builder()
             .baseUrl(mBaseUrl)

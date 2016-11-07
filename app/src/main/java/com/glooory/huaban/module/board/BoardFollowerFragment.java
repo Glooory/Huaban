@@ -17,7 +17,7 @@ import com.glooory.huaban.adapter.FollowerAdapter;
 import com.glooory.huaban.api.BoardApi;
 import com.glooory.huaban.base.BaseFragment;
 import com.glooory.huaban.entity.FollowerBean;
-import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.net.RetrofitClient;
 import com.glooory.huaban.module.user.UserActivity;
 import com.glooory.huaban.util.Constant;
 

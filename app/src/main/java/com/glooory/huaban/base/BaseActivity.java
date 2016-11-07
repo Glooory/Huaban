@@ -22,6 +22,7 @@ import com.glooory.huaban.util.Base64;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.NetworkUtils;
 import com.glooory.huaban.util.SPUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
 import rx.Subscription;
@@ -141,6 +142,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
         isLogin = (boolean) SPUtils.get(getApplicationContext(), Constant.ISLOGIN, Boolean.FALSE);
         mAuthorization = getAuthorizations(isLogin);
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     //fresco shared element transition 已经解决的bug 调用以下方法

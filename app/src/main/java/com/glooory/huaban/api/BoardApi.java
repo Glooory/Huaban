@@ -2,7 +2,7 @@ package com.glooory.huaban.api;
 
 import com.glooory.huaban.entity.FollowerBean;
 import com.glooory.huaban.entity.PinsListBean;
-import com.glooory.huaban.module.board.SimpleBoardInfoBean;
+import com.glooory.huaban.entity.board.SimpleBoardInfoBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.GET;

@@ -1,8 +1,8 @@
 package com.glooory.huaban.api;
 
 import com.glooory.huaban.entity.PinsListBean;
-import com.glooory.huaban.module.type.TypeUserListBean;
-import com.glooory.huaban.module.user.UserBoardListBean;
+import com.glooory.huaban.entity.type.TypeUserListBean;
+import com.glooory.huaban.entity.user.UserBoardListBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.GET;

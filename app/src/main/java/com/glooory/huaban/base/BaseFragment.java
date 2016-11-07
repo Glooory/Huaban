@@ -2,6 +2,8 @@ package com.glooory.huaban.base;
 
 import android.support.v4.app.Fragment;
 
+import com.umeng.analytics.MobclickAgent;
+
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
@@ -44,6 +46,18 @@ public abstract class BaseFragment extends Fragment {
             this.mCompositeSubscription.unsubscribe();
         }
         MyApplication.getRefwatcher(getActivity()).watch(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart(getClass().getSimpleName());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd(getClass().getSimpleName());
     }
 
 }

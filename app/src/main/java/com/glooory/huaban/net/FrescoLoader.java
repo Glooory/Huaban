@@ -1,4 +1,4 @@
-package com.glooory.huaban.httputils;
+package com.glooory.huaban.net;
 
 import android.content.Context;
 import android.graphics.PointF;

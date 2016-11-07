@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.searchresult;
+package com.glooory.huaban.entity.searchresult;
 
 import com.glooory.huaban.entity.PinsUserBean;
 import com.google.gson.Gson;

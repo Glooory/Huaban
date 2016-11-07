@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.user;
+package com.glooory.huaban.entity.user;
 
 import android.os.Parcel;
 import android.os.Parcelable;

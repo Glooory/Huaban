@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.board;
+package com.glooory.huaban.entity.board;
 
 /**
  * Created by Glooory on 2016/9/14 0014 15:38.

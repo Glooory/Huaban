@@ -1,7 +1,7 @@
 package com.glooory.huaban.api;
 
 import com.glooory.huaban.entity.PinsBean;
-import com.glooory.huaban.module.imagedetail.PinDetailBean;
+import com.glooory.huaban.entity.imagedetail.PinDetailBean;
 import com.glooory.huaban.util.Constant;
 
 import java.util.List;

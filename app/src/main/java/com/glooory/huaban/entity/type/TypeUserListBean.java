@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.type;
+package com.glooory.huaban.entity.type;
 
 import com.glooory.huaban.entity.AvatarBean;
 import com.glooory.huaban.entity.PinsBoardBean;

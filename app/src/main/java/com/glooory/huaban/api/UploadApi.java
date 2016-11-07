@@ -1,8 +1,8 @@
 package com.glooory.huaban.api;
 
 
-import com.glooory.huaban.module.gather.GatherResultBean;
-import com.glooory.huaban.module.gather.UploadResultBean;
+import com.glooory.huaban.entity.gather.GatherResultBean;
+import com.glooory.huaban.entity.gather.UploadResultBean;
 import com.glooory.huaban.util.Constant;
 
 import okhttp3.MultipartBody;

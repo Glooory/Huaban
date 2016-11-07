@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.search;
+package com.glooory.huaban.entity.search;
 
 import java.util.List;
 

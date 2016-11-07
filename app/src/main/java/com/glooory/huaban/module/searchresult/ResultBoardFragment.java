@@ -13,12 +13,12 @@ import com.glooory.huaban.adapter.TypeBoardAdapter;
 import com.glooory.huaban.api.OperateApi;
 import com.glooory.huaban.api.SearchApi;
 import com.glooory.huaban.base.BaseResultFragment;
-import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.net.RetrofitClient;
 import com.glooory.huaban.module.board.BoardActivity;
-import com.glooory.huaban.module.board.FollowBoardOperateBean;
+import com.glooory.huaban.entity.board.FollowBoardOperateBean;
 import com.glooory.huaban.module.user.UserActivity;
-import com.glooory.huaban.module.user.UserBoardItemBean;
-import com.glooory.huaban.module.user.UserBoardListBean;
+import com.glooory.huaban.entity.user.UserBoardItemBean;
+import com.glooory.huaban.entity.user.UserBoardListBean;
 import com.glooory.huaban.util.Constant;
 import com.orhanobut.logger.Logger;
 

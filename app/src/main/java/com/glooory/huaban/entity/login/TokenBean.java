@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.login;
+package com.glooory.huaban.entity.login;
 
 /**
  * Created by Glooory on 2016/9/1 0001.

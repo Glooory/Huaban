@@ -1,6 +1,6 @@
-package com.glooory.huaban.module.imagedetail;
+package com.glooory.huaban.entity.imagedetail;
 
-import com.glooory.huaban.module.user.UserBoardItemBean;
+import com.glooory.huaban.entity.user.UserBoardItemBean;
 import com.google.gson.Gson;
 
 import java.util.List;

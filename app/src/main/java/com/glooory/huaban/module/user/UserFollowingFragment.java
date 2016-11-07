@@ -11,7 +11,8 @@ import com.glooory.huaban.R;
 import com.glooory.huaban.adapter.FollowingAdapter;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseUserFragment;
-import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.entity.user.UserFollowingBean;
+import com.glooory.huaban.net.RetrofitClient;
 import com.glooory.huaban.util.Constant;
 
 import java.util.List;

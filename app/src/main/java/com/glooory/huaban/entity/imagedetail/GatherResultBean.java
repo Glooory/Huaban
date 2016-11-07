@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.imagedetail;
+package com.glooory.huaban.entity.imagedetail;
 
 /**
  * Created by Glooory on 2016/9/12 0012 20:30.

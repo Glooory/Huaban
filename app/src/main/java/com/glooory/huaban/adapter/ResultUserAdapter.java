@@ -8,7 +8,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.entity.PinsUserBean;
-import com.glooory.huaban.httputils.FrescoLoader;
+import com.glooory.huaban.net.FrescoLoader;
 
 /**
  * Created by Glooory on 2016/9/18 0018 18:38.

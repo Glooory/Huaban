@@ -1,6 +1,6 @@
 package com.glooory.huaban.entity;
 
-import com.glooory.huaban.module.board.SimpleBoardInfoBean;
+import com.glooory.huaban.entity.board.SimpleBoardInfoBean;
 import com.google.gson.Gson;
 
 import java.util.List;

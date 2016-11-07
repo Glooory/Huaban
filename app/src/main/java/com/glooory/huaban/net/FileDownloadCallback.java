@@ -1,6 +1,6 @@
-package com.glooory.huaban.httputils;
+package com.glooory.huaban.net;
 
-import com.glooory.huaban.entity.PinLoadBean;
+import com.glooory.huaban.entity.FileLoadBean;
 import com.glooory.huaban.rx.RxBus;
 
 import java.io.File;
@@ -19,7 +19,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * Created by Glooory on 2016/9/13 0013 13:13.
  */
-public abstract class PinDownloadCallback implements Callback<ResponseBody>{
+public abstract class FileDownloadCallback implements Callback<ResponseBody>{
 
     /**
      * 订阅下载进度
@@ -36,7 +36,7 @@ public abstract class PinDownloadCallback implements Callback<ResponseBody>{
      */
     private String destFileName;
 
-    public PinDownloadCallback(String destFileDir, String destFileName) {
+    public FileDownloadCallback(String destFileDir, String destFileName) {
         this.destFileDir = destFileDir;
         this.destFileName = destFileName;
         subscribeLoadProgress(); //订阅下载进度
@@ -46,13 +46,13 @@ public abstract class PinDownloadCallback implements Callback<ResponseBody>{
      * 订阅文件的下载进度
      */
     private void subscribeLoadProgress() {
-        rxSubscriptions.add(RxBus.getDefault().toObservable(PinLoadBean.class)
+        rxSubscriptions.add(RxBus.getDefault().toObservable(FileLoadBean.class)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<PinLoadBean>() {
+                .subscribe(new Action1<FileLoadBean>() {
                     @Override
-                    public void call(PinLoadBean pinLoadBean) {
+                    public void call(FileLoadBean pinLoadBean) {
                         onLoading(pinLoadBean.getProgress(), pinLoadBean.getTotal());
                     }
                 })

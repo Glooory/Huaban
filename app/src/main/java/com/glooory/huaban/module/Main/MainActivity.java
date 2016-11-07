@@ -1,9 +1,12 @@
 package com.glooory.huaban.module.main;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -26,20 +29,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.glooory.huaban.BuildConfig;
 import com.glooory.huaban.R;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.base.BaseActivity;
-import com.glooory.huaban.httputils.FrescoLoader;
-import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.entity.VersionInfoBean;
 import com.glooory.huaban.module.gather.GatherActivity;
 import com.glooory.huaban.module.login.LoginActivity;
-import com.glooory.huaban.module.login.UserInfoBean;
+import com.glooory.huaban.entity.login.UserInfoBean;
 import com.glooory.huaban.module.search.SearchActivity;
 import com.glooory.huaban.module.user.UserActivity;
+import com.glooory.huaban.net.FrescoLoader;
+import com.glooory.huaban.net.RetrofitClient;
+import com.glooory.huaban.net.UpdateRequest;
+import com.glooory.huaban.service.UpdateService;
 import com.glooory.huaban.util.Constant;
+import com.glooory.huaban.util.NetworkUtils;
 import com.glooory.huaban.util.SPUtils;
 import com.jakewharton.rxbinding.view.RxView;
 import com.orhanobut.logger.Logger;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.PermissionNo;
+import com.yanzhenjie.permission.PermissionYes;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RationaleListener;
 
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +66,7 @@ import rx.schedulers.Schedulers;
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         View.OnClickListener {
+    public static final int EXTERNAL_REQUEST_CODE = 409;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -84,6 +98,29 @@ public class MainActivity extends BaseActivity
     //侧滑菜单粉丝数
     private TextView mFansCountTv;
     private FragmentManager mFragmentManager;
+    private VersionInfoBean mVersionInfoBean;
+    private RationaleListener mRationaleListener = new RationaleListener() {
+        @Override
+        public void showRequestPermissionRationale(int requestCode, final Rationale rationale) {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(R.string.external_permission_tip)
+                    .setMessage(R.string.external_permission_des)
+                    .setPositiveButton("好的", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            rationale.resume();
+                        }
+                    })
+                    .setNegativeButton("我拒绝", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            rationale.cancel();
+                        }
+                    }).show();
+        }
+    };
 
     @Override
     protected int getLayoutId() {
@@ -108,6 +145,8 @@ public class MainActivity extends BaseActivity
                     .replace(R.id.container_main, PinsFragment.newInstance(mAuthorization, PinsFragment.NEWEST_FRAGMENT_INDEX))
                     .commit();
         }
+        checkUpdate();
+
     }
 
     @Override
@@ -353,5 +392,87 @@ public class MainActivity extends BaseActivity
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public void checkUpdate() {
+        if (!NetworkUtils.isConnected(getApplicationContext())) {
+            return;
+        }
+        Subscription s = UpdateRequest.getUpdateApi()
+                .checkUpdateInfo()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<VersionInfoBean>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Logger.d(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(VersionInfoBean bean) {
+                        if (isShowUpdateDialog(bean)) {
+                            showUpdateDialog(bean);
+                            mVersionInfoBean = bean;
+                        }
+                    }
+                });
+        addSubscription(s);
+    }
+
+    private boolean isShowUpdateDialog(VersionInfoBean bean) {
+        return bean.getVersioncode() > BuildConfig.VERSION_CODE;
+    }
+
+    public void showUpdateDialog(final VersionInfoBean bean) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(R.string.new_version_available)
+                .setMessage(String.format(getString(R.string.new_version_des), bean.getVersionname(), bean.getReleaseinfo(), bean.getSize()))
+                .setCancelable(false)
+                .setPositiveButton(R.string.download_new_version, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            AndPermission.with(MainActivity.this)
+                                    .requestCode(EXTERNAL_REQUEST_CODE)
+                                    .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    .rationale(mRationaleListener)
+                                    .send();
+                        } else {
+                            actionDownload(mVersionInfoBean);
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancle, null);
+        builder.create().show();
+    }
+
+    private void actionDownload(VersionInfoBean bean) {
+        UpdateService.launch(MainActivity.this,
+                bean.getFilename());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        AndPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    /**
+     * 请求获取 External 权限成功的回调
+     */
+    @PermissionYes(EXTERNAL_REQUEST_CODE)
+    private void getWriteExternalYes() {
+        actionDownload(mVersionInfoBean);
+    }
+
+    /**
+     * 请求读写 External 权限失败的回调
+     */
+    @PermissionNo(EXTERNAL_REQUEST_CODE)
+    private void getWriteExternalNo() {
+        Toast.makeText(getApplicationContext(), R.string.external_permission_failed, Toast.LENGTH_LONG).show();
     }
 }

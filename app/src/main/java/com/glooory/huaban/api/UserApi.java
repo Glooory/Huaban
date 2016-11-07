@@ -2,9 +2,9 @@ package com.glooory.huaban.api;
 
 import com.glooory.huaban.entity.LastBoardsBean;
 import com.glooory.huaban.entity.PinsListBean;
-import com.glooory.huaban.module.login.UserInfoBean;
-import com.glooory.huaban.module.user.UserBoardListBean;
-import com.glooory.huaban.module.user.UserFollowingBean;
+import com.glooory.huaban.entity.login.UserInfoBean;
+import com.glooory.huaban.entity.user.UserBoardListBean;
+import com.glooory.huaban.entity.user.UserFollowingBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.GET;

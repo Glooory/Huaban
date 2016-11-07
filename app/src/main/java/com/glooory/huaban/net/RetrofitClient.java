@@ -1,4 +1,4 @@
-package com.glooory.huaban.httputils;
+package com.glooory.huaban.net;
 
 import java.util.concurrent.TimeUnit;
 

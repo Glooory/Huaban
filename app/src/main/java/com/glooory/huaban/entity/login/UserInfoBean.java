@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.login;
+package com.glooory.huaban.entity.login;
 
 import com.glooory.huaban.entity.AvatarBean;
 

@@ -1,7 +1,7 @@
 package com.glooory.huaban.api;
 
-import com.glooory.huaban.module.login.TokenBean;
-import com.glooory.huaban.module.login.UserInfoBean;
+import com.glooory.huaban.entity.login.TokenBean;
+import com.glooory.huaban.entity.login.UserInfoBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.Field;

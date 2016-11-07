@@ -2,15 +2,13 @@ package com.glooory.huaban.service;
 
 import android.app.Activity;
 import android.app.IntentService;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Environment;
-import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.glooory.huaban.R;
-import com.glooory.huaban.httputils.PinDownloadCallback;
-import com.glooory.huaban.httputils.PinResponseBody;
+import com.glooory.huaban.net.FileDownloadCallback;
+import com.glooory.huaban.net.FileResponseBody;
 import com.glooory.huaban.util.Utils;
 
 import java.io.File;
@@ -36,10 +34,6 @@ public class DownloadPinService extends IntentService {
     private String mPinDirPath = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "huaban";
     private String mPinUrlKey;
-    private NotificationCompat.Builder builder;
-    private NotificationManager notificationManager;
-    private int NOTIFY_ID = 1001;
-    private int preProgress = 0;
 
     public static void launch(Activity activity, String urlKey, String type) {
         Intent intent = new Intent(activity, DownloadPinService.class);
@@ -64,15 +58,13 @@ public class DownloadPinService extends IntentService {
      * 开始下载
      */
     private void actionDownload() {
-
-//        initNotification();
         new Retrofit.Builder()
                 .baseUrl(getString(R.string.urlImageRoot))
                 .client(initOkHttpClient())
                 .build()
                 .create(PinDownloadService.class)
                 .httpForDownload(mPinUrlKey)
-                .enqueue(new PinDownloadCallback(mPinDirPath, mPinName) {
+                .enqueue(new FileDownloadCallback(mPinDirPath, mPinName) {
                     @Override
                     public void onSuccess(File file) {
                         Toast.makeText(getApplicationContext(), "图片已保存到 " + mPinDirPath, Toast.LENGTH_SHORT).show();
@@ -80,70 +72,31 @@ public class DownloadPinService extends IntentService {
 
                     @Override
                     public void onLoading(long progress, long total) {
-//                        updateNotification(progress * 100 / total);
-//                        cancelNotification();
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                        cancelNotification();
                         Toast.makeText(getApplicationContext(), "下载失败", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-    }
-
-    /**
-     * 初始化通知
-     */
-    private void initNotification() {
-
-        builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_petal_icon_24dp)
-                .setContentText("0%")
-                .setContentTitle("正在下载图片")
-                .setProgress(100, 0, false);
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFY_ID, builder.build());
-
     }
 
     private OkHttpClient initOkHttpClient() {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(15000, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(20000, TimeUnit.MILLISECONDS);
         builder.networkInterceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Response originalResponse = chain.proceed(chain.request());
                 return originalResponse
                         .newBuilder()
-                        .body(new PinResponseBody(originalResponse))
+                        .body(new FileResponseBody(originalResponse))
                         .build();
             }
         });
         return builder.build();
 
-    }
-
-    /**
-     * 更新下载进度
-     * @param progress
-     */
-    private void updateNotification(long progress) {
-
-        int currentProgress = (int) progress;
-        if (preProgress < currentProgress) {
-            builder.setContentText(currentProgress + "%");
-            builder.setProgress(100, currentProgress, false);
-            notificationManager.notify(NOTIFY_ID, builder.build());
-        }
-        preProgress = currentProgress;
-
-    }
-
-    private void cancelNotification() {
-        notificationManager.cancel(NOTIFY_ID);
     }
 
     public interface PinDownloadService {

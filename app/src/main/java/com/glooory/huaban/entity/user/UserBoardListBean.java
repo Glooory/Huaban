@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.user;
+package com.glooory.huaban.entity.user;
 
         import java.util.List;
 

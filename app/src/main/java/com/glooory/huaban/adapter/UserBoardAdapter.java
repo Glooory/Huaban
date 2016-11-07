@@ -10,8 +10,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.glooory.huaban.R;
-import com.glooory.huaban.httputils.FrescoLoader;
-import com.glooory.huaban.module.user.UserBoardItemBean;
+import com.glooory.huaban.net.FrescoLoader;
+import com.glooory.huaban.entity.user.UserBoardItemBean;
 import com.glooory.huaban.util.CompatUtils;
 
 /**

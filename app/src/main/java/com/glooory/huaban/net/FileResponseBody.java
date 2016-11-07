@@ -1,6 +1,6 @@
-package com.glooory.huaban.httputils;
+package com.glooory.huaban.net;
 
-import com.glooory.huaban.entity.PinLoadBean;
+import com.glooory.huaban.entity.FileLoadBean;
 import com.glooory.huaban.rx.RxBus;
 
 import java.io.IOException;
@@ -17,10 +17,10 @@ import okio.Okio;
  * Created by Glooory on 2016/9/13 0013 12:57.
  * 自定义ResponseBody类。 实现RxBus发送事件
  */
-public class PinResponseBody extends ResponseBody {
+public class FileResponseBody extends ResponseBody {
     Response originalResponse;
 
-    public PinResponseBody(Response originalResponse) {
+    public FileResponseBody(Response originalResponse) {
         this.originalResponse = originalResponse;
     }
 
@@ -45,7 +45,7 @@ public class PinResponseBody extends ResponseBody {
                 bytesReaded += bytesRead == -1 ? 0 : bytesRead;
 
                 //通过RxBus发布进度信息
-                RxBus.getDefault().post(new PinLoadBean(contentLength(), bytesReaded));
+                RxBus.getDefault().post(new FileLoadBean(bytesReaded, contentLength()));
 
                 return bytesRead;
             }

@@ -1,11 +1,11 @@
 package com.glooory.huaban.api;
 
 import com.glooory.huaban.entity.PinsBean;
-import com.glooory.huaban.module.board.FollowBoardOperateBean;
-import com.glooory.huaban.module.imagedetail.GatherInfoBean;
-import com.glooory.huaban.module.imagedetail.GatherResultBean;
-import com.glooory.huaban.module.imagedetail.LikePinOperateBean;
-import com.glooory.huaban.module.user.UserBoardSingleBean;
+import com.glooory.huaban.entity.board.FollowBoardOperateBean;
+import com.glooory.huaban.entity.imagedetail.GatherInfoBean;
+import com.glooory.huaban.entity.imagedetail.GatherResultBean;
+import com.glooory.huaban.entity.imagedetail.LikePinOperateBean;
+import com.glooory.huaban.entity.user.UserBoardSingleBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.DELETE;

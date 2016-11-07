@@ -19,7 +19,7 @@ import com.glooory.huaban.api.BoardApi;
 import com.glooory.huaban.base.BaseFragment;
 import com.glooory.huaban.entity.PinsBean;
 import com.glooory.huaban.entity.PinsListBean;
-import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.net.RetrofitClient;
 import com.glooory.huaban.module.imagedetail.ImageDetailActivity;
 import com.glooory.huaban.util.Constant;
 

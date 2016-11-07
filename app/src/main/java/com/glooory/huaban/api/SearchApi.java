@@ -1,10 +1,10 @@
 package com.glooory.huaban.api;
 
 import com.glooory.huaban.entity.PinsListBean;
-import com.glooory.huaban.module.search.SearchHintBean;
-import com.glooory.huaban.module.searchresult.ResultCountInfoBean;
-import com.glooory.huaban.module.searchresult.ResultUserListBean;
-import com.glooory.huaban.module.user.UserBoardListBean;
+import com.glooory.huaban.entity.search.SearchHintBean;
+import com.glooory.huaban.entity.searchresult.ResultCountInfoBean;
+import com.glooory.huaban.entity.searchresult.ResultUserListBean;
+import com.glooory.huaban.entity.user.UserBoardListBean;
 import com.glooory.huaban.util.Constant;
 
 import retrofit2.http.GET;

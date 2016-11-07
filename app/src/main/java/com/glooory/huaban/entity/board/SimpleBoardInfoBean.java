@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.board;
+package com.glooory.huaban.entity.board;
 
 import com.glooory.huaban.entity.PinsUserBean;
 import com.google.gson.Gson;

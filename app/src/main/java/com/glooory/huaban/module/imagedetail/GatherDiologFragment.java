@@ -17,7 +17,8 @@ import android.widget.TextView;
 import com.glooory.huaban.R;
 import com.glooory.huaban.api.OperateApi;
 import com.glooory.huaban.base.BaseDialogFragmemt;
-import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.entity.imagedetail.GatherInfoBean;
+import com.glooory.huaban.net.RetrofitClient;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.widget.HighLightArrayAdapter;
 

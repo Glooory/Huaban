@@ -16,7 +16,7 @@ import android.widget.Spinner;
 import com.glooory.huaban.R;
 import com.glooory.huaban.api.UserApi;
 import com.glooory.huaban.entity.LastBoardsBean;
-import com.glooory.huaban.httputils.RetrofitClient;
+import com.glooory.huaban.net.RetrofitClient;
 import com.glooory.huaban.util.Constant;
 import com.glooory.huaban.util.SPUtils;
 import com.glooory.huaban.widget.HighLightArrayAdapter;

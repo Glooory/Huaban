@@ -1,4 +1,4 @@
-package com.glooory.huaban.module.gather;
+package com.glooory.huaban.entity.gather;
 
 import com.glooory.huaban.entity.ErrorBaseBean;
 import com.google.gson.Gson;

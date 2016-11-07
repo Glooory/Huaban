@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -80,13 +81,14 @@ public class ImageDetailActivity extends BaseActivity
         implements BaseQuickAdapter.RequestLoadMoreListener,
         GatherDiologFragment.GatherInfoListener {
 
-
     @BindView(R.id.toolbar_image_detail)
     Toolbar mToolbar;
     @BindView(R.id.img_image_detail)
     SimpleDraweeView mImageDetail;
     @BindView(R.id.coordinator_image_detail)
     CoordinatorLayout mCoordinator;
+    @BindView(R.id.appbar)
+    AppBarLayout mAppBar;
     private LinearLayout mLlPin;
     private ShineButton mSbtnlPin;
     private TextView mTvGathercount;
@@ -253,6 +255,19 @@ public class ImageDetailActivity extends BaseActivity
                                 mImgBoard);
                     }
                 });
+
+        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                int off = -verticalOffset;
+                if (off >= appBarLayout.getTotalScrollRange()) {
+                    mToolbar.setAlpha(0);
+                } else {
+                    mToolbar.setAlpha(1);
+                }
+            }
+        });
 
     }
 
@@ -770,6 +785,7 @@ public class ImageDetailActivity extends BaseActivity
 
     /**
      * 联网提交修改
+     *
      * @param pinId
      * @param des
      * @param boardId
@@ -806,6 +822,7 @@ public class ImageDetailActivity extends BaseActivity
 
     /**
      * 联网删除采集
+     *
      * @param pinId
      */
     private void httpForCommitDelete(String pinId) {

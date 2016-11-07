@@ -44,7 +44,7 @@ Petal 是花瓣网 [huaban.com](http://huaban.com) 的第三方客户端，其�
 
 #### 体验
 
-<img src="/screenshot/huaban.png" width = "150" height = "150" align=center hspace="16" vspace="16"/> or [戳我下载 APK ](http://glooory.com/apps/Huaban/huaban_1.0.0_universal.apk)
+<img src="/screenshots/huaban.png" width = "150" height = "150" align=center hspace="16" vspace="16"/> or  [戳我下载 APK ](http://glooory.com/apps/Huaban/huaban_1.0.0_universal.apk)
 
 #### License
 

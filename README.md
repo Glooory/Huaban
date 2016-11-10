@@ -2,7 +2,7 @@
 
 ---
 
-Petal 是花瓣网 [huaban.com](http://huaban.com) 的第三方客户端，其中的所有内容都可以在[花瓣网](http://huaban.com)获取。
+Huaban 是花瓣网 [huaban.com](http://huaban.com) 的第三方客户端，其中的所有内容都可以在[花瓣网](http://huaban.com)获取。
 
 如果涉及侵权请联系我 glooorypu@gmail.com 及时删除。
 
